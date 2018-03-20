@@ -19,5 +19,7 @@
     "terms_of_use_error": "您必须同意使用条款",
     "registration-added-to-queue": "您的注册正在等待批准。一旦通过，管理员会发送邮件通知您。",
     "interstitial.intro": "在创建您的账户前我们需要一些额外信息。",
-    "interstitial.errors-found": "我们无法完成您的注册："
+    "interstitial.errors-found": "我们无法完成您的注册：",
+    "inviter": "邀请人",
+    "inviter_placeholder": "输入邀请人"
 }

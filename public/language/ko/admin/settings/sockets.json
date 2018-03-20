@@ -1,6 +1,0 @@
-{
-    "reconnection": "재접속 환경",
-    "max-attempts": "최대 재접속시도",
-    "default-placeholder": "기본: %1",
-    "delay": "재접속 지체"
-}

@@ -1,7 +1,0 @@
-{
-	"alert.confirm-reload": "Jste si jist/a, že si přejete znovu načíst NodeBB?",
-	"alert.confirm-restart": "Jste si jist/a, že si přejete restartovat NodeBB?",
-
-	"acp-title": "Ovládací panel správce NodeBB | %1",
-	"settings-header-contents": "Obsah"
-}
