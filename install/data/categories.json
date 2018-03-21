@@ -1,38 +1,29 @@
 [
     {
-        "name": "Announcements",
-        "description": "Announcements regarding our community",
-        "descriptionParsed": "<p>Announcements regarding our community</p>\n",
+        "name": "通告",
+        "description": "社区相关的公告",
+        "descriptionParsed": "<p>社区相关的公告</p>\n",
         "bgColor": "#fda34b",
         "color": "#fff",
         "icon" : "fa-bullhorn",
         "order": 1
     },
     {
-        "name": "General Discussion",
-        "description": "A place to talk about whatever you want",
-        "descriptionParsed": "<p>A place to talk about whatever you want</p>\n",
+        "name": "区块链技术",
+        "description": "区块链技术讨论",
+        "descriptionParsed": "<p>区块链技术讨论</p>\n",
         "bgColor": "#59b3d0",
         "color": "#fff",
         "icon" : "fa-comments-o",
         "order": 2
     },
     {
-        "name": "Blogs",
-        "description": "Blog posts from individual members",
-        "descriptionParsed": "<p>Blog posts from individual members</p>\n",
+        "name": "博客",
+        "description": "个人博客区",
+        "descriptionParsed": "<p>个人博客区</p>\n",
         "bgColor": "#86ba4b",
         "color": "#fff",
         "icon" : "fa-newspaper-o",
         "order": 4
-    },
-    {
-        "name": "Comments & Feedback",
-        "description": "Got a question? Ask away!",
-        "descriptionParsed": "<p>Got a question? Ask away!</p>\n",
-        "bgColor": "#e95c5a",
-        "color": "#fff",
-        "icon" : "fa-question",
-        "order": 3
     }
 ]
