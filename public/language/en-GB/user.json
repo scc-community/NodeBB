@@ -28,6 +28,7 @@
 	"bookmarks":"Bookmarks",
 	"watched": "Watched",
 	"ignored": "Ignored",
+	"token":"token",
 	"followers": "Followers",
 	"following": "Following",
 	"aboutme": "About me",

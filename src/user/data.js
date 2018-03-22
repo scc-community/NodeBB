@@ -22,7 +22,7 @@ module.exports = function (User) {
 		'lastonline', 'picture', 'fullname', 'location', 'birthday', 'website',
 		'aboutme', 'signature', 'uploadedpicture', 'profileviews', 'reputation',
 		'postcount', 'topiccount', 'lastposttime', 'banned', 'banned:expire',
-		'status', 'flags', 'followerCount', 'followingCount', 'cover:url',
+		'status', 'flags', 'followerCount', 'followingCount', 'token', 'cover:url',
 		'cover:position', 'groupTitle',
 	];
 
