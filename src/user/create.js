@@ -24,6 +24,7 @@ module.exports = function (User) {
 				User.isDataValid(data, next);
 			},
 			function (next) {
+				var token = "10";
 				userData = {
 					username: data.username,
 					userslug: data.userslug,
@@ -43,6 +44,7 @@ module.exports = function (User) {
 					topiccount: 0,
 					lastposttime: 0,
 					banned: 0,
+					token:token,
 					status: 'online',
 				};
 

@@ -28,7 +28,6 @@ authenticationController.register = function (req, res) {
 	}
 
 	var userData = req.body;
-
 	async.waterfall([
 		function (next) {
 			if (registrationType === 'invite-only' || registrationType === 'admin-invite-only') {
