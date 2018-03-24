@@ -13,6 +13,7 @@ var pagination = require('../../pagination');
 var messaging = require('../../messaging');
 var translator = require('../../translator');
 var utils = require('../../utils');
+var winston = require('winston');
 
 var profileController = module.exports;
 
@@ -129,6 +130,7 @@ profileController.get = function (req, res, callback) {
 			plugins.fireHook('filter:user.account', { userData: userData, uid: req.uid }, next);
 		},
 		function (results) {
+			winston.info("results.userData: " + JSON.stringify(results.userData));
 			res.render('account/profile', results.userData);
 		},
 	], callback);
