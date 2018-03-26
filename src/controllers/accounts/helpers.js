@@ -12,6 +12,7 @@ var plugins = require('../../plugins');
 var meta = require('../../meta');
 var utils = require('../../utils');
 var privileges = require('../../privileges');
+var invite = require('../../user/invite_scc');
 
 var helpers = module.exports;
 
@@ -68,6 +69,9 @@ helpers.getUserDataByUserSlug = function (userslug, callerUID, callback) {
 				canBanUser: function (next) {
 					privileges.users.canBanUser(callerUID, uid, next);
 				},
+				inviteToken: function (next) {
+					user.getInviteToken(uid, next);
+				}
 			}, next);
 		},
 		function (results, next) {
@@ -162,6 +166,14 @@ helpers.getUserDataByUserSlug = function (userslug, callerUID, callback) {
 			userData['cover:position'] = validator.escape(String(userData['cover:position'] || '50% 50%'));
 			userData['username:disableEdit'] = !userData.isAdmin && parseInt(meta.config['username:disableEdit'], 10) === 1;
 			userData['email:disableEdit'] = !userData.isAdmin && parseInt(meta.config['email:disableEdit'], 10) === 1;
+
+			/* Old user didn't own invite token*/
+			// if(!results.inviteToken) {
+			// 	invite.createInviteLink(userData.uid, next);
+			// }
+			if(!results.invitelink) {
+				userData.invitelink = nconf.get('relative_path') + '/register?token=' + results.inviteToken;
+			}
 
 			next(null, userData);
 		},

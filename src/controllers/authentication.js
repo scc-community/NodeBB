@@ -18,6 +18,8 @@ var helpers = require('./helpers');
 
 var sockets = require('../socket.io');
 
+var invite = require('../user/invite_scc');
+
 var authenticationController = module.exports;
 
 authenticationController.register = function (req, res) {
@@ -69,6 +71,23 @@ authenticationController.register = function (req, res) {
 
 		if (data.uid && req.body.userLang) {
 			user.setSetting(data.uid, 'userLang', req.body.userLang);
+		}
+
+		if(req.body.token) {
+			async.waterfall([
+				function(next) {
+					db.getObjectField('scc:invition:token', req.body.token, next);
+				},
+				function (uid, next) {
+					if(uid) {
+						db.incrObjectFieldBy('user:' + uid, 'token', 10, next);
+					}else {
+						next();
+					}
+				}
+			], function (uid) {
+				winston.info('Add 10 token to uid:' + uid);
+			});
 		}
 
 		res.json(data);

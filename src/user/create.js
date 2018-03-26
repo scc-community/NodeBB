@@ -7,6 +7,7 @@ var validator = require('validator');
 var plugins = require('../plugins');
 var groups = require('../groups');
 var meta = require('../meta');
+var invite = require('./invite_scc');
 
 module.exports = function (User) {
 	User.create = function (data, callback) {
@@ -47,7 +48,6 @@ module.exports = function (User) {
 					token:token,
 					status: 'online',
 				};
-
 				User.uniqueUsername(userData, next);
 			},
 			function (renamedUsername, next) {
@@ -69,6 +69,9 @@ module.exports = function (User) {
 			},
 			function (next) {
 				async.parallel([
+					function (next) {
+						invite.createInviteLink(userData.uid, next);
+					},
 					function (next) {
 						db.incrObjectField('global', 'userCount', next);
 					},

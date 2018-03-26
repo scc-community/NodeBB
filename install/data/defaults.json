@@ -38,5 +38,9 @@
     "bookmarkThreshold": 5,
     "topicsPerList": 20,
     "autoDetectLang": 1,
-    "min:rep:flag": 0
+    "min:rep:flag": 0,
+
+    "originToken" : 10,
+    "inviteToken" : 10,
+    "host": "https://forum.sourcecc.cn"
 }

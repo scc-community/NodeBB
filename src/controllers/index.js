@@ -9,6 +9,8 @@ var user = require('../user');
 var plugins = require('../plugins');
 var helpers = require('./helpers');
 
+var invite = require('../user/invite_scc');
+
 var Controllers = module.exports;
 
 Controllers.home = require('./home');

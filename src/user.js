@@ -369,3 +369,7 @@ User.addInterstitials = function (callback) {
 	callback();
 };
 
+User.getInviteToken = function(uid, callback) {
+	db.getObjectField('scc:invition:uid', uid,  callback);
+}
+

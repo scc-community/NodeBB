@@ -30,6 +30,11 @@ define('forum/register', ['translator', 'zxcvbn'], function (translator, zxcvbn)
 			$('#token').val(query.token);
 		}
 
+		/* Add token into request body */
+		if(query.token) {
+			$('#token').val(query.token);
+		}
+
 		// Update the "others can mention you via" text
 		username.on('keyup', function () {
 			$('#yourUsername').text(this.value.length > 0 ? utils.slugify(this.value) : 'username');
