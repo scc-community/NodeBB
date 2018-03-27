@@ -65,3 +65,5 @@ build
 test/files/normalise.jpg.png
 test/files/normalise-resized.jpg
 config.json
+
+package-lock.json
