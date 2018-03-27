@@ -252,6 +252,9 @@ actions.minifyJS = minifyJS;
 
 Minifier.js = {};
 Minifier.js.bundle = function (data, minify, fork, callback) {
+	if (process.env.NODE_ENV === 'development') {
+		minify = false;
+	}
 	executeAction({
 		act: minify ? 'minifyJS' : 'concat',
 		files: data.files,

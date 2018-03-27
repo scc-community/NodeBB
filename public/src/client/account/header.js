@@ -53,6 +53,7 @@ define('forum/account/header', [
 		components.get('account/unban').on('click', unbanAccount);
 		components.get('account/delete').on('click', deleteAccount);
 		components.get('account/flag').on('click', flagAccount);
+		components.get('account/invitelink').on('click', inviteLink);
 	};
 
 	function hidePrivateLinks() {
@@ -207,6 +208,21 @@ define('forum/account/header', [
 						app.alertError(err.message);
 					}
 				});
+			});
+		});
+	}
+
+	function inviteLink() {
+		translator.translate('[[user:copy-invite-link]]', function (translated) {
+			bootbox.confirm({
+				title: translated,
+				message: $('#invite-link').attr('data-value'),
+				callback: function (confirm) {
+					if(!confirm) {
+						return;
+					}
+					app.alertSuccess('[[success:success]]');
+				}
 			});
 		});
 	}

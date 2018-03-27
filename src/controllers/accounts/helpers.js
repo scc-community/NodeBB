@@ -172,7 +172,7 @@ helpers.getUserDataByUserSlug = function (userslug, callerUID, callback) {
 			// 	invite.createInviteLink(userData.uid, next);
 			// }
 			if(!results.invitelink) {
-				userData.invitelink = nconf.get('relative_path') + '/register?token=' + results.inviteToken;
+				userData.invitelink = nconf.get('url') + '/register?token=' + results.inviteToken;
 			}
 
 			next(null, userData);

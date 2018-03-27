@@ -18,7 +18,19 @@ define('coverPhoto', [
 			enableDragging(coverEl);
 		});
 		coverEl.find('.remove').on('click', removeFn);
-
+		coverEl.find('.invitelink').on('click', function () {
+			bootbox.prompt('Invite Link: ', function (email) {
+				if (!email) {
+					return;
+				}
+				socket.emit('user.invite', email, function (err) {
+					if (err) {
+						return app.alertError(err.message);
+					}
+					app.alertSuccess('[[success:success]]');
+				});
+			});
+		});
 		coverEl
 			.on('dragover', coverPhoto.onDragOver)
 			.on('drop', coverPhoto.onDrop);
