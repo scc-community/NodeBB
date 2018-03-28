@@ -30,7 +30,7 @@
     "maximumProfileImageSize": 256,
     "maximumCoverImageSize": 2048,
     "profileImageDimension": 200,
-    "requireEmailConfirmation": 0,
+    "requireEmailConfirmation": 1,
     "allowProfileImageUploads": 1,
     "teaserPost": "last-reply",
     "allowPrivateGroups": 1,
