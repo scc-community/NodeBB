@@ -221,28 +221,43 @@ authenticationController.login = function (req, res, next) {
 		return continueLogin(req, res, next);
 	}
 
-	var requireEmailConfirmation = parseInt(meta.config.requireEmailConfirmation, 10) === 1;
-
 	var loginWith = meta.config.allowLoginWith || 'username-email';
 
-	if (requireEmailConfirmation) {
-		helpers.noScriptErrors(req, res, "require confirm link in your mail!", 500);
-	} else if (req.body.username && utils.isEmailValid(req.body.username) && loginWith.indexOf('email') !== -1) {
-		async.waterfall([
-			function (next) {
-				user.getUsernameByEmail(req.body.username, next);
-			},
-			function (username, next) {
-				req.body.username = username || req.body.username;
+	async.waterfall([
+		function (next) {
+			user.getUidByUserslug(utils.slugify(req.body.username),next);
+		},
+		function (uid, next) {
+			user.getUserFields(uid, ['email:confirmed'], next);
+		},
+		function (userData, next) {
+			var requireEmailConfirmation = parseInt(meta.config.requireEmailConfirmation, 10) === 1;
+			var isEmailConfirmed = parseInt(userData['email:confirmed'], 10) === 1;
+			if (!isEmailConfirmed && requireEmailConfirmation) {
+				helpers.noScriptErrors(req, res, "require confirm link in your mail!", 500);
+			} else if (req.body.username && utils.isEmailValid(req.body.username) && loginWith.indexOf('email') !== -1) {
+				async.waterfall([
+					function (next) {
+						user.getUsernameByEmail(req.body.username, next);
+					},
+					function (username, next) {
+						req.body.username = username || req.body.username;
+						continueLogin(req, res, next);
+					},
+				], next);
+			} else if (loginWith.indexOf('username') !== -1 && !validator.isEmail(req.body.username)) {
 				continueLogin(req, res, next);
-			},
-		], next);
-	} else if (loginWith.indexOf('username') !== -1 && !validator.isEmail(req.body.username)) {
-		continueLogin(req, res, next);
-	} else {
-		var err = '[[error:wrong-login-type-' + loginWith + ']]';
-		helpers.noScriptErrors(req, res, err, 500);
-	}
+			} else {
+				var err = '[[error:wrong-login-type-' + loginWith + ']]';
+				helpers.noScriptErrors(req, res, err, 500);
+			}
+		} 
+	]);
+
+	//if (requireEmailConfirmation) {
+	//	helpers.noScriptErrors(req, res, "require confirm link in your mail!", 500);
+	//} else 
+
 };
 
 function continueLogin(req, res, next) {
