@@ -133,6 +133,10 @@ function registerAndLoginUser(req, res, userData, callback) {
 		},
 		function (_uid, next) {
 			uid = _uid;
+			var requireEmailConfirmation = parseInt(meta.config.requireEmailConfirmation, 10) === 1;
+			if (requireEmailConfirmation) {
+				next();
+			}
 			if (res.locals.processLogin) {
 				authenticationController.doLogin(req, uid, next);
 			} else {
@@ -217,9 +221,13 @@ authenticationController.login = function (req, res, next) {
 		return continueLogin(req, res, next);
 	}
 
+	var requireEmailConfirmation = parseInt(meta.config.requireEmailConfirmation, 10) === 1;
+
 	var loginWith = meta.config.allowLoginWith || 'username-email';
 
-	if (req.body.username && utils.isEmailValid(req.body.username) && loginWith.indexOf('email') !== -1) {
+	if (requireEmailConfirmation) {
+		helpers.noScriptErrors(req, res, "require confirm link in your mail!", 500);
+	} else if (req.body.username && utils.isEmailValid(req.body.username) && loginWith.indexOf('email') !== -1) {
 		async.waterfall([
 			function (next) {
 				user.getUsernameByEmail(req.body.username, next);
