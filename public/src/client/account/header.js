@@ -221,7 +221,8 @@ define('forum/account/header', [
 					if(!confirm) {
 						return;
 					}
-					app.alertSuccess('[[success:success]]');
+					$('#invite-link').click();
+					// app.alertSuccess('[[success:success]]');
 				}
 			});
 		});
