@@ -254,11 +254,6 @@ authenticationController.login = function (req, res, next) {
 			}
 		} 
 	]);
-
-	//if (requireEmailConfirmation) {
-	//	helpers.noScriptErrors(req, res, "require confirm link in your mail!", 500);
-	//} else 
-
 };
 
 function continueLogin(req, res, next) {
