@@ -234,7 +234,8 @@ authenticationController.login = function (req, res, next) {
 			var requireEmailConfirmation = parseInt(meta.config.requireEmailConfirmation, 10) === 1;
 			var isEmailConfirmed = parseInt(userData['email:confirmed'], 10) === 1;
 			if (!isEmailConfirmed && requireEmailConfirmation) {
-				helpers.noScriptErrors(req, res, "require confirm link in your mail!", 500);
+				var err = '[[error:wrong-login-email-confirm]]';
+				helpers.noScriptErrors(req, res, err, 500);
 			} else if (req.body.username && utils.isEmailValid(req.body.username) && loginWith.indexOf('email') !== -1) {
 				async.waterfall([
 					function (next) {
