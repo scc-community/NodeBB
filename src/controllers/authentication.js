@@ -245,7 +245,7 @@ authenticationController.login = function (req, res, next) {
 						req.body.username = username || req.body.username;
 						continueLogin(req, res, next);
 					},
-				], next);
+				], next);			
 			} else if (loginWith.indexOf('username') !== -1 && !validator.isEmail(req.body.username)) {
 				continueLogin(req, res, next);
 			} else {
