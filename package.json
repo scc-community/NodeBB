@@ -75,7 +75,7 @@
     "nodebb-rewards-essentials": "0.0.11",
     "nodebb-theme-lavender": "5.0.4",
     "nodebb-theme-persona": "8.0.4",
-    "nodebb-theme-scc": "git+https://github.com/scc-community/NodeBB.git",
+    "nodebb-theme-scc": "git+https://github.com/scc-community/nodebb-theme-scc.git",
     "nodebb-theme-slick": "1.1.5",
     "nodebb-theme-vanilla": "9.0.3",
     "nodebb-widget-essentials": "4.0.2",
