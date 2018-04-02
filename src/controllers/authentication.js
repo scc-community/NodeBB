@@ -58,8 +58,12 @@ authenticationController.register = function (req, res) {
 			user.isPasswordValid(userData.password, next);
 		},
 		function (next) {
-			res.locals.processLogin = true;	// set it to false in plugin if you wish to just register only
-			plugins.fireHook('filter:register.check', { req: req, res: res, userData: userData }, next);
+			res.locals.processLogin = true; // set it to false in plugin if you wish to just register only
+			plugins.fireHook('filter:register.check', {
+				req: req,
+				res: res,
+				userData: userData
+			}, next);
 		},
 		function (result, next) {
 			registerAndLoginUser(req, res, userData, next);
@@ -73,15 +77,15 @@ authenticationController.register = function (req, res) {
 			user.setSetting(data.uid, 'userLang', req.body.userLang);
 		}
 
-		if(req.body.token) {
+		if (req.body.token) {
 			async.waterfall([
-				function(next) {
+				function (next) {
 					db.getObjectField('scc:invition:token', req.body.token, next);
 				},
 				function (uid, next) {
-					if(uid) {
+					if (uid) {
 						db.incrObjectFieldBy('user:' + uid, 'token', 10, next);
-					}else {
+					} else {
 						next();
 					}
 				}
@@ -116,13 +120,20 @@ function registerAndLoginUser(req, res, userData, callback) {
 			if (req.body.noscript === 'true') {
 				return res.redirect(nconf.get('relative_path') + '/register/complete');
 			}
-			return res.json({ referrer: nconf.get('relative_path') + '/register/complete' });
+			return res.json({
+				referrer: nconf.get('relative_path') + '/register/complete'
+			});
 		},
 		function (next) {
 			user.shouldQueueUser(req.ip, next);
 		},
 		function (queue, next) {
-			plugins.fireHook('filter:register.shouldQueue', { req: req, res: res, userData: userData, queue: queue }, next);
+			plugins.fireHook('filter:register.shouldQueue', {
+				req: req,
+				res: res,
+				userData: userData,
+				queue: queue
+			}, next);
 		},
 		function (data, next) {
 			if (data.queue) {
@@ -136,8 +147,7 @@ function registerAndLoginUser(req, res, userData, callback) {
 			var requireEmailConfirmation = parseInt(meta.config.requireEmailConfirmation, 10) === 1;
 			if (requireEmailConfirmation) {
 				next();
-			}
-			if (res.locals.processLogin) {
+			} else if (res.locals.processLogin) {
 				authenticationController.doLogin(req, uid, next);
 			} else {
 				next();
@@ -145,7 +155,10 @@ function registerAndLoginUser(req, res, userData, callback) {
 		},
 		function (next) {
 			user.deleteInvitationKey(userData.email);
-			plugins.fireHook('filter:register.complete', { uid: uid, referrer: req.body.referrer || nconf.get('relative_path') + '/' }, next);
+			plugins.fireHook('filter:register.complete', {
+				uid: uid,
+				referrer: req.body.referrer || nconf.get('relative_path') + '/'
+			}, next);
 		},
 	], callback);
 }
@@ -157,7 +170,9 @@ function addToApprovalQueue(req, userData, callback) {
 			user.addToApprovalQueue(userData, next);
 		},
 		function (next) {
-			next(null, { message: '[[register:registration-added-to-queue]]' });
+			next(null, {
+				message: '[[register:registration-added-to-queue]]'
+			});
 		},
 	], callback);
 }
@@ -225,15 +240,16 @@ authenticationController.login = function (req, res, next) {
 
 	async.waterfall([
 		function (next) {
-			user.getUidByUserslug(utils.slugify(req.body.username),next);
+			user.getUidByUserslug(utils.slugify(req.body.username), next);
 		},
 		function (uid, next) {
 			user.getUserFields(uid, ['email:confirmed'], next);
 		},
 		function (userData, next) {
+			var uid = userData.uid;
 			var requireEmailConfirmation = parseInt(meta.config.requireEmailConfirmation, 10) === 1;
 			var isEmailConfirmed = parseInt(userData['email:confirmed'], 10) === 1;
-			if (!isEmailConfirmed && requireEmailConfirmation) {
+			if (uid != '1' && !isEmailConfirmed && requireEmailConfirmation) {
 				var err = '[[error:wrong-login-email-confirm]]';
 				helpers.noScriptErrors(req, res, err, 500);
 			} else if (req.body.username && utils.isEmailValid(req.body.username) && loginWith.indexOf('email') !== -1) {
@@ -245,14 +261,14 @@ authenticationController.login = function (req, res, next) {
 						req.body.username = username || req.body.username;
 						continueLogin(req, res, next);
 					},
-				], next);			
+				], next);
 			} else if (loginWith.indexOf('username') !== -1 && !validator.isEmail(req.body.username)) {
 				continueLogin(req, res, next);
 			} else {
 				var err = '[[error:wrong-login-type-' + loginWith + ']]';
 				helpers.noScriptErrors(req, res, err, 500);
 			}
-		} 
+		}
 	]);
 };
 
@@ -321,7 +337,9 @@ authenticationController.doLogin = function (req, uid, callback) {
 	}
 	async.waterfall([
 		function (next) {
-			req.login({ uid: uid }, next);
+			req.login({
+				uid: uid
+			}, next);
 		},
 		function (next) {
 			authenticationController.onSuccessfulLogin(req, uid, next);
@@ -373,7 +391,10 @@ authenticationController.onSuccessfulLogin = function (req, uid, callback) {
 			// Force session check for all connected socket.io clients with the same session id
 			sockets.in('sess_' + req.sessionID).emit('checkSession', uid);
 
-			plugins.fireHook('action:user.loggedIn', { uid: uid, req: req });
+			plugins.fireHook('action:user.loggedIn', {
+				uid: uid,
+				req: req
+			});
 			next();
 		},
 	], function (err) {
@@ -472,7 +493,11 @@ authenticationController.logout = function (req, res, next) {
 			user.setUserField(req.uid, 'lastonline', Date.now() - 300000, next);
 		},
 		function (next) {
-			plugins.fireHook('static:user.loggedOut', { req: req, res: res, uid: req.uid }, next);
+			plugins.fireHook('static:user.loggedOut', {
+				req: req,
+				res: res,
+				uid: req.uid
+			}, next);
 		},
 		function () {
 			// Force session check for all connected socket.io clients with the same session id
