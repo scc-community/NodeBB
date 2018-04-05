@@ -144,5 +144,13 @@
     "info.moderation-note.success": "Moderation note saved",
     "info.moderation-note.add": "Add note",
     "invite-link": "Invite link",
-    "copy-invite-link" : "Copy Invite Link"
+    "copy-invite-link" : "Copy Invite Link",
+    "scc-number-invite-title": "SCC community member invitation",
+    "invitelink": "Personally Exclusive Invitation Link",
+    "invitelink-label-title": "Your invitation link: %1",
+    "invitelink-button-title": "copy",
+    "invitelink-desc": "Inviting links to join the community rewards 110 SCC, each invited to join a reward 30 SCC",
+    "invitelink-content1": "The world's first blockchain project for developers –AI Programming Assistant",
+    "invitelink-content2": "The SCC project uses artificial intelligence to create software projects that subvert the current inefficient software development collaboration model. By bringing together the wisdom of global developers, accumulating excellent source code, and creating an artificial intelligence programming assistant that belongs to developers, it has increased the development efficiency by hundreds of times.",
+    "invitelink-content3": "The project uses blockchain technology to solve trust and incentive problems. Through the SCC token (ERC20 contract token based on Ethereum technology) crowdsourcing incentive mechanism, it creates a new software development collaboration mechanism and builds a strong independent developer community. Members' contributions in the community will receive corresponding SCC awards."
 }

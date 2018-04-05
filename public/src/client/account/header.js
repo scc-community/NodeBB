@@ -213,17 +213,35 @@ define('forum/account/header', [
 	}
 
 	function inviteLink() {
-		translator.translate('[[user:copy-invite-link]]', function (translated) {
-			bootbox.confirm({
-				title: translated,
-				message: $('#invite-link').attr('data-value'),
-				callback: function (confirm) {
-					if(!confirm) {
-						return;
-					}
-					$('#invite-link').click();
-					// app.alertSuccess('[[success:success]]');
-				}
+		// translator.translate('[[user:copy-invite-link]]', function (translated) {
+		// bootbox.confirm({
+		// 	title: 'translated',
+		// 	message: $('#invite-link').attr('data-clipboard-text'),
+		// 	callback: function (confirm) {
+		// 		if (!confirm) {
+		// 			return;
+		// 		}
+		// 		$('#invite-link').click();
+		// 		// app.alertSuccess('[[success:success]]');
+		// 	},
+		// });
+		// });
+		$('#invite-link').click();
+		var pluginData = { invitelink: $('#invite-link').attr('data-clipboard-text') };
+		Benchpress.parse('modals/invite', pluginData, function (html) {
+			bootbox.dialog({
+				title: '[[user:scc-number-invite-title]]',
+				message: html,
+				size: 'large',
+				buttons: {
+					copy: {
+						label: '[[user:invitelink-button-title]]',
+						className: 'btn-primary',
+						callback: function () {
+							//$('#invite-link').click();
+						},
+					},
+				},
 			});
 		});
 	}

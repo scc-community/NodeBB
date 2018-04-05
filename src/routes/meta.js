@@ -1,5 +1,7 @@
 'use strict';
 
+var qr = require('qr-image');
+
 module.exports = function (app, middleware, controllers) {
 	app.get('/sitemap.xml', controllers.sitemap.render);
 	app.get('/sitemap/pages.xml', controllers.sitemap.getPages);
@@ -9,4 +11,15 @@ module.exports = function (app, middleware, controllers) {
 	app.get('/manifest.json', controllers.manifest);
 	app.get('/css/previews/:theme', controllers.admin.themes.get);
 	app.get('/osd.xml', controllers.osd.handle);
+	app.get('/create_qrcode', function (req, res, next) {
+		var text = req.query.text;
+		try {
+			var img = qr.image(text, { size: 3 });
+			res.writeHead(200, { 'Content-Type': 'image/png' });
+			img.pipe(res);
+		} catch (e) {
+			res.writeHead(414, { 'Content-Type': 'text/html' });
+			res.end('<h1>414 Request-URI Too Large</h1>');
+		}
+	});
 };
