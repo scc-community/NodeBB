@@ -132,14 +132,16 @@ module.exports = function (Categories) {
 	};
 
 	Categories.buildTopicsSortedSet = function (data, callback) {
+		var uid = data.uid;
 		var cid = data.cid;
 		var set = 'cid:' + cid + ':tids';
 		var sort = data.sort || (data.settings && data.settings.categoryTopicSort) || meta.config.categoryTopicSort || 'newest_to_oldest';
-
 		if (sort === 'most_posts') {
 			set = 'cid:' + cid + ':tids:posts';
 		} else if (sort === 'most_votes') {
 			set = 'cid:' + cid + ':tids:votes';
+		} else if (sort === 'publish_newest_to_oldest' || sort === 'publish_oldest_to_newest') {
+			set = 'cid:' + cid + ':uid:' + uid + ':tids';
 		}
 
 		if (data.targetUid) {
@@ -155,6 +157,7 @@ module.exports = function (Categories) {
 				set = [set, 'tag:' + data.tag + ':topics'];
 			}
 		}
+
 		plugins.fireHook('filter:categories.buildTopicsSortedSet', {
 			set: set,
 			data: data,
@@ -165,7 +168,7 @@ module.exports = function (Categories) {
 
 	Categories.getSortedSetRangeDirection = function (sort, callback) {
 		sort = sort || 'newest_to_oldest';
-		var direction = sort === 'newest_to_oldest' || sort === 'most_posts' || sort === 'most_votes' ? 'highest-to-lowest' : 'lowest-to-highest';
+		var direction = sort === 'publish_newest_to_oldest' || sort === 'newest_to_oldest' || sort === 'most_posts' || sort === 'most_votes' ? 'highest-to-lowest' : 'lowest-to-highest';
 		plugins.fireHook('filter:categories.getSortedSetRangeDirection', {
 			sort: sort,
 			direction: direction,
