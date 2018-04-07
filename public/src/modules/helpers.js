@@ -131,7 +131,7 @@
 					'<div class="icon pull-left" style="' + generateCategoryBackground(child) + '">' +
 					'<i class="fa fa-fw ' + child.icon + '"></i>' +
 					'</div>' +
-					'<a href="' + link + '"><small>' + child.name + '</small></a></span>';
+					'<a href="' + link + '"><span style="font-size:16px">' + child.name + '</span></a></span>';
 			}
 		});
 		html = html ? ('<span class="category-children">' + html + '</span>') : html;
