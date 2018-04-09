@@ -23,7 +23,7 @@ module.exports = function (User) {
 		'aboutme', 'signature', 'uploadedpicture', 'profileviews', 'reputation',
 		'postcount', 'topiccount', 'lastposttime', 'banned', 'banned:expire',
 		'status', 'flags', 'followerCount', 'followingCount', 'cover:url',
-		'cover:position', 'groupTitle', 'invitelink','token'
+		'cover:position', 'groupTitle', 'invitelink', 'token',
 	];
 
 	User.getUserField = function (uid, field, callback) {

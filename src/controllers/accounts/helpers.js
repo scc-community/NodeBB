@@ -6,15 +6,16 @@ var validator = require('validator');
 var winston = require('winston');
 var nconf = require('nconf');
 
+var db = require('../../database');
 var user = require('../../user');
 var groups = require('../../groups');
 var plugins = require('../../plugins');
 var meta = require('../../meta');
 var utils = require('../../utils');
 var privileges = require('../../privileges');
-var invite = require('../../user/invite_scc');
 
 var helpers = module.exports;
+var TinyURL = require('tinyurl');
 
 helpers.getUserDataByUserSlug = function (userslug, callerUID, callback) {
 	async.waterfall([
@@ -71,7 +72,7 @@ helpers.getUserDataByUserSlug = function (userslug, callerUID, callback) {
 				},
 				inviteToken: function (next) {
 					user.getInviteToken(uid, next);
-				}
+				},
 			}, next);
 		},
 		function (results, next) {
@@ -167,19 +168,29 @@ helpers.getUserDataByUserSlug = function (userslug, callerUID, callback) {
 			userData['username:disableEdit'] = !userData.isAdmin && parseInt(meta.config['username:disableEdit'], 10) === 1;
 			userData['email:disableEdit'] = !userData.isAdmin && parseInt(meta.config['email:disableEdit'], 10) === 1;
 
-			/* Old user didn't own invite token*/
-			// if(!results.inviteToken) {
-			// 	invite.createInviteLink(userData.uid, next);
-			// }
-			if(!results.invitelink) {
+			if (!userData.invitelink || userData.invitelink.length > 40) {
 				userData.invitelink = nconf.get('url') + '/register?token=' + results.inviteToken;
+				TinyURL.shorten(userData.invitelink, function (shortUrl) {
+					async.waterfall([
+						function (next) {
+							if (shortUrl) {
+								userData.invitelink = shortUrl;
+								db.setObjectField('user:' + userData.uid, 'invitelink', userData.invitelink, next);
+							} else {
+								next(null, userData);
+							}
+						},
+						function (next) {
+							next(null, userData);
+						},
+					]);
+				});
+			} else {
+				next(null, userData);
 			}
-
-			next(null, userData);
 		},
 	], callback);
 };
-
 
 helpers.getBaseUser = function (userslug, callerUID, callback) {
 	winston.warn('helpers.getBaseUser deprecated please use helpers.getUserDataByUserSlug');
