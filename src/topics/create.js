@@ -65,6 +65,9 @@ module.exports = function (Topics) {
 						], timestamp, topicData.tid, next);
 					},
 					function (next) {
+						db.sortedSetAdd('cid:' + topicData.cid + ':tids:publishtime', topicData.timestamp, topicData.tid, next);
+					},
+					function (next) {
 						db.sortedSetAdd('cid:' + topicData.cid + ':tids:votes', 0, topicData.tid, next);
 					},
 					function (next) {

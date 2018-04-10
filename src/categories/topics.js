@@ -141,7 +141,7 @@ module.exports = function (Categories) {
 		} else if (sort === 'most_votes') {
 			set = 'cid:' + cid + ':tids:votes';
 		} else if (sort === 'publish_newest_to_oldest' || sort === 'publish_oldest_to_newest') {
-			set = 'cid:' + cid + ':uid:' + uid + ':tids';
+			set = 'cid:' + cid + ':tids:publishtime';
 		}
 
 		if (data.targetUid) {

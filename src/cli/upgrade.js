@@ -11,32 +11,32 @@ var meta = require('../meta');
 var upgradePlugins = require('./upgrade-plugins').upgradePlugins;
 
 var steps = {
-	package: {
-		message: 'Updating package.json file with defaults...',
-		handler: function (next) {
-			packageInstall.updatePackageFile();
-			packageInstall.preserveExtraneousPlugins();
-			process.stdout.write('  OK\n'.green);
-			next();
-		},
-	},
-	install: {
-		message: 'Bringing base dependencies up to date...',
-		handler: function (next) {
-			process.stdout.write('  started\n'.green);
-			packageInstall.installAll();
-			next();
-		},
-	},
-	plugins: {
-		message: 'Checking installed plugins for updates...',
-		handler: function (next) {
-			async.series([
-				db.init,
-				upgradePlugins,
-			], next);
-		},
-	},
+	// package: {
+	// 	message: 'Updating package.json file with defaults...',
+	// 	handler: function (next) {
+	// 		packageInstall.updatePackageFile();
+	// 		packageInstall.preserveExtraneousPlugins();
+	// 		process.stdout.write('  OK\n'.green);
+	// 		next();
+	// 	},
+	// },
+	// install: {
+	// 	message: 'Bringing base dependencies up to date...',
+	// 	handler: function (next) {
+	// 		process.stdout.write('  started\n'.green);
+	// 		packageInstall.installAll();
+	// 		next();
+	// 	},
+	// },
+	// plugins: {
+	// 	message: 'Checking installed plugins for updates...',
+	// 	handler: function (next) {
+	// 		async.series([
+	// 			db.init,
+	// 			upgradePlugins,
+	// 		], next);
+	// 	},
+	// },
 	schema: {
 		message: 'Updating NodeBB data store schema...',
 		handler: function (next) {

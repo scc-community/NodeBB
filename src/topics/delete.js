@@ -212,6 +212,7 @@ module.exports = function (Topics) {
 							'cid:' + topicData.cid + ':tids:pinned',
 							'cid:' + topicData.cid + ':tids:posts',
 							'cid:' + topicData.cid + ':tids:lastposttime',
+							'cid:' + topicData.cid + ':tids:publishtime',
 							'cid:' + topicData.cid + ':tids:votes',
 							'cid:' + topicData.cid + ':recent_tids',
 							'cid:' + topicData.cid + ':uid:' + topicData.uid + ':tids',
