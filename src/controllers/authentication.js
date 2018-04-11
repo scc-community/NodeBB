@@ -73,17 +73,6 @@ authenticationController.register = function (req, res) {
 
 		if (req.body.token) {
 			async.waterfall([
-				function (next) {
-					db.getObjectField('scc:invition:token', req.body.token, next);
-				},
-				function (uid, next) {
-					if (uid) {
-						db.incrObjectFieldBy('user:' + uid, 'token', 30, next);
-					} else {
-						console.warn('uid is null.');
-						return null;
-					}
-				},
 				function (_, next) {
 					db.incrObjectFieldBy('user:' + data.uid, 'token', 10, next);
 				},

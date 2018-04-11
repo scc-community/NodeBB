@@ -15,7 +15,6 @@ var utils = require('../../utils');
 var privileges = require('../../privileges');
 
 var helpers = module.exports;
-var TinyURL = require('tinyurl');
 
 helpers.getUserDataByUserSlug = function (userslug, callerUID, callback) {
 	async.waterfall([
@@ -168,26 +167,10 @@ helpers.getUserDataByUserSlug = function (userslug, callerUID, callback) {
 			userData['username:disableEdit'] = !userData.isAdmin && parseInt(meta.config['username:disableEdit'], 10) === 1;
 			userData['email:disableEdit'] = !userData.isAdmin && parseInt(meta.config['email:disableEdit'], 10) === 1;
 
-			if (!userData.invitelink || userData.invitelink.length > 40) {
+			if (!userData.invitelink) {
 				userData.invitelink = nconf.get('url') + '/register?token=' + results.inviteToken;
-				TinyURL.shorten(userData.invitelink, function (shortUrl) {
-					async.waterfall([
-						function (next) {
-							if (shortUrl) {
-								userData.invitelink = shortUrl;
-								db.setObjectField('user:' + userData.uid, 'invitelink', userData.invitelink, next);
-							} else {
-								next(null, userData);
-							}
-						},
-						function (next) {
-							next(null, userData);
-						},
-					]);
-				});
-			} else {
-				next(null, userData);
 			}
+			next(null, userData);
 		},
 	], callback);
 };

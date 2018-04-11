@@ -11,6 +11,7 @@ module.exports = function (app, middleware, controllers) {
 	setupPageRoute(app, '/uid/:uid*', middleware, [], middleware.redirectUidToUserslug);
 
 	setupPageRoute(app, '/user/:userslug', middleware, middlewares, controllers.accounts.profile.get);
+	setupPageRoute(app, '/user/:userslug/invitation', middleware, middlewares, controllers.accounts.invitation.get);
 	setupPageRoute(app, '/user/:userslug/following', middleware, middlewares, controllers.accounts.follow.getFollowing);
 	setupPageRoute(app, '/user/:userslug/followers', middleware, middlewares, controllers.accounts.follow.getFollowers);
 	setupPageRoute(app, '/user/:userslug/posts', middleware, middlewares, controllers.accounts.posts.getPosts);

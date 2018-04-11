@@ -14,7 +14,7 @@ module.exports = function (app, middleware, controllers) {
 	app.get('/create_qrcode', function (req, res, next) {
 		var text = req.query.text;
 		try {
-			var img = qr.image(text, { size: 3 });
+			var img = qr.image(text, { size: 4 });
 			res.writeHead(200, { 'Content-Type': 'image/png' });
 			img.pipe(res);
 		} catch (e) {

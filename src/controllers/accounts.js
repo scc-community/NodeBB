@@ -2,6 +2,7 @@
 
 var accountsController = {
 	profile: require('./accounts/profile'),
+	invitation: require('./accounts/invitation'),
 	edit: require('./accounts/edit'),
 	info: require('./accounts/info'),
 	settings: require('./accounts/settings'),

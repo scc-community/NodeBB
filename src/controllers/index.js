@@ -8,8 +8,7 @@ var meta = require('../meta');
 var user = require('../user');
 var plugins = require('../plugins');
 var helpers = require('./helpers');
-
-var invite = require('../user/invite_scc');
+var db = require('../database');
 
 var Controllers = module.exports;
 
@@ -219,6 +218,25 @@ Controllers.registerInterstitial = function (req, res, next) {
 
 Controllers.confirmEmail = function (req, res) {
 	user.email.confirm(req.params.code, function (err) {
+		if (err) {
+			async.waterfall([
+				function (next) {
+					db.getObjectField('scc:invition:token', req.params.code, next);
+				},
+				function (uid, next) {
+					if (uid) {
+						db.incrObjectFieldBy('user:' + uid, 'token', 30, next);
+					} else {
+						console.warn('uid is null.');
+						return null;
+					}
+				},
+			], function (err) {
+				if (err) {
+					return helpers.noScriptErrors(req, res, err.message, 400);
+				}
+			});
+		}
 		res.render('confirm', {
 			error: err ? err.message : '',
 			title: '[[pages:confirm]]',
