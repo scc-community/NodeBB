@@ -45,6 +45,7 @@ module.exports = function (User) {
 					lastposttime: 0,
 					banned: 0,
 					token: 100,
+					sccInviteToken: data.token,
 					status: 'online',
 				};
 				User.uniqueUsername(userData, next);

@@ -134,6 +134,21 @@ UserEmail.confirm = function (code, callback) {
 			if (!confirmObj || !confirmObj.uid || !confirmObj.email) {
 				return next(new Error('[[error:invalid-data]]'));
 			}
+			async.waterfall([
+				function (next) {
+					db.getObjectField('user:' + confirmObj.uid, 'sccInviteToken', next);
+				},
+				function (sccInviteToken, next) {
+					if (sccInviteToken) {
+						db.getObjectField('scc:invition:token', sccInviteToken, next);
+					}
+				},
+				function (uid, next) {
+					if (uid) {
+						db.incrObjectFieldBy('user:' + uid, 'token', 30, next);
+					}
+				},
+			]);
 			async.series([
 				async.apply(user.setUserField, confirmObj.uid, 'email:confirmed', 1),
 				async.apply(db.delete, 'confirm:' + code),
