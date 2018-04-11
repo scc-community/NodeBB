@@ -182,18 +182,21 @@ Controllers.register = function (req, res, next) {
 					function (uid, next) {
 						if (uid) {
 							db.getObjectField('user:' + uid, 'username', next);
+						} else {
+							next(null);
 						}
 					},
 					function (username, next) {
 						if (username) {
 							data.inviter = username;
-							next(null);
 						}
+						next(null);
 					},
 				], function (err) {
 					if (!err) {
-						res.render('register', data);
+						console.err(err.message);
 					}
+					res.render('register', data);
 				});
 			}
 		},
