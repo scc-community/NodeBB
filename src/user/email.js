@@ -141,11 +141,15 @@ UserEmail.confirm = function (code, callback) {
 				function (sccInviteToken, next) {
 					if (sccInviteToken) {
 						db.getObjectField('scc:invition:token', sccInviteToken, next);
+					} else {
+						next(null, null);
 					}
 				},
 				function (uid, next) {
 					if (uid) {
 						db.incrObjectFieldBy('user:' + uid, 'token', 30, next);
+					} else {
+						null(null, null);
 					}
 				},
 			]);

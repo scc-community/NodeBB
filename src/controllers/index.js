@@ -183,7 +183,7 @@ Controllers.register = function (req, res, next) {
 						if (uid) {
 							db.getObjectField('user:' + uid, 'username', next);
 						} else {
-							next(null);
+							next(null, null);
 						}
 					},
 					function (username, next) {
@@ -193,11 +193,13 @@ Controllers.register = function (req, res, next) {
 						next(null);
 					},
 				], function (err) {
-					if (!err) {
+					if (err) {
 						console.err(err.message);
 					}
 					res.render('register', data);
 				});
+			} else {
+				res.render('register', data);
 			}
 		},
 	], next);
