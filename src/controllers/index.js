@@ -174,8 +174,28 @@ Controllers.register = function (req, res, next) {
 			data.regFormEntry = [];
 			data.error = req.flash('error')[0] || errorText;
 			data.title = '[[pages:register]]';
-
-			res.render('register', data);
+			if (req.query.token) {
+				async.waterfall([
+					function (next) {
+						db.getObjectField('scc:invition:token', req.query.token, next);
+					},
+					function (uid, next) {
+						if (uid) {
+							db.getObjectField('user:' + uid, 'username', next);
+						}
+					},
+					function (username, next) {
+						if (username) {
+							data.inviter = username;
+							next(null);
+						}
+					},
+				], function (err) {
+					if (!err) {
+						res.render('register', data);
+					}
+				});
+			}
 		},
 	], next);
 };
@@ -218,25 +238,6 @@ Controllers.registerInterstitial = function (req, res, next) {
 
 Controllers.confirmEmail = function (req, res) {
 	user.email.confirm(req.params.code, function (err) {
-		if (err) {
-			async.waterfall([
-				function (next) {
-					db.getObjectField('scc:invition:token', req.params.code, next);
-				},
-				function (uid, next) {
-					if (uid) {
-						db.incrObjectFieldBy('user:' + uid, 'token', 30, next);
-					} else {
-						console.warn('uid is null.');
-						return null;
-					}
-				},
-			], function (err) {
-				if (err) {
-					return helpers.noScriptErrors(req, res, err.message, 400);
-				}
-			});
-		}
 		res.render('confirm', {
 			error: err ? err.message : '',
 			title: '[[pages:confirm]]',
