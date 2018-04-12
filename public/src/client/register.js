@@ -31,7 +31,7 @@ define('forum/register', ['translator', 'zxcvbn'], function (translator, zxcvbn)
 		}
 
 		/* Add token into request body */
-		if(query.token) {
+		if (query.token) {
 			$('#token').val(query.token);
 		}
 
