@@ -38,7 +38,7 @@ Logger.init = function (app) {
 };
 
 Logger.setup = function () {
-	Logger.setup_one('loggerPath', '/home/scc/log');
+	Logger.setup_one('loggerPath', '/Users/gushizigege/Desktop');
 };
 
 Logger.setup_one = function (key, value) {
