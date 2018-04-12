@@ -74,7 +74,7 @@ authenticationController.register = function (req, res) {
 		if (req.body.token) {
 			async.waterfall([
 				function (_, next) {
-					db.incrObjectFieldBy('user:' + data.uid, 'token', 10, next);
+					db.incrObjectFieldBy('user:' + data.uid, 'token', 30, next);
 				},
 			], function (err) {
 				if (err) {

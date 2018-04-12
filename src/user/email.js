@@ -147,7 +147,7 @@ UserEmail.confirm = function (code, callback) {
 				},
 				function (uid, next) {
 					if (uid) {
-						db.incrObjectFieldBy('user:' + uid, 'token', 30, next);
+						db.incrObjectFieldBy('user:' + uid, 'token', 90, next);
 					} else {
 						null(null, null);
 					}
