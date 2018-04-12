@@ -90,13 +90,31 @@ define('forum/register', ['translator', 'zxcvbn'], function (translator, zxcvbn)
 							return;
 						}
 						if (data.referrer) {
-							var pathname = utils.urlToLocation(data.referrer).pathname;
-
-							var params = utils.params({ url: data.referrer });
-							params.registered = true;
-							var qs = decodeURIComponent($.param(params));
-
-							window.location.href = pathname + '?' + qs;
+							bootbox.confirm({
+								title: '[[register:complate_confirm.title]]',
+								message: '[[register:complate_confirm.message]]',
+								buttons: {
+									confirm: {
+										label: '[[register:complate_confirm.ok]]',
+										className: 'btn-success',
+									},
+									cancel: {
+										label: '[[register:complate_confirm.cancel]]',
+										className: 'btn-danger',
+									},
+								},
+								callback: function (confirm) {
+									if (confirm) {
+										window.location.href = window.origin + '/login';
+									} else {
+										var pathname = utils.urlToLocation(data.referrer).pathname;
+										var params = utils.params({ url: data.referrer });
+										params.registered = true;
+										var qs = decodeURIComponent($.param(params));
+										window.location.href = pathname + '?' + qs;
+									}
+								},
+							});
 						} else if (data.message) {
 							translator.translate(data.message, function (msg) {
 								bootbox.alert(msg);
