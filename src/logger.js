@@ -38,7 +38,7 @@ Logger.init = function (app) {
 };
 
 Logger.setup = function () {
-	Logger.setup_one('loggerPath', meta.config.loggerPath);
+	Logger.setup_one('loggerPath', '/Users/gushizigege/Desktop');
 };
 
 Logger.setup_one = function (key, value) {
@@ -57,16 +57,16 @@ Logger.setup_one_log = function (value) {
 	 * If logging is currently enabled, create a stream.
 	 * Otherwise, close the current stream
 	 */
-	if (meta.config.loggerStatus > 0 || meta.config.loggerIOStatus) {
+	// if (meta.config.loggerStatus > 0 || meta.config.loggerIOStatus) {
 		var stream = Logger.open(value);
 		if (stream) {
 			opts.streams.log.f = stream;
 		} else {
 			opts.streams.log.f = process.stdout;
 		}
-	} else {
-		Logger.close(opts.streams.log);
-	}
+	// } else {
+	// 	Logger.close(opts.streams.log);
+	// }
 };
 
 Logger.open = function (value) {
@@ -130,9 +130,9 @@ Logger.expressLogger = function (req, res, next) {
 	 *
 	 * This hijack allows us to turn logger on/off dynamically within express
 	 */
-	if (meta.config.loggerStatus > 0) {
+	// if (meta.config.loggerStatus > 0) {
 		return opts.express.ofn(req, res, next);
-	}
+	// }
 	return next();
 };
 
@@ -209,7 +209,7 @@ Logger.io_one = function (socket, uid) {
 		};
 	}
 
-	if (socket && meta.config.loggerIOStatus > 0) {
+	// if (socket && meta.config.loggerIOStatus > 0) {
 		// courtesy of: http://stackoverflow.com/a/9674248
 		socket.oEmit = socket.emit;
 		var emit = socket.emit;
@@ -218,5 +218,5 @@ Logger.io_one = function (socket, uid) {
 		socket.$onvent = socket.onevent;
 		var $onevent = socket.onevent;
 		socket.onevent = override($onevent, 'on', 'Logger.io_one: $emit.apply: Failed');
-	}
+	// }
 };
