@@ -249,7 +249,7 @@ Emailer.sendToEmail = function (template, email, language, params, callback) {
 			}
 		},
 	], function (err) {
-		if (err && err.code === 'ENOENT') {
+		if (err) {
 			if (err.code === 'ENOENT') {
 				callback(new Error('[[error:sendmail-not-found]]'));
 			} else {
