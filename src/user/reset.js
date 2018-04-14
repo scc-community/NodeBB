@@ -73,9 +73,6 @@ UserReset.send = function (email, callback) {
 			canGenerate(uid, next);
 		},
 		function (next) {
-			db.sortedSetAdd('reset:issueDate:uid', Date.now(), uid, next);
-		},
-		function (next) {
 			UserReset.generate(uid, next);
 		},
 		function (code, next) {
@@ -91,6 +88,9 @@ UserReset.send = function (email, callback) {
 				template: 'reset',
 				uid: uid,
 			}, next);
+		},
+		function (next) {
+			db.sortedSetAdd('reset:issueDate:uid', Date.now(), uid, next);
 		},
 	], callback);
 };

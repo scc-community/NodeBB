@@ -250,7 +250,11 @@ Emailer.sendToEmail = function (template, email, language, params, callback) {
 		},
 	], function (err) {
 		if (err && err.code === 'ENOENT') {
-			callback(new Error('[[error:sendmail-not-found]]'));
+			if (err.code === 'ENOENT') {
+				callback(new Error('[[error:sendmail-not-found]]'));
+			} else {
+				callback(new Error('[[error:email-not-send]]'));
+			}
 		} else {
 			callback(err);
 		}
@@ -270,8 +274,11 @@ Emailer.sendViaFallback = function (data, callback) {
 	Emailer.fallbackTransport.sendMail(data, function (err) {
 		if (err) {
 			winston.error(err);
+			winston.error('[ERROR][src/user/emailer.js]' + 'Uid: ' + data.uid + ' Email: ' + data.to);
+			callback(err);
+		}else {
+			callback();
 		}
-		callback();
 	});
 };
 

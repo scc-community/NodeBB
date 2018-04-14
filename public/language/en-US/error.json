@@ -22,6 +22,7 @@
     "invalid-pagination-value": "Invalid pagination value, must be at least %1 and at most %2",
     "username-taken": "Username taken",
     "email-taken": "Email taken",
+    "email-not-send": "Fail to send mail, please contact the forum's administrator!",
     "email-not-confirmed": "Your email has not been confirmed yet, please click here to confirm your email.",
     "email-not-confirmed-chat": "You are unable to chat until your email is confirmed, please click here to confirm your email.",
     "email-not-confirmed-email-sent": "Your email has not been confirmed yet, please check your inbox for the confirmation email.",

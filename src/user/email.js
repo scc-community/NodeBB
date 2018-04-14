@@ -77,10 +77,7 @@ UserEmail.sendValidationEmail = function (uid, options, callback) {
 			if (sent) {
 				return next(new Error('[[error:confirm-email-already-sent, ' + emailInterval + ']]'));
 			}
-			db.set('uid:' + uid + ':confirm:email:sent', 1, next);
-		},
-		function (next) {
-			db.pexpireAt('uid:' + uid + ':confirm:email:sent', Date.now() + (emailInterval * 60 * 1000), next);
+			next();
 		},
 		function (next) {
 			plugins.fireHook('filter:user.verify.code', confirm_code, next);
@@ -118,6 +115,12 @@ UserEmail.sendValidationEmail = function (uid, options, callback) {
 					emailer.send('welcome', uid, data, next);
 				}
 			});
+		},
+		function (next) {
+			db.set('uid:' + uid + ':confirm:email:sent', 1, next);
+		},
+		function (next) {
+			db.pexpireAt('uid:' + uid + ':confirm:email:sent', Date.now() + (emailInterval * 60 * 1000), next);
 		},
 		function (next) {
 			next(null, confirm_code);
