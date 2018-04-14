@@ -78,6 +78,7 @@ UserEmail.sendValidationEmail = function (uid, options, callback) {
 				return next(new Error('[[error:confirm-email-already-sent, ' + emailInterval + ']]'));
 			}
 			next();
+
 		},
 		function (next) {
 			plugins.fireHook('filter:user.verify.code', confirm_code, next);
@@ -117,12 +118,6 @@ UserEmail.sendValidationEmail = function (uid, options, callback) {
 			});
 		},
 		function (next) {
-			db.set('uid:' + uid + ':confirm:email:sent', 1, next);
-		},
-		function (next) {
-			db.pexpireAt('uid:' + uid + ':confirm:email:sent', Date.now() + (emailInterval * 60 * 1000), next);
-		},
-		function (next) {
 			next(null, confirm_code);
 		},
 	], callback);
@@ -145,14 +140,14 @@ UserEmail.confirm = function (code, callback) {
 					if (sccInviteToken) {
 						db.getObjectField('scc:invition:token', sccInviteToken, next);
 					} else {
-						next(null, null);
+						next();
 					}
 				},
 				function (uid, next) {
 					if (uid) {
 						db.incrObjectFieldBy('user:' + uid, 'token', 90, next);
 					} else {
-						null(null, null);
+						next();
 					}
 				},
 			]);
