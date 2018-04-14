@@ -25,7 +25,7 @@
     "learn.address_content": "了解SCC社区",
     "learn.address_link": "http://forum.sourcecc.io/topic/3/source-code-chain-scc-%E5%9F%BA%E4%BA%8E%E5%8C%BA%E5%9D%97%E9%93%BE%E7%9A%84%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E9%A1%B9%E7%9B%AE",
     "complate_confirm.title": "请确认验证邮件",
-    "complate_confirm.message": "通过邮箱验证后才能登录。",
+    "complate_confirm.message": "通过邮箱验证后才能登录。（如没收到邮件，请尝试找下垃圾箱）",
     "complate_confirm.ok": "已激活去登陆",
     "complate_confirm.cancel": "取消"
 }

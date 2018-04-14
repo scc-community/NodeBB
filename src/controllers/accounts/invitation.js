@@ -130,10 +130,12 @@ invitationController.get = function (req, res, callback) {
 			plugins.fireHook('filter:user.account', { userData: userData, uid: req.uid }, next);
 		},
 		function (results) {
-			winston.info("results.userData: " + JSON.stringify(results.userData));
-			res.render('account/invitation', results.userData);
+			winston.info('results.userData: ' + JSON.stringify(results.userData));
+			if (req.query.mobile === '1') {
+				res.render('account/invitation_mobile', results.userData);
+			} else {
+				res.render('account/invitation', results.userData);
+			}
 		},
 	], callback);
 };
-
-

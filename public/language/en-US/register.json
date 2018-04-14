@@ -24,8 +24,8 @@
     "inviter_placeholder": "Enter Your Inviter",
     "learn.address_content": "Learn about SCC community",
     "learn.address_link": "http://forum.sourcecc.io/topic/4/source-code-chain-scc-blockchain-based-artificial-intelligence-software-project",
-    "complate_confirm.title": "Check Your  Validation Email",
-    "complate_confirm.message": "Please check your  validation email before login.",
+    "complate_confirm.title": "Check your validation Email",
+    "complate_confirm.message": "Please check your validation email before login.（If you haven't received the mail, please try to look at the garbage box）",
     "complate_confirm.ok": "Login",
     "complate_confirm.cancel": "Cancel"
 }

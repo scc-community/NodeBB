@@ -24,7 +24,55 @@ define('forum/account/profile', [
 		if (!config.usePagination) {
 			infinitescroll.init(loadMorePosts);
 		}
+
+		var link = $('#invitelink').attr('invitelink');
+		if (isMobile()) {
+			link += '?mobile=1';
+		}
+		$('#invitelink').attr('href', link);
 	};
+
+	function isMobile() {
+		var sUserAgent = navigator.userAgent.toLowerCase();
+		var matchValue; var bIsIpad; var bIsIphoneOs; var bIsMidp;	var bIsUc7; var bIsUc; var bIsAndroid; var bIsCE; var bIsWM;
+		matchValue = sUserAgent.match(/ipad/i);
+		if (matchValue) {
+			bIsIpad = matchValue[0] === 'ipad';
+		}
+		matchValue = sUserAgent.match(/iphone os/i);
+		if (matchValue) {
+			bIsIphoneOs = matchValue[0] === 'iphone os';
+		}
+		matchValue = sUserAgent.match(/midp/i);
+		if (matchValue) {
+			bIsMidp = matchValue[0] === 'midp';
+		}
+		matchValue = sUserAgent.match(/rv:1.2.3.4/i);
+		if (matchValue) {
+			bIsUc7 = matchValue[0] === 'rv:1.2.3.4';
+		}
+		matchValue = sUserAgent.match(/ucweb/i);
+		if (matchValue) {
+			bIsUc = matchValue[0] === 'ucweb';
+		}
+		matchValue = sUserAgent.match(/android/i);
+		if (matchValue) {
+			bIsAndroid = matchValue[0] === 'android';
+		}
+		matchValue = sUserAgent.match(/windows ce/i);
+		if (matchValue) {
+			bIsCE = matchValue[0] === 'windows ce';
+		}
+		matchValue = sUserAgent.match(/windows mobile/i);
+		if (matchValue) {
+			bIsWM = matchValue[0] === 'windows mobile';
+		}
+
+		if (bIsIpad || bIsIphoneOs || bIsMidp || bIsUc7 || bIsUc || bIsAndroid || bIsCE || bIsWM) {
+			return true;
+		}
+		return false;
+	}
 
 	function processPage() {
 		$('[component="posts"] img:not(.not-responsive), [component="aboutme"] img:not(.not-responsive)').addClass('img-responsive');
