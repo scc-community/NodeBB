@@ -269,12 +269,16 @@ module.exports = function (Topics) {
 					'cid:' + topicData.cid + ':tids:posts',
 					'cid:' + topicData.cid + ':tids:votes',
 					'cid:' + topicData.cid + ':tids:lastposttime',
+					'cid:' + topicData.cid + ':tids:publishtime',
 					'cid:' + topicData.cid + ':recent_tids',
 					'cid:' + topicData.cid + ':uid:' + topicData.uid + ':tids',
 				], tid, next);
 			},
 			function (next) {
 				db.sortedSetAdd('cid:' + cid + ':tids:lastposttime', topic.lastposttime, tid, next);
+			},
+			function (next) {
+				db.sortedSetAdd('cid:' + cid + ':tids:publishtime', topic.timestamp, tid, next);
 			},
 			function (next) {
 				db.sortedSetAdd('cid:' + cid + ':uid:' + topic.uid + ':tids', topic.timestamp, tid, next);
