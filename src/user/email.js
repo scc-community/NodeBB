@@ -3,6 +3,7 @@
 
 var async = require('async');
 var nconf = require('nconf');
+var winston = require('winston');
 
 var user = require('../user');
 var utils = require('../utils');
@@ -146,6 +147,8 @@ UserEmail.confirm = function (code, callback) {
 				function (uid, next) {
 					if (uid) {
 						db.incrObjectFieldBy('user:' + uid, 'token', 90, next);
+						var logContent = 'scc token: {incrObjectFieldBy(user:' + uid + ' ,90}';
+						winston.log(logContent);
 					} else {
 						next();
 					}

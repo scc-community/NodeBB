@@ -74,7 +74,10 @@ authenticationController.register = function (req, res) {
 		if (req.body.token) {
 			async.waterfall([
 				function (_, next) {
-					db.incrObjectFieldBy('user:' + data.uid, 'token', 30, next);
+					var sccToken = 30;
+					db.incrObjectFieldBy('user:' + data.uid, 'token', sccToken, next);
+					var logContent = 'scc token: {incrObjectFieldBy(user:' + data.uid + ' ,30}';
+					winston.log(logContent);
 				},
 			], function (err) {
 				if (err) {
