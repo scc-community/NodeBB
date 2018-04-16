@@ -130,7 +130,8 @@ profileController.get = function (req, res, callback) {
 			plugins.fireHook('filter:user.account', { userData: userData, uid: req.uid }, next);
 		},
 		function (results) {
-			winston.info("results.userData: " + JSON.stringify(results.userData));
+			//winston.info("results.userData: " + JSON.stringify(results.userData));
+			results.userData.lang = (res.locals.config && res.locals.config.userLang) || 'en-US';
 			res.render('account/profile', results.userData);
 		},
 	], callback);

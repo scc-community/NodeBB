@@ -25,10 +25,12 @@ define('forum/account/profile', [
 			infinitescroll.init(loadMorePosts);
 		}
 
-		var link = $('#invitelink').attr('invitelink');
+		var link = $('#invitelink').attr('invitelink') + '?';
+		link += 'lang=' + $('#invitelink').attr('lang');
 		if (isMobile()) {
-			link += '?mobile=1';
+			link += '&mobile=1';
 		}
+
 		$('#invitelink').attr('href', link);
 	};
 
