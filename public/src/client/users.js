@@ -23,8 +23,6 @@ define('forum/users', ['translator', 'benchpress'], function (translator, Benchp
 
 		handleInvite();
 
-		handleInviteLink();
-
 		socket.removeListener('event:user_status_change', onUserStatusChange);
 		socket.on('event:user_status_change', onUserStatusChange);
 	};
