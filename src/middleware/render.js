@@ -77,23 +77,35 @@ module.exports = function (middleware) {
 
 					async.parallel({
 						header: function (next) {
-							renderHeaderFooter('renderHeader', req, res, options, next);
+							if (!options.isCustomHtml) {
+								renderHeaderFooter('renderHeader', req, res, options, next);
+							} else {
+								next();
+							}
 						},
 						content: function (next) {
 							render.call(self, template, options, next);
 						},
 						footer: function (next) {
-							renderHeaderFooter('renderFooter', req, res, options, next);
+							if (!options.isCustomHtml) {
+								renderHeaderFooter('renderFooter', req, res, options, next);
+							} else {
+								next();
+							}
 						},
 					}, next);
 				},
 				function (results, next) {
-					var str = results.header +
+					var str;
+					if (!options.isCustomHtml) {
+						str = results.header +
 						(res.locals.postHeader || '') +
 						results.content + '<script id="ajaxify-data"></script>' +
 						(res.locals.preFooter || '') +
 						results.footer;
-
+					} else {
+						str = results.content;
+					}
 					translate(str, req, res, next);
 				},
 				function (translated, next) {

@@ -132,6 +132,7 @@ invitationController.get = function (req, res, callback) {
 		function (results) {
 			winston.info('results.userData: ' + JSON.stringify(results.userData));
 			if (req.query.mobile === '1') {
+				results.userData.isCustomHtml = true;
 				res.render('account/invitation_mobile', results.userData);
 			} else {
 				res.render('account/invitation', results.userData);
