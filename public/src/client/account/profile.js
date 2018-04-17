@@ -37,6 +37,13 @@ define('forum/account/profile', [
 		// }
 
 		$('#invitelink').attr('href', link);
+
+
+		if (window.document.location.pathname === '/') {
+			$('#customSCCfooter').removeClass('hidden');
+		} else {
+			$('#customSCCfooter').addClass('hidden');
+		}
 	};
 
 	function isMobile() {

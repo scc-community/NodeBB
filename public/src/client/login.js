@@ -75,6 +75,12 @@ define('forum/login', [], function () {
 			$('#content #username').focus();
 		}
 		$('#content #noscript').val('false');
+
+		if (window.document.location.pathname === '/') {
+			$('#customSCCfooter').removeClass('hidden');
+		} else {
+			$('#customSCCfooter').addClass('hidden');
+		}
 	};
 
 	return Login;

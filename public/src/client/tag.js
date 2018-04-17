@@ -38,6 +38,12 @@ define('forum/tag', ['forum/recent', 'forum/infinitescroll'], function (recent, 
 				$('[component="category"]').attr('data-nextstart', data.nextStart);
 			});
 		}
+
+		if (window.document.location.pathname === '/') {
+			$('#customSCCfooter').removeClass('hidden');
+		} else {
+			$('#customSCCfooter').addClass('hidden');
+		}
 	};
 
 	return Tag;

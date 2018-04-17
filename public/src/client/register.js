@@ -136,6 +136,12 @@ define('forum/register', ['translator', 'zxcvbn'], function (translator, zxcvbn)
 				});
 			});
 		});
+
+		if (window.document.location.pathname === '/') {
+			$('#customSCCfooter').removeClass('hidden');
+		} else {
+			$('#customSCCfooter').addClass('hidden');
+		}
 	};
 
 	function validateEmail(email, callback) {

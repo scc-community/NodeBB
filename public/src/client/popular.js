@@ -11,6 +11,12 @@ define('forum/popular', ['components'], function (components) {
 			.removeClass('active')
 			.find('a[href="' + window.location.pathname + '"]')
 			.parent().addClass('active');
+
+		if (window.document.location.pathname === '/') {
+			$('#customSCCfooter').removeClass('hidden');
+		} else {
+			$('#customSCCfooter').addClass('hidden');
+		}
 	};
 
 	return Popular;

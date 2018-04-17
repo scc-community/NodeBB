@@ -73,6 +73,12 @@ define('admin/manage/groups', ['translator', 'benchpress'], function (translator
 				break;
 			}
 		});
+
+		if (window.document.location.pathname === '/') {
+			$('#customSCCfooter').removeClass('hidden');
+		} else {
+			$('#customSCCfooter').addClass('hidden');
+		}
 	};
 
 	function handleSearch() {

@@ -5,6 +5,11 @@ define('forum/account/edit/password', ['forum/account/header', 'translator', 'zx
 	var AccountEditPassword = {};
 
 	AccountEditPassword.init = function () {
+		if (window.document.location.pathname === '/') {
+			$('#customSCCfooter').removeClass('hidden');
+		} else {
+			$('#customSCCfooter').addClass('hidden');
+		}
 		header.init();
 
 		handlePasswordChange();

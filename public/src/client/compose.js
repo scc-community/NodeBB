@@ -12,6 +12,12 @@ define('forum/compose', [], function () {
 				container: container,
 			});
 		}
+
+		if (window.document.location.pathname === '/') {
+			$('#customSCCfooter').removeClass('hidden');
+		} else {
+			$('#customSCCfooter').addClass('hidden');
+		}
 	};
 
 	return Compose;

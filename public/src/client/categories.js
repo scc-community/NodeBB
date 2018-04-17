@@ -33,6 +33,12 @@ define('forum/categories', ['components', 'translator', 'benchpress'], function 
 				});
 			});
 		});
+
+		if (window.document.location.pathname === '/') {
+			$('#customSCCfooter').removeClass('hidden');
+		} else {
+			$('#customSCCfooter').addClass('hidden');
+		}
 	};
 
 	categories.onNewPost = function (data) {

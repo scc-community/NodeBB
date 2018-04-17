@@ -26,6 +26,12 @@ define('forum/notifications', ['components'], function (components) {
 				components.get('notifications/item').removeClass('unread');
 			});
 		});
+
+		if (window.document.location.pathname === '/') {
+			$('#customSCCfooter').removeClass('hidden');
+		} else {
+			$('#customSCCfooter').addClass('hidden');
+		}
 	};
 
 	return Notifications;

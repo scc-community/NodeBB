@@ -5,6 +5,11 @@ define('forum/groups/list', ['forum/infinitescroll', 'benchpress'], function (in
 	var Groups = {};
 
 	Groups.init = function () {
+		if (window.document.location.pathname === '/') {
+			$('#customSCCfooter').removeClass('hidden');
+		} else {
+			$('#customSCCfooter').addClass('hidden');
+		}
 		infinitescroll.init(Groups.loadMoreGroups);
 
 		// Group creation

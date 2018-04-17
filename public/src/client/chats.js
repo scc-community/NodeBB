@@ -48,6 +48,12 @@ define('forum/chats', [
 		if (ajaxify.data.hasOwnProperty('roomId')) {
 			components.get('chat/input').focus();
 		}
+
+		if (window.document.location.pathname === '/') {
+			$('#customSCCfooter').removeClass('hidden');
+		} else {
+			$('#customSCCfooter').addClass('hidden');
+		}
 	};
 
 	Chats.addEventListeners = function () {

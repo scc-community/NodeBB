@@ -28,5 +28,10 @@ define('forum/reset', function () {
 		});
 	};
 
+	if (window.document.location.pathname === '/') {
+		$('#customSCCfooter').removeClass('hidden');
+	} else {
+		$('#customSCCfooter').addClass('hidden');
+	}
 	return ResetPassword;
 });
