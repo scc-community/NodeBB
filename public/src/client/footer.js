@@ -99,4 +99,10 @@ define('forum/footer', ['notifications', 'chat', 'components', 'translator'], fu
 	socket.on('event:unread.updateChatCount', updateUnreadChatCount);
 
 	initUnreadTopics();
+
+	if (window.document.location.pathname === '/') {
+		$('#customSCCfooter').removeClass('hidden');
+	} else {
+		$('#customSCCfooter').addClass('hidden');
+	}
 });
