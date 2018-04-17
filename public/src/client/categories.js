@@ -19,6 +19,20 @@ define('forum/categories', ['components', 'translator', 'benchpress'], function 
 		$('.category-header').tooltip({
 			placement: 'bottom',
 		});
+
+		var donateETH = $('#donateETH');
+		donateETH.on('click', function (e) {
+			var pluginData = {};
+			e.preventDefault();
+			Benchpress.parse('modals/donateETH', pluginData, function (html) {
+				bootbox.dialog({
+					title: '[[admin/manage/categories:donateETH]]',
+					className: 'size400',
+					message: html,
+					size: 'medium',
+				});
+			});
+		});
 	};
 
 	categories.onNewPost = function (data) {
