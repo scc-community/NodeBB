@@ -88,7 +88,7 @@ module.exports = function (User) {
 				markNotificationRead(username, next);
 			},
 			function (next) {
-				var title = meta.config.title || meta.config.browserTitle || 'NodeBB';
+				var title = username || meta.config.title || meta.config.browserTitle || 'NodeBB';
 				translator.translate('[[email:welcome-to, ' + title + ']]', meta.config.defaultLang, function (subject) {
 					var data = {
 						username: username,

@@ -98,7 +98,7 @@ UserEmail.sendValidationEmail = function (uid, options, callback) {
 			user.getUserField(uid, 'username', next);
 		},
 		function (username, next) {
-			var title = meta.config.title || meta.config.browserTitle || 'NodeBB';
+			var title = username || meta.config.title || meta.config.browserTitle || 'NodeBB';
 			translator.translate('[[email:welcome-to, ' + title + ']]', meta.config.defaultLang, function (subject) {
 				var data = {
 					username: username,
