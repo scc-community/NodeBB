@@ -1,6 +1,7 @@
 'use strict';
 
 var qr = require('qr-image');
+var merge = require('./merge');
 
 module.exports = function (app, middleware, controllers) {
 	app.get('/sitemap.xml', controllers.sitemap.render);
@@ -11,6 +12,7 @@ module.exports = function (app, middleware, controllers) {
 	app.get('/manifest.json', controllers.manifest);
 	app.get('/css/previews/:theme', controllers.admin.themes.get);
 	app.get('/osd.xml', controllers.osd.handle);
+
 	app.get('/create_qrcode', function (req, res, next) {
 		var text = req.query.text;
 		try {
@@ -21,5 +23,10 @@ module.exports = function (app, middleware, controllers) {
 			res.writeHead(414, { 'Content-Type': 'text/html' });
 			res.end('<h1>414 Request-URI Too Large</h1>');
 		}
+		if (next) {
+			next();
+		}
 	});
+
+	app.get('/mergeRes', merge);
 };

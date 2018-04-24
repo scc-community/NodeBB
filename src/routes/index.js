@@ -154,7 +154,7 @@ module.exports = function (app, middleware, hotswapIds, callback) {
 	app.use(middleware.privateUploads);
 	app.use(relativePath + '/assets/templates', middleware.templatesOnDemand);
 
-	var statics = [
+	app.statics = [
 		{ route: '/assets', path: path.join(__dirname, '../../build/public') },
 		{ route: '/assets', path: path.join(__dirname, '../../public') },
 		{ route: '/plugins', path: path.join(__dirname, '../../build/public/plugins') },
@@ -164,10 +164,10 @@ module.exports = function (app, middleware, hotswapIds, callback) {
 	};
 
 	if (path.resolve(__dirname, '../../public/uploads') !== nconf.get('upload_path')) {
-		statics.unshift({ route: '/assets/uploads', path: nconf.get('upload_path') });
+		app.statics.unshift({ route: '/assets/uploads', path: nconf.get('upload_path') });
 	}
 
-	statics.forEach(function (obj) {
+	app.statics.forEach(function (obj) {
 		app.use(relativePath + obj.route, express.static(obj.path, staticOptions));
 	});
 	app.use(relativePath + '/uploads', function (req, res) {

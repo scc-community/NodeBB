@@ -51,7 +51,6 @@ start.start = function () {
 				require('./notifications').startJobs();
 				require('./user').startJobs();
 			}
-
 			webserver.listen(next);
 		},
 	], function (err) {
