@@ -47,6 +47,7 @@ module.exports = function (User) {
 					banned: 0,
 					token: 300,
 					sccInviteToken: data.token,
+					sccInvitationNumber: 0,
 					status: 'online',
 				};
 				User.uniqueUsername(userData, next);

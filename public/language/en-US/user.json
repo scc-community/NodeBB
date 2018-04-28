@@ -147,6 +147,7 @@
     "copy-invite-link" : "Copy Invite Link",
     "scc-number-invite-title": "SCC Community Membership Invitation",
     "invitelink": "Personally Exclusive Invitation Link",
+    "invitationNumber":"%1 people invited",
     "invitelink-label-title": "'s invitation link: %1",
     "invitelink-mobile-title": "‘s Invitation QR Code",
     "invitelink-button-title": "copy",

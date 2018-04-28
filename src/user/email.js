@@ -133,6 +133,7 @@ UserEmail.confirm = function (code, callback) {
 			if (!confirmObj || !confirmObj.uid || !confirmObj.email) {
 				return next(new Error('[[error:invalid-data]]'));
 			}
+			var registerUserId = null;
 			async.waterfall([
 				function (next) {
 					db.getObjectField('user:' + confirmObj.uid, 'sccInviteToken', next);
@@ -141,21 +142,31 @@ UserEmail.confirm = function (code, callback) {
 					if (sccInviteToken) {
 						db.getObjectField('scc:invition:token', sccInviteToken, next);
 					} else {
-						next();
+						return next(new Error('[[error:getSccInviteToken-noexist]]'));
 					}
 				},
 				function (uid, next) {
-					if (uid) {
-						db.incrObjectFieldBy('user:' + uid, 'token', 90, next);
-						var logContent = 'scc token: {incrObjectFieldBy(user:' + uid + ' ,90}';
+					registerUserId = uid;
+					if (registerUserId) {
+						db.incrObjectFieldBy('user:' + registerUserId, 'token', 90, next);
+						var logContent = 'scc token: {incrObjectFieldBy(user:' + registerUserId + ' ,90}';
 						winston.log(logContent);
 					} else {
-						next();
+						return next(new Error('[[error:setUserUidToken-exception]]'));
 					}
 				},
-			]);
+				function (next) {
+					db.incrObjectFieldBy('user:' + registerUserId, 'sccInvitationNumber', 1, function (err, val) {
+						if (err) {
+							return next(new Error('uid:' + registerUserId + ',newValue:' + val + ', [[error:setSccInvitationNumber-exception]]'));
+						}
+						next();
+					});
+				},
+			], function (err) {
+				callback(err);
+			});
 			async.series([
-				async.apply(user.setUserField, confirmObj.uid, 'email:confirmed', 1),
 				async.apply(db.delete, 'confirm:' + code),
 				async.apply(db.delete, 'uid:' + confirmObj.uid + ':confirm:email:sent'),
 				function (next) {
