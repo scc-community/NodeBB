@@ -147,6 +147,7 @@ helpers.getUserDataByUserSlug = function (userslug, callerUID, callback) {
 			userData.websiteName = userData.website.replace(validator.escape('http://'), '').replace(validator.escape('https://'), '');
 			userData.followingCount = parseInt(userData.followingCount, 10) || 0;
 			userData.followerCount = parseInt(userData.followerCount, 10) || 0;
+			userData.sccInvitationNumber = parseInt(userData.sccInvitationNumber, 10) || 0;
 			userData.token = parseInt(userData.token, 10) || 0;
 
 			userData.email = validator.escape(String(userData.email || ''));
