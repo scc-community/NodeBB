@@ -9,6 +9,7 @@ var db = require('../database');
 var meta = require('../meta');
 var plugins = require('../plugins');
 var utils = require('../utils');
+var mysql = require('../database/mysql');
 
 module.exports = function (User) {
 	var iconBackgrounds = [
@@ -250,4 +251,14 @@ module.exports = function (User) {
 			},
 		], callback);
 	}
+
+	User.sqlCreateUser = function (userData, callback) {
+		mysql.connect(function (conn, next) {
+			var newUser = {};
+			newUser.uid = userData.uid;
+			mysql.newRow('users', conn, newUser, function (err) {
+				next(err);
+			});
+		}, callback);
+	};
 };

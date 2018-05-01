@@ -1,8 +1,8 @@
 'use strict';
 
-var winston = require('winston');
 var async = require('async');
 var db = require('../database');
+
 var utils = require('../utils');
 var validator = require('validator');
 var plugins = require('../plugins');
@@ -69,8 +69,9 @@ module.exports = function (User) {
 				userData.uid = uid;
 				userData.token = 300;
 				db.setObject('user:' + uid, userData, next);
-				var logContent = 'scc token: {setObject(user:' + uid + ' , userData.token:300}';
-				winston.log(logContent);
+			},
+			function (next) {
+				User.sqlCreateUser(userData, next);
 			},
 			function (next) {
 				async.parallel([

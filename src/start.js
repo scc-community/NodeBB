@@ -9,7 +9,6 @@ var start = module.exports;
 
 start.start = function () {
 	var db = require('./database');
-
 	setupConfigs();
 
 	printStartupInfo();
@@ -42,6 +41,9 @@ start.start = function () {
 		},
 		function (next) {
 			db.initSessionStore(next);
+		},
+		function (next) {
+			startMysql(next);
 		},
 		function (next) {
 			var webserver = require('./webserver');
@@ -84,6 +86,18 @@ start.start = function () {
 		}
 	});
 };
+
+function startMysql(cb) {
+	var mysql = require('./database/mysql');
+	async.waterfall([
+		function (next) {
+			mysql.init(next);
+		},
+		function (next) {
+			mysql.checkCompatibility(next);
+		},
+	], cb);
+}
 
 function setupConfigs() {
 	// nconf defaults, if not set in config
@@ -153,6 +167,7 @@ function restart() {
 function shutdown(code) {
 	winston.info('[app] Shutdown (SIGTERM/SIGINT) Initialised.');
 	require('./database').close();
+	require('./database/mysql').close();
 	winston.info('[app] Database connection closed.');
 	require('./webserver').server.close();
 	winston.info('[app] Web server closed to connections.');

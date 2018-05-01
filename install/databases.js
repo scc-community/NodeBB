@@ -72,13 +72,6 @@ function saveDatabaseConfig(config, databaseConfig, callback) {
 	} else {
 		return callback(new Error('unknown database : ' + config.database));
 	}
-	config.mysql = {
-		host: '127.0.0.1',
-		port: '3306',
-		username: 'root',
-		password: '12345',
-		database: '3306',
-	};
 	var allQuestions = questions.redis.concat(questions.mongo);
 	for (var x = 0; x < allQuestions.length; x += 1) {
 		delete config[allQuestions[x].name];
