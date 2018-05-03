@@ -100,6 +100,9 @@ module.exports = function (User) {
 						db.sortedSetsAdd(['users:postcount', 'users:reputation'], 0, userData.uid, next);
 					},
 					function (next) {
+						db.sortedSetsAdd(['users:scc', 'mostScc'], 0, userData);
+					},
+					function (next) {
 						groups.join('registered-users', userData.uid, next);
 					},
 					function (next) {

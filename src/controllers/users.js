@@ -103,6 +103,11 @@ usersController.getUsersSortedByReputation = function (req, res, next) {
 	usersController.renderUsersPage('users:reputation', req, res, next);
 };
 
+usersController.gtUsersSortedByScc = function (req, res, next) {
+	console.log('usersController.gtUsersSortedByScc');
+	usersController.renderUsersPage('users:scc', req, res, next);
+}
+
 usersController.getUsersSortedByJoinDate = function (req, res, next) {
 	usersController.renderUsersPage('users:joindate', req, res, next);
 };

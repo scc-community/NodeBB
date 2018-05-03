@@ -99,6 +99,7 @@ module.exports = function (User) {
 							'users:joindate',
 							'users:postcount',
 							'users:reputation',
+							'users:scc',
 							'users:banned',
 							'users:online',
 							'users:notvalidated',
