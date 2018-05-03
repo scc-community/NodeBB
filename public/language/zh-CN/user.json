@@ -154,5 +154,13 @@
     "invitelink-desc": "通过邀请链接加入社区奖励330SCC",
     "invitelink-content1": "全球首个面向开发者的区块链项目-智能编程助手",
     "invitelink-content2": "SCC社区利用区块链技术解决信任和激励问题，通过SCC token（ERC20合约代币）众包激励机制，开创一种新的软件开发协作机制，建立一个强大自主的开发者社区，成员在社区的贡献都将获得相应的SCC奖励。",
-    "invitelink-content3": "同时，SCC项目将用人工智能赋能软件工程，颠覆现在低效的软件开发协作模式。通过汇聚全球开发者的智慧，积累优秀的源代码，打造一个属于开发者的人工智能编程助手。"
+    "invitelink-content3": "同时，SCC项目将用人工智能赋能软件工程，颠覆现在低效的软件开发协作模式。通过汇聚全球开发者的智慧，积累优秀的源代码，打造一个属于开发者的人工智能编程助手。",
+    "scc": "SCC",
+    "scc.count" : "数量",
+    "scc.category": "类别",
+    "scc.object": "对象",
+    "scc.type": "类型",
+    "scc.content": "内容",
+    "scc.timestamp": "时间",
+    "scc.transaction-id": "交易号"
 }
