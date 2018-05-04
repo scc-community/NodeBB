@@ -34,8 +34,8 @@ CREATE TABLE `manual_rewards` (
   `memo` varchar(40) NOT NULL,
   `publish_id` mediumint(9) unsigned NOT NULL,
   `date_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `last_updated` datetime DEFAULT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `version` char(10) DEFAULT NOT NULL '0',
+  `last_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `version` char(10)  NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `fk_users_manual_rewards_uid` (`uid`),
   KEY `fk_reward_types_manual_rewards_reward_type` (`reward_type`),
@@ -67,8 +67,8 @@ CREATE TABLE `post_rewards` (
   `memo` varchar(40) DEFAULT NULL,
   `publish_id` mediumint(9) unsigned NOT NULL,
   `date_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `last_updated` datetime DEFAULT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `version` char(10) DEFAULT NOT NULL '0',
+  `last_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `version` char(10)  NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `index_post_id` (`post_id`) USING HASH,
   KEY `fk_users_post_rewards_uid` (`uid`),
@@ -87,29 +87,27 @@ CREATE TABLE `reward_types` (
   `id` smallint(5) unsigned NOT NULL,
   `category` varchar(20) NOT NULL,
   `item` varchar(20) NOT NULL,
-  `content` varchar(40) DEFAULT NOT NULL,
+  `content` varchar(40) NOT NULL,
   `scc` varchar(2048) NOT NULL DEFAULT '["return 0;"]',
   `comment` varchar(512) DEFAULT NULL,
   `date_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `last_updated` datetime DEFAULT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `version` char(10) DEFAULT NOT NULL '0',
+  `last_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `version` char(10)  NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='奖励类型表';
 
 -- ----------------------------
--- Records of reward-types
+-- Table structure for users
 -- ----------------------------
-BEGIN;
-INSERT INTO `users` VALUES (1, 0, '2018-05-02 00:02:02', '2018-05-02 00:02:02', '0');
-
-INSERT INTO `reward_types` VALUES (1, 'register', 'register', '[[rewardType:register]]', 'function () {return 300;}', '注册');
-INSERT INTO `reward_types` VALUES (2, 'register', 'register_invited', '[[rewardType:register_invited]]', 'function () {return 30;}', '被邀请注册');
-INSERT INTO `reward_types` VALUES (3, 'register', 'invite_friend', '[[rewardType:invited_friend]]', 'function () {return 90;}', '邀请好友注册');
-INSERT INTO `reward_types` VALUES (4, 'post', 'orinial', '[[rewardType:orinial]]', 'function () {return 0;}', '原创:60SCC/500字，超出不满500部分按500字计算 / 文章每获得一个赞奖励1SCC');
-INSERT INTO `reward_types` VALUES (5, 'post', 'translation', '[[rewardType:translation]]', 'function () {return 0;}', '翻译:60SCC/500字，超出不满500部分按500字计算 / 文章每获得一个赞奖励1SCC');
-INSERT INTO `reward_types` VALUES (6, 'post', 'reprint', '[[rewardType:reprint]]', 'function () {return 0;}', '转载:每转载一篇文章奖励30SC');
-INSERT INTO `reward_types` VALUES (999, 'other', 'other', '[[rewardType:other]]', 'function () {return 0;}', '其它');
-COMMIT;
+DROP TABLE IF EXISTS `users`;CREATE TABLE `users` (
+  `id` mediumint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uid` mediumint(20) unsigned NOT NULL,
+  `date_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `version` char(10) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index_uid` (`uid`) USING HASH
+) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT = '用户表';
 
 -- ----------------------------
 -- Table structure for txs
@@ -127,8 +125,8 @@ CREATE TABLE `txs` (
   `desc` varchar(40) NOT NULL,
   `memo` varchar(40) DEFAULT NULL,
   `date_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `last_updated` datetime DEFAULT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `version` char(10) DEFAULT NOT NULL '0',
+  `last_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `version` char(10)  NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_tx_no` (`tx_no`) USING HASH,
   KEY `fk_users_txs_uid` (`uid`),
@@ -140,17 +138,18 @@ CREATE TABLE `txs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户收支明细表\n1 类别:收入/支出 transaction_type:’1’,’2’ ';
 
 -- ----------------------------
--- Table structure for users
+-- Records of reward-types
 -- ----------------------------
-DROP TABLE IF EXISTS `users`;
-CREATE TABLE `users` (
-  `id` mediumint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `uid` mediumint(20) unsigned NOT NULL,
-  `date_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `last_updated` datetime DEFAULT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `version` char(10) DEFAULT NOT NULL '0',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `index_uid` (`uid`) USING HASH
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户表';
+BEGIN;
+INSERT INTO `users` VALUES (1, 0, '2018-01-01 00:00:00', '2018-01-01 00:00:00', '0');
+
+INSERT INTO `reward_types` (id, category, item, content, scc, comment) VALUES (1,'register', 'register', '[[rewardType:register]]', '[\"return 300;\"]', '注册');
+INSERT INTO `reward_types` (id, category, item, content, scc, comment) VALUES (2,'register', 'register_invited', '[[rewardType:register_invited]]', '[\"return 30;\"]', '被邀请注册');
+INSERT INTO `reward_types` (id, category, item, content, scc, comment) VALUES (3,'register', 'invite_friend', '[[rewardType:invited_friend]]', '[\"return 90;\"]', '邀请好友注册');
+INSERT INTO `reward_types` (id, category, item, content, scc, comment) VALUES (4,'post', 'orinial', '[[rewardType:orinial]]', '[\"return 0;\"]', '原创:60SCC/500字，超出不满500部分按500字计算 / 文章每获得一个赞奖励1SCC');
+INSERT INTO `reward_types` (id, category, item, content, scc, comment) VALUES (5,'post', 'translation', '[[rewardType:translation]]', '[\"return 0;\"]', '翻译:60SCC/500字，超出不满500部分按500字计算 / 文章每获得一个赞奖励1SCC');
+INSERT INTO `reward_types` (id, category, item, content, scc, comment) VALUES (6,'post', 'reprint', '[[rewardType:reprint]]', '[\"return 0;\"]', '转载:每转载一篇文章奖励30SC');
+INSERT INTO `reward_types` (id, category, item, content, scc, comment) VALUES (999, 'other', 'other', '[[rewardType:other]]', '[\"return 0;\"]', '其它');
+COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;

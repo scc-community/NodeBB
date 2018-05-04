@@ -23,11 +23,16 @@ RewardType.loadRewardTypes = function (callback) {
 	});
 };
 
+RewardType.getRewardTypeKey = function (category, item) {
+	return category + ':' + item;
+};
+
 RewardType.getSccFunction = function (category, item, callback) {
 	callback = callback || function () { };
 	var me = this;
 
-	var data = me.rewardTypes[category + ':' + item];
+	var rewardTypeKey = me.getRewardTypeKey(category, item);
+	var data = me.rewardTypes[rewardTypeKey];
 	if (!item || !item.scc) {
 		return callback(new Error('item || item.scc is error'));
 	}
