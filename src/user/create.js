@@ -73,7 +73,7 @@ module.exports = function (User) {
 			function (next) {
 				scc.user.createUser(userData, next);
 			},
-			function (next) {
+			function (_, next) {
 				async.parallel([
 					function (next) {
 						invite.createInviteLink(userData.uid, next);
