@@ -9,6 +9,7 @@ var plugins = require('../plugins');
 var groups = require('../groups');
 var meta = require('../meta');
 var invite = require('./invite_scc');
+var scc = require('../scc');
 
 module.exports = function (User) {
 	User.create = function (data, callback) {
@@ -45,7 +46,7 @@ module.exports = function (User) {
 					topiccount: 0,
 					lastposttime: 0,
 					banned: 0,
-					token: 300,
+					token: 0,
 					sccInviteToken: data.token,
 					sccInvitationNumber: 0,
 					status: 'online',
@@ -67,11 +68,10 @@ module.exports = function (User) {
 			},
 			function (uid, next) {
 				userData.uid = uid;
-				userData.token = 300;
 				db.setObject('user:' + uid, userData, next);
 			},
 			function (next) {
-				User.sqlCreateUser(userData, next);
+				scc.user.createUser(userData, next);
 			},
 			function (next) {
 				async.parallel([

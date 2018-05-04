@@ -252,13 +252,15 @@ module.exports = function (User) {
 		], callback);
 	}
 
-	User.sqlCreateUser = function (userData, callback) {
-		mysql.connect(function (conn, next) {
-			var newUser = {};
-			newUser.uid = userData.uid;
-			mysql.newRow('users', conn, newUser, function (err) {
-				next(err);
-			});
-		}, callback);
+	User.incrSccToken = function (uid, value, callback) {
+		db.incrObjectFieldBy('user:' + uid, 'token', value, callback);
+	};
+
+	User.getSccToken = function (uid, sccToken, callback) {
+		db.getObjectField('user:' + uid, 'token', callback);
+	};
+
+	User.setSccToken = function (uid, value, callback) {
+		db.setObjectField('user:' + uid, 'token', value, callback);
 	};
 };

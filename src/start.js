@@ -46,6 +46,9 @@ start.start = function () {
 			startMysql(next);
 		},
 		function (next) {
+			require('./scc').init(next);
+		},
+		function (next) {
 			var webserver = require('./webserver');
 			require('./socket.io').init(webserver.server);
 

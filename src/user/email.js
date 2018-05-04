@@ -11,6 +11,7 @@ var plugins = require('../plugins');
 var db = require('../database');
 var meta = require('../meta');
 var emailer = require('../emailer');
+var scc = require('../scc');
 
 var UserEmail = module.exports;
 
@@ -124,8 +125,25 @@ UserEmail.sendValidationEmail = function (uid, options, callback) {
 };
 
 UserEmail.handleSccInviteToken = function (registerUid, callback) {
+	var rewardTypes = scc.rewardType.rewardTypes;
 	async.waterfall([
 		function (next) {
+			var rewardTypeItem = rewardTypes['register:register'];
+			var tx = {
+				uid: registerUid,
+				publish_id: 0,
+				transaction_type: '1',
+				tx_no: utils.generateUUID(),
+				reward_type: rewardTypeItem.reward_type,
+				date_issued: new Date().getTime(),
+				scc: rewardTypeItem.scc(),
+				desc: rewardTypeItem.content,
+				memo: null,
+			};
+			scc.tx.createTx(tx, next);
+		},
+		async.apply(db.incrObjectFieldBy, 'user:' + registerUid, 'token', 300),
+		function (_, next) {
 			db.getObjectField('user:' + registerUid, 'sccInviteToken', next);
 		},
 		function (sccInviteToken, next) {
@@ -137,6 +155,7 @@ UserEmail.handleSccInviteToken = function (registerUid, callback) {
 		},
 		function (inviteUid, next) {
 			async.series([
+				async.apply(db.incrObjectFieldBy, 'user:' + registerUid, 'token', 30),
 				async.apply(db.incrObjectFieldBy, 'user:' + inviteUid, 'token', 90),
 				async.apply(db.incrObjectFieldBy, 'user:' + inviteUid, 'sccInvitationNumber', 1),
 			], next);
