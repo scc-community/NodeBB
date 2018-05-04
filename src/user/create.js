@@ -46,6 +46,7 @@ module.exports = function (User) {
 					lastposttime: 0,
 					banned: 0,
 					token: 300,
+					scc: 300,
 					sccInviteToken: data.token,
 					sccInvitationNumber: 0,
 					status: 'online',
@@ -98,6 +99,9 @@ module.exports = function (User) {
 					},
 					function (next) {
 						db.sortedSetsAdd(['users:postcount', 'users:reputation'], 0, userData.uid, next);
+					},
+					function (next) {
+						db.sortedSetsAdd(['users:mostScc'], userData.scc, next);
 					},
 					function (next) {
 						groups.join('registered-users', userData.uid, next);
