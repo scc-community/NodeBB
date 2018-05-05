@@ -250,17 +250,39 @@ module.exports = function (User) {
 				next(null, value);
 			},
 		], callback);
-	}
+	};
 
 	User.incrSccToken = function (uid, value, callback) {
-		db.incrObjectFieldBy('user:' + uid, 'token', value, callback);
+		async.waterfall([
+			function (next) {
+				User.getSccToken(uid, 0, next);
+			},
+			function (currentToken, next) {
+				console.log('currentToken:' + currentToken);
+				if (currentToken == null || currentToken == undefined) {
+					db.sortedSetAdd('users:token', parseInt(value, 10), uid, next); // sort by token number
+				} else {
+					var newToken = parseInt(currentToken, 10) + parseInt(value, 10);
+					console.log('token != null token=' + parseInt(currentToken, 10) + ', value=' + parseInt(value, 10) + ', total=' + newToken);
+					db.sortedSetAdd('users:token', newToken, uid, next); // sort by token number
+				}
+			},
+			function (next) {
+				console.log('db.incrObjectFieldBy uid=' + uid + ', value=' + value);
+				db.incrObjectFieldBy('user:' + uid, 'token', value, next);
+			},
+		], callback);
 	};
 
 	User.getSccToken = function (uid, sccToken, callback) {
+		console.log('User.getSccToken');
 		db.getObjectField('user:' + uid, 'token', callback);
 	};
 
 	User.setSccToken = function (uid, value, callback) {
+		console.log('User.setSccToken');
 		db.setObjectField('user:' + uid, 'token', value, callback);
+		db.sortedSetAdd('users:token', parseInt(value, 10), uid); // sort by token number
 	};
+
 };
