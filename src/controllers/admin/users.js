@@ -14,7 +14,7 @@ var plugins = require('../../plugins');
 var usersController = module.exports;
 
 var userFields = ['uid', 'username', 'userslug', 'email', 'postcount', 'joindate', 'banned',
-	'reputation', 'picture', 'flags', 'lastonline', 'email:confirmed'];
+	'reputation', 'picture', 'flags', 'lastonline', 'email:confirmed', 'token'];
 
 usersController.search = function (req, res) {
 	res.render('admin/manage/users', {
@@ -41,6 +41,14 @@ usersController.topPosters = function (req, res, next) {
 
 usersController.mostScc = function (req, res, next) {
 	console.log('usersController.mostScc');
+	async.waterfall([
+		// function (next) {
+		// 	user.incrSccToken(16, 400, next);
+		// },
+		function (next) {
+			getUsers('users:token', 'mostscc', 0, '+inf', req, res, next);
+		},
+	],next);
 };
 
 usersController.mostReputaion = function (req, res, next) {
