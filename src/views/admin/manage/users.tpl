@@ -97,7 +97,7 @@
 								<i class="notvalidated fa fa-times text-danger<!-- IF users.email:confirmed --> hidden<!-- ENDIF users.email:confirmed -->" title="not validated"></i>
 								<!-- ENDIF config.requireEmailConfirmation --> {users.email}</td>
 								<td class="text-right">{users.postcount}</td>
-								<td class="text-right">{users.scc}</td>
+								<td class="text-right">{users.scctoken}</td>
 								<td class="text-right"><!-- IF users.flags -->{users.flags}<!-- ELSE -->0<!-- ENDIF users.flags --></td>
 								<td><span class="timeago" title="{users.joindateISO}"></span></td>
 								<td><span class="timeago" title="{users.lastonlineISO}"></span></td>

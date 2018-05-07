@@ -252,22 +252,6 @@ module.exports = function (User) {
 		], callback);
 	}
 
-	User.incrScctoken = function (uid, value, callback) {
-		User.incrementUserFieldBy(uid, 'scctoken', value, callback);
-	};
-
-	User.decrScctoken = function (uid, value, callback) {
-		User.decrementUserFieldBy(uid, 'scctoken', value, callback);
-	};
-
-	User.getScctoken = function (uid, scctoken, callback) {
-		User.getUserField(uid, 'scctoken', callback);
-	};
-
-	User.setScctoken = function (uid, value, callback) {
-		db.setUserField(uid, 'scctoken', value, callback);
-	};
-
 	User.getInvitedcode = function (uid, callback) {
 		User.getUserField(uid, 'invitedcode', callback);
 	};
@@ -282,5 +266,38 @@ module.exports = function (User) {
 
 	User.setInvitationcode = function (uid, value, callback) {
 		User.setUserField(uid, 'invitationcode', value, callback);
+	};
+
+	User.incrSccToken = function (uid, value, callback) {
+		async.waterfall([
+			function (next) {
+				User.getSccToken(uid, 0, next);
+			},
+			function (currentToken, next) {
+				console.log('currentToken:' + currentToken);
+				if (currentToken === null || currentToken === undefined) {
+					db.sortedSetAdd('users:scctoken', parseInt(value, 10), uid, next); // sort by token number
+				} else {
+					var newToken = parseInt(currentToken, 10) + parseInt(value, 10);
+					console.log('token != null token=' + parseInt(currentToken, 10) + ', value=' + parseInt(value, 10) + ', total=' + newToken);
+					db.sortedSetAdd('users:scctoken', newToken, uid, next); // sort by token number
+				}
+			},
+			function (next) {
+				console.log('db.incrObjectFieldBy uid=' + uid + ', value=' + value);
+				db.incrObjectFieldBy('user:' + uid, 'scctoken', value, next);
+			},
+		], callback);
+	};
+
+	User.getSccToken = function (uid, sccToken, callback) {
+		console.log('User.getSccToken');
+		db.getObjectField('user:' + uid, 'scctoken', callback);
+	};
+
+	User.setSccToken = function (uid, value, callback) {
+		console.log('User.setSccToken');
+		db.setObjectField('user:' + uid, 'scctoken', value, callback);
+		db.sortedSetAdd('users:scctoken', parseInt(value, 10), uid); // sort by token number
 	};
 };

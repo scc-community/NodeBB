@@ -106,7 +106,7 @@ User.getUsers = function (uids, uid, callback) {
 	User.getUsersWithFields(uids, [
 		'uid', 'username', 'userslug', 'picture', 'status',
 		'postcount', 'reputation', 'email:confirmed', 'lastonline',
-		'flags', 'banned', 'banned:expire', 'joindate',
+		'flags', 'banned', 'banned:expire', 'joindate', 'scctoken',
 	], uid, callback);
 };
 
@@ -141,6 +141,14 @@ User.getUidByUserslug = function (userslug, callback) {
 		return callback(null, 0);
 	}
 	db.sortedSetScore('userslug:uid', userslug, callback);
+};
+
+User.getTokenByUid = function (uid, callback) {
+	async.waterfall([
+		function (next) {
+			User.getUserField(uid, 'scctoken', next);
+		},
+	], callback);
 };
 
 User.getUsernamesByUids = function (uids, callback) {
