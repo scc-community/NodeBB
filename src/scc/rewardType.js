@@ -33,8 +33,37 @@ RewardType.getRewardType = function (category, item) {
 };
 
 RewardType.getScc = function (category, item, params) {
-	var rewardTypeKey = this.getRewardTypeKey(category, item);
-	var result;
+	var invitedExtra = function (invitationcount) {
+		var factor = 90;
+		var percent = 1;
+		var scctoken = 0;
+
+		if (invitationcount >= 70) {
+			scctoken += factor;
+		} else if (invitationcount === 60) {
+			percent = 9;
+			scctoken += factor * percent;
+		} else if (invitationcount === 50) {
+			percent = 8;
+			scctoken += factor * percent;
+		} else if (invitationcount === 40) {
+			percent = 7;
+			scctoken += factor * percent;
+		} else if (invitationcount === 30) {
+			percent = 6;
+			scctoken += factor * percent;
+		} else if (invitationcount === 20) {
+			percent = 5;
+			scctoken += factor * percent;
+		} else if (invitationcount === 10) {
+			percent = 4;
+			scctoken += factor * percent;
+		}
+		return scctoken;
+	};
+
+	var rewardTypeKey = RewardType.getRewardTypeKey(category, item);
+	var result = function () { return 0; };
 	switch (rewardTypeKey) {
 	case 'register:register':
 		result = function () { return 300; };
@@ -45,43 +74,33 @@ RewardType.getScc = function (category, item, params) {
 	case 'register:invite_friend':
 		result = function () { return 90; };
 		break;
+	case 'register:invite_extra':
+		result = invitedExtra;
+		break;
 	case 'post:orinial':
-		result = this.getOrinialPostScc;
+		result = this.orinialPostScc;
 		break;
 	case 'post:translation':
-		result = this.getTranslationPostScc;
+		result = this.translationPostScc;
 		break;
 	case 'post:reprint':
-		result = this.getReprintPostScc;
+		result = this.reprintPostScc;
 		break;
 	case 'other:other':
-		result = this.getRegisterScc;
+		result = function () { return 0; };
 		break;
-	default:
-		result = this.getOrinialPostScc;
 	}
 	return result(params);
 };
 
 RewardType.getContentTemplate = function (category, item) {
 	var rewardTypeKey = this.getRewardTypeKey(category, item);
-	switch (rewardTypeKey) {
-	case 'register:register':
-		return '[[rewardType:register]]';
-	case 'register:register_invited':
-		return '[[rewardType:register_invited]]';
-	case 'register:invite_friend':
-		return '[[rewardType:invited_friend]]';
-	case 'post:orinial':
-		return '[[rewardType:orinial]]';
-	case 'post:translation':
-		return '[[rewardType:translation]]';
-	case 'post:reprint':
-		return '[[rewardType:reprint]]';
-	case 'other:other':
-		return '[[rewardType:other]]';
+	var result;
+	var rewardTypeItem = RewardType.rewardTypes[rewardTypeKey];
+	if (item) {
+		result = rewardTypeItem.content;
 	}
-	return '';
+	return result;
 };
 
 RewardType.getRewardTypes = function (sqlCondition, variable_binding, callback) {

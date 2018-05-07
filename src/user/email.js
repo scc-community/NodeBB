@@ -126,7 +126,7 @@ UserEmail.sendValidationEmail = function (uid, options, callback) {
 UserEmail.registerReward = function (uid, callback) {
 	async.waterfall([
 		function (next) {
-			user.registerReward('register', uid, next);
+			user.registerReward('register', uid, null, next);
 		},
 		function (next) {
 			user.getInvitedcode(uid, next);
@@ -141,12 +141,21 @@ UserEmail.registerReward = function (uid, callback) {
 		function (inviteduid, next) {
 			if (inviteduid) {
 				async.series([
-					async.apply(user.registerReward, 'register_invited', uid),
-					async.apply(user.registerReward, 'invite_friend', inviteduid),
-					async.apply(user.incrementUserFieldBy, inviteduid, 'invitationcount', 1),
+					async.apply(user.registerReward, 'register_invited', uid, null),
+					async.apply(user.registerReward, 'invite_friend', inviteduid, null),
+					function (next) {
+						async.waterfall([
+							function (next) {
+								user.incrementUserFieldBy(inviteduid, 'invitationcount', 1, next);
+							},
+							function (invitationcount, next) {
+								user.registerReward('invite_extra', inviteduid, invitationcount, next);
+							},
+						], next);
+					},
 				], next);
 			} else {
-				next();
+				return callback();
 			}
 		},
 		function (_, next) {
