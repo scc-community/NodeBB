@@ -6,7 +6,6 @@ var validator = require('validator');
 var winston = require('winston');
 var nconf = require('nconf');
 
-var db = require('../../database');
 var user = require('../../user');
 var groups = require('../../groups');
 var plugins = require('../../plugins');
@@ -69,8 +68,11 @@ helpers.getUserDataByUserSlug = function (userslug, callerUID, callback) {
 				canBanUser: function (next) {
 					privileges.users.canBanUser(callerUID, uid, next);
 				},
-				inviteToken: function (next) {
-					user.getInviteToken(uid, next);
+				invitedcode: function (next) {
+					user.getInvitedcode(uid, next);
+				},
+				invitationcode: function (next) {
+					user.getInvitationcode(uid, next);
 				},
 			}, next);
 		},
@@ -147,8 +149,8 @@ helpers.getUserDataByUserSlug = function (userslug, callerUID, callback) {
 			userData.websiteName = userData.website.replace(validator.escape('http://'), '').replace(validator.escape('https://'), '');
 			userData.followingCount = parseInt(userData.followingCount, 10) || 0;
 			userData.followerCount = parseInt(userData.followerCount, 10) || 0;
-			userData.sccInvitationNumber = parseInt(userData.sccInvitationNumber, 10) || 0;
-			userData.token = parseInt(userData.token, 10) || 0;
+			userData.invitationcount = parseInt(userData.invitationcount, 10) || 0;
+			userData.scctoken = parseInt(userData.scctoken, 10) || 0;
 
 			userData.email = validator.escape(String(userData.email || ''));
 			userData.fullname = validator.escape(String(userData.fullname || ''));
@@ -169,7 +171,7 @@ helpers.getUserDataByUserSlug = function (userslug, callerUID, callback) {
 			userData['email:disableEdit'] = !userData.isAdmin && parseInt(meta.config['email:disableEdit'], 10) === 1;
 
 			if (!userData.invitelink) {
-				userData.invitelink = nconf.get('url') + '/register?token=' + results.inviteToken;
+				userData.invitelink = nconf.get('url') + '/register?invitedcode=' + results.invitationcode;
 			}
 			next(null, userData);
 		},

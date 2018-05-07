@@ -26,7 +26,7 @@
     "bookmarks": "Bookmarks",
     "watched": "Watched",
     "ignored": "Ignored",
-    "token":"SCC",
+    "scctoken":"SCC",
     "followers": "Followers",
     "following": "Following",
     "aboutme": "About me",

@@ -9,7 +9,6 @@ var db = require('../database');
 var meta = require('../meta');
 var plugins = require('../plugins');
 var utils = require('../utils');
-var mysql = require('../database/mysql');
 
 module.exports = function (User) {
 	var iconBackgrounds = [
@@ -24,7 +23,8 @@ module.exports = function (User) {
 		'aboutme', 'signature', 'uploadedpicture', 'profileviews', 'reputation',
 		'postcount', 'topiccount', 'lastposttime', 'banned', 'banned:expire',
 		'status', 'flags', 'followerCount', 'followingCount', 'cover:url',
-		'cover:position', 'groupTitle', 'invitelink', 'token', 'sccInvitationNumber',
+		'cover:position', 'groupTitle', 'scctoken', 'invitationcount',
+		'invitationcode', 'invitedcode',
 	];
 
 	User.getUserField = function (uid, field, callback) {
@@ -252,15 +252,35 @@ module.exports = function (User) {
 		], callback);
 	}
 
-	User.incrSccToken = function (uid, value, callback) {
-		db.incrObjectFieldBy('user:' + uid, 'token', value, callback);
+	User.incrScctoken = function (uid, value, callback) {
+		User.incrementUserFieldBy(uid, 'scctoken', value, callback);
 	};
 
-	User.getSccToken = function (uid, sccToken, callback) {
-		db.getObjectField('user:' + uid, 'token', callback);
+	User.decrScctoken = function (uid, value, callback) {
+		User.decrementUserFieldBy(uid, 'scctoken', value, callback);
 	};
 
-	User.setSccToken = function (uid, value, callback) {
-		db.setObjectField('user:' + uid, 'token', value, callback);
+	User.getScctoken = function (uid, scctoken, callback) {
+		User.getUserField(uid, 'scctoken', callback);
+	};
+
+	User.setScctoken = function (uid, value, callback) {
+		db.setUserField(uid, 'scctoken', value, callback);
+	};
+
+	User.getInvitedcode = function (uid, callback) {
+		User.getUserField(uid, 'invitedcode', callback);
+	};
+
+	User.setInvitedcode = function (uid, value, callback) {
+		User.setUserField(uid, 'invitedcode', value, callback);
+	};
+
+	User.getInvitationcode = function (uid, callback) {
+		User.getUserField(uid, 'invitationcode', callback);
+	};
+
+	User.setInvitationcode = function (uid, value, callback) {
+		User.setUserField(uid, 'invitationcode', value, callback);
 	};
 };

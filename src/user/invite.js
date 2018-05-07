@@ -57,8 +57,8 @@ module.exports = function (User) {
 	User.sendInvitationEmail = function (uid, email, callback) {
 		callback = callback || function () {};
 
-		var token = utils.generateUUID();
-		var registerLink = nconf.get('url') + '/register?token=' + token + '&email=' + encodeURIComponent(email);
+		var invitationcode = utils.generateUUID();
+		var registerLink = nconf.get('url') + '/register?invitationcode=' + invitationcode + '&email=' + encodeURIComponent(email);
 
 		var expireIn = (parseInt(meta.config.inviteExpiration, 10) || 1) * 86400000;
 
@@ -76,7 +76,7 @@ module.exports = function (User) {
 				db.setAdd('invitation:uids', uid, next);
 			},
 			function (next) {
-				db.set('invitation:email:' + email, token, next);
+				db.set('invitation:email:' + email, invitationcode, next);
 			},
 			function (next) {
 				db.pexpireAt('invitation:email:' + email, Date.now() + expireIn, next);
@@ -105,7 +105,7 @@ module.exports = function (User) {
 	};
 
 	User.verifyInvitation = function (query, callback) {
-		if (!query.token || !query.email) {
+		if (!query.invitationcode || !query.email) {
 			return callback(new Error('[[error:invalid-data]]'));
 		}
 
@@ -113,9 +113,9 @@ module.exports = function (User) {
 			function (next) {
 				db.get('invitation:email:' + query.email, next);
 			},
-			function (token, next) {
-				if (!token || token !== query.token) {
-					return next(new Error('[[error:invalid-token]]'));
+			function (invitationcode, next) {
+				if (!invitationcode || invitationcode !== query.invitationcode) {
+					return next(new Error('[[error:invalid-invitationcode]]'));
 				}
 
 				next();
@@ -181,4 +181,13 @@ module.exports = function (User) {
 			},
 		], callback);
 	}
+
+	User.invitationcodeUid = {};
+	User.invitationcodeUid.set = function (invitationcode, uid, callback) {
+		db.setObjectField('invitationcode:uid', invitationcode, uid, callback);
+	};
+
+	User.invitationcodeUid.get = function (invitationcode, callback) {
+		db.getObjectField('invitationcode:uid', invitationcode, callback);
+	};
 };

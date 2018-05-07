@@ -1,0 +1,211 @@
+'use strict';
+
+var redis = require('redis');
+var async = require('async');
+var utils = require('../src/utils');
+
+var client = redis.createClient('6379', '127.0.0.1');
+
+async.waterfall([
+	function (next) {
+		client.select(0, next);
+	},
+	function (status, next) {
+		client.keys('user:*', next);
+	},
+	function (res, next) {
+		var arr1 = [];
+		res.forEach(function (item) {
+			var item1 = item.split(':', 2);
+			if (item1[1].length < 20) {
+				var item2 = item1.join(':');
+				arr1.push(item2);
+			}
+		});
+		console.log(arr1.length);
+		arr1.forEach(function (item) {
+			checkInviteToken(item);
+		});
+		next();
+	},
+], function (err) {
+	if (err) {
+		console.log(err);
+	}
+});
+
+var count = 0;
+function checkInviteToken(dbKey) {
+	async.waterfall([
+		function (next) {
+			if (typeof next !== 'function') {
+				console.log('1 next is not function!');
+			}
+			client.hget(dbKey, 'token', next);
+		},
+		function (token, next) {
+			if (typeof next !== 'function') {
+				console.log('2 next is not function!');
+			}
+			if (token) {
+				client.hset(dbKey, 'scctoken', token, next);
+			} else {
+				client.hset(dbKey, 'scctoken', 0, next);
+			}
+		},
+		function (err, next) {
+			if (typeof next !== 'function') {
+				console.log('3 next is not function!');
+			}
+			if (err) {
+				console.log(err);
+			}
+			client.hget(dbKey, 'token', next);
+		},
+		function (token, next) {
+			if (typeof next !== 'function') {
+				console.log('4 next is not function!');
+			}
+			if (token) {
+				client.hdel(dbKey, 'token', next);
+			} else {
+				next();
+			}
+		},
+		function (err, next) {
+			if (typeof next !== 'function') {
+				// console.log('7 next is not function!');
+				if (next) {
+					console.log(next);
+				}
+				next = err;
+				if (typeof next !== 'function') {
+					console.log('5 next is not function!');
+				}
+			} else if (err) {
+				console.log(err);
+			}
+			client.hget(dbKey, 'sccInvitationNumber', next);
+		},
+		function (sccInvitationNumber, next) {
+			if (typeof next !== 'function') {
+				console.log('6 next is not function!');
+			}
+			if (sccInvitationNumber) {
+				client.hset(dbKey, 'invitationcount', sccInvitationNumber, next);
+			} else {
+				client.hset(dbKey, 'invitationcount', 0, next);
+			}
+		},
+		function (err, next) {
+			if (typeof next !== 'function') {
+				// console.log('7 next is not function!');
+				if (next) {
+					console.log(next);
+				}
+				next = err;
+				if (typeof next !== 'function') {
+					console.log('7 next is not function!');
+				}
+			} else if (err) {
+				console.log(err);
+			}
+			client.hget(dbKey, 'sccInvitationNumber', next);
+		},
+		function (sccInvitationNumber, next) {
+			if (typeof next !== 'function') {
+				console.log('8 next is not function!');
+			}
+			if (sccInvitationNumber) {
+				client.hdel(dbKey, 'sccInvitationNumber', next);
+			} else {
+				next();
+			}
+		},
+		function (err, next) {
+			if (typeof next !== 'function') {
+				// console.log('9 next is not function!');
+				if (next) {
+					console.log(next);
+				}
+				next = err;
+				if (typeof next !== 'function') {
+					console.log('9 next is not function!');
+				}
+			} else if (err) {
+				console.log(err);
+			}
+			client.hget(dbKey, 'sccInviteToken', next);
+		},
+		function (sccInviteToken, next) {
+			if (typeof next !== 'function') {
+				console.log('10 next is not function!');
+			}
+			if (sccInviteToken) {
+				client.hset(dbKey, 'invitedcode', sccInviteToken, next);
+			} else {
+				next();
+			}
+		},
+		function (err, next) {
+			if (typeof next !== 'function') {
+				// console.log('9 next is not function!');
+				if (next) {
+					console.log(next);
+				}
+				next = err;
+				if (typeof next !== 'function') {
+					console.log('11 next is not function!');
+				}
+			} else if (err) {
+				console.log(err);
+			}
+			client.hget(dbKey, 'sccInviteToken', next);
+		},
+		function (sccInviteToken, next) {
+			if (typeof next !== 'function') {
+				console.log('12 next is not function!');
+			}
+			if (sccInviteToken !== null) {
+				client.hdel(dbKey, 'sccInviteToken', next);
+			} else {
+				next();
+			}
+		},
+		function (err, next) {
+			if (typeof next !== 'function') {
+				// console.log('9 next is not function!');
+				if (next) {
+					console.log(next);
+				}
+				next = err;
+				if (typeof next !== 'function') {
+					console.log('13 next is not function!');
+				}
+			} else if (err) {
+				console.log(err);
+			}
+			client.hget(dbKey, 'invitationcode', next);
+		},
+		function (invitationcode, next) {
+			console.log(dbKey + ':' + count + ':invitationcode:' + invitationcode);
+			if (typeof next !== 'function') {
+				console.log('14 next is not function!');
+			}
+			if (invitationcode) {
+				count += 1;
+				console.log(dbKey + ':' + count);
+				next();
+			} else {
+				client.hset(dbKey, 'invitationcode', utils.generateUUID(), function (err) {
+					if (err) {
+						console.log(err);
+					}
+					count += 1;
+					console.log(dbKey + ':' + count);
+					next();
+				});
+			}
+		},
+	]);
+}

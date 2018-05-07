@@ -8,7 +8,6 @@ var validator = require('validator');
 var plugins = require('../plugins');
 var groups = require('../groups');
 var meta = require('../meta');
-var invite = require('./invite_scc');
 var scc = require('../scc');
 
 module.exports = function (User) {
@@ -46,9 +45,10 @@ module.exports = function (User) {
 					topiccount: 0,
 					lastposttime: 0,
 					banned: 0,
-					token: 0,
-					sccInviteToken: data.token,
-					sccInvitationNumber: 0,
+					scctoken: 0,
+					invitedcode: data.invitedcode,
+					invitationcode: utils.generateUUID(),
+					invitationcount: 0,
 					status: 'online',
 				};
 				User.uniqueUsername(userData, next);
@@ -76,7 +76,7 @@ module.exports = function (User) {
 			function (_, next) {
 				async.parallel([
 					function (next) {
-						invite.createInviteLink(userData.uid, next);
+						User.invitationcodeUid.set(userData.invitationcode, userData.uid, next);
 					},
 					function (next) {
 						db.incrObjectField('global', 'userCount', next);
@@ -101,7 +101,7 @@ module.exports = function (User) {
 						db.sortedSetsAdd(['users:postcount', 'users:reputation'], 0, userData.uid, next);
 					},
 					function (next) {
-						db.sortedSetsAdd(['users:mostScc'], userData.scc, next);
+						db.sortedSetsAdd(['users:mostScc'], userData.scctoken, userData.uid, next);
 					},
 					function (next) {
 						groups.join('registered-users', userData.uid, next);

@@ -11,7 +11,6 @@ var plugins = require('../plugins');
 var db = require('../database');
 var meta = require('../meta');
 var emailer = require('../emailer');
-var scc = require('../scc');
 
 var UserEmail = module.exports;
 
@@ -124,49 +123,36 @@ UserEmail.sendValidationEmail = function (uid, options, callback) {
 	], callback);
 };
 
-UserEmail.handleSccInviteToken = function (registerUid, callback) {
-	// var rewardTypes = scc.rewardType.rewardTypes;
+UserEmail.registerReward = function (uid, callback) {
 	async.waterfall([
-		// function (next) {
-		// 	var rewardTypeItem = rewardTypes['register:register'];
-		// 	var tx = {
-		// 		uid: registerUid,
-		// 		publish_id: 0,
-		// 		transaction_type: '1',
-		// 		tx_no: utils.generateUUID(),
-		// 		reward_type: rewardTypeItem.reward_type,
-		// 		date_issued: new Date().getTime(),
-		// 		scc: rewardTypeItem.scc(),
-		// 		desc: rewardTypeItem.content,
-		// 		memo: null,
-		// 	};
-		// 	scc.tx.createTx(tx, next);
-		// },
-		async.apply(db.incrObjectFieldBy, 'user:' + registerUid, 'token', 300),
-		function (_, next) {
-			db.getObjectField('user:' + registerUid, 'sccInviteToken', next);
+		function (next) {
+			user.registerReward('register', uid, next);
 		},
-		function (sccInviteToken, next) {
-			if (sccInviteToken) {
-				db.getObjectField('scc:invition:token', sccInviteToken, next);
+		function (next) {
+			user.getInvitedcode(uid, next);
+		},
+		function (invitedode, next) {
+			if (invitedode) {
+				user.invitationcodeUid.get(invitedode, next);
 			} else {
-				next(new Error('sccInviteToken'));
+				return callback();
 			}
 		},
-		function (inviteUid, next) {
-			async.series([
-				async.apply(db.incrObjectFieldBy, 'user:' + registerUid, 'token', 30),
-				async.apply(db.incrObjectFieldBy, 'user:' + inviteUid, 'token', 90),
-				async.apply(db.incrObjectFieldBy, 'user:' + inviteUid, 'sccInvitationNumber', 1),
-			], next);
+		function (inviteduid, next) {
+			if (inviteduid) {
+				async.series([
+					async.apply(user.registerReward, 'register_invited', uid),
+					async.apply(user.registerReward, 'invite_friend', inviteduid),
+					async.apply(user.incrementUserFieldBy, inviteduid, 'invitationcount', 1),
+				], next);
+			} else {
+				next();
+			}
 		},
-	], function (err) {
-		if (err && err.message === 'sccInviteToken') {
-			callback();
-		} else {
-			callback(err);
-		}
-	});
+		function (_, next) {
+			next();
+		},
+	], callback);
 };
 
 UserEmail.confirm = function (code, callback) {
@@ -180,7 +166,7 @@ UserEmail.confirm = function (code, callback) {
 			}
 			async.waterfall([
 				function (next) {
-					UserEmail.handleSccInviteToken(confirmObj.uid, next);
+					UserEmail.registerReward(confirmObj.uid, next);
 				},
 				function (next) {
 					async.series([

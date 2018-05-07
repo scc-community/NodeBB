@@ -12,3 +12,7 @@ User.createUser = function (data, callback) {
 	var user = { uid: data.uid };
 	mysql.newRow('users', user, callback);
 };
+
+User.deleteUser = function (uid, callback) {
+	mysql.deleteRows('users', 'WHERE uid = ' + uid, callback);
+};

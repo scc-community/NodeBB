@@ -28,7 +28,7 @@ CREATE TABLE `manual_rewards` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `uid` mediumint(9) unsigned NOT NULL,
   `reward_type` smallint(5) unsigned NOT NULL,
-  `desc` varchar(40) NOT NULL,
+  `content` varchar(40) NOT NULL,
   `date_issued` datetime NOT NULL,
   `scc_setted` mediumint(8) NOT NULL,
   `memo` varchar(40) NOT NULL,
@@ -88,7 +88,6 @@ CREATE TABLE `reward_types` (
   `category` varchar(20) NOT NULL,
   `item` varchar(20) NOT NULL,
   `content` varchar(40) NOT NULL,
-  `scc` varchar(2048) NOT NULL DEFAULT '["return 0;"]',
   `comment` varchar(512) DEFAULT NULL,
   `date_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `last_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -116,13 +115,13 @@ DROP TABLE IF EXISTS `txs`;
 CREATE TABLE `txs` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `uid` mediumint(20) unsigned NOT NULL,
-  `publish_id` mediumint(8) unsigned NOT NULL,
+  `publish_uid` mediumint(8) unsigned NOT NULL,
   `transaction_type` enum('1','2') NOT NULL,
-  `tx_no` varchar(20) NOT NULL,
+  `tx_no` varchar(40) NOT NULL,
   `reward_type` smallint(5) unsigned NOT NULL,
   `date_issued` datetime NOT NULL,
   `scc` mediumint(9) NOT NULL,
-  `desc` varchar(40) NOT NULL,
+  `content` varchar(40) NOT NULL,
   `memo` varchar(40) DEFAULT NULL,
   `date_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `last_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -131,9 +130,9 @@ CREATE TABLE `txs` (
   UNIQUE KEY `index_tx_no` (`tx_no`) USING HASH,
   KEY `fk_users_txs_uid` (`uid`),
   KEY `fk_reward_types_txs_reward_type` (`reward_type`),
-  KEY `fk_users_txs_publish_id` (`publish_id`),
+  KEY `fk_users_txs_publish_uid` (`publish_uid`),
   CONSTRAINT `fk_reward_types_txs_reward_type` FOREIGN KEY (`reward_type`) REFERENCES `reward_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_users_txs_publish_id` FOREIGN KEY (`publish_id`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_users_txs_publish_uid` FOREIGN KEY (`publish_uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_users_txs_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户收支明细表\n1 类别:收入/支出 transaction_type:’1’,’2’ ';
 
@@ -142,14 +141,15 @@ CREATE TABLE `txs` (
 -- ----------------------------
 BEGIN;
 INSERT INTO `users` VALUES (1, 0, '2018-01-01 00:00:00', '2018-01-01 00:00:00', '0');
+INSERT INTO `users` VALUES (2, 1, '2018-01-01 00:00:00', '2018-01-01 00:00:00', '0');
 
-INSERT INTO `reward_types` (id, category, item, content, scc, comment) VALUES (1,'register', 'register', '[[rewardType:register]]', '[\"return 300;\"]', '注册');
-INSERT INTO `reward_types` (id, category, item, content, scc, comment) VALUES (2,'register', 'register_invited', '[[rewardType:register_invited]]', '[\"return 30;\"]', '被邀请注册');
-INSERT INTO `reward_types` (id, category, item, content, scc, comment) VALUES (3,'register', 'invite_friend', '[[rewardType:invited_friend]]', '[\"return 90;\"]', '邀请好友注册');
-INSERT INTO `reward_types` (id, category, item, content, scc, comment) VALUES (4,'post', 'orinial', '[[rewardType:orinial]]', '[\"return 0;\"]', '原创:60SCC/500字，超出不满500部分按500字计算 / 文章每获得一个赞奖励1SCC');
-INSERT INTO `reward_types` (id, category, item, content, scc, comment) VALUES (5,'post', 'translation', '[[rewardType:translation]]', '[\"return 0;\"]', '翻译:60SCC/500字，超出不满500部分按500字计算 / 文章每获得一个赞奖励1SCC');
-INSERT INTO `reward_types` (id, category, item, content, scc, comment) VALUES (6,'post', 'reprint', '[[rewardType:reprint]]', '[\"return 0;\"]', '转载:每转载一篇文章奖励30SC');
-INSERT INTO `reward_types` (id, category, item, content, scc, comment) VALUES (999, 'other', 'other', '[[rewardType:other]]', '[\"return 0;\"]', '其它');
+INSERT INTO `reward_types` (id, category, item, content, comment) VALUES (1,'register', 'register', '[[rewardType:register]]', '注册');
+INSERT INTO `reward_types` (id, category, item, content, comment) VALUES (2,'register', 'register_invited', '[[rewardType:register_invited]]', '被邀请注册');
+INSERT INTO `reward_types` (id, category, item, content, comment) VALUES (3,'register', 'invite_friend', '[[rewardType:invited_friend]]',  '邀请好友注册');
+INSERT INTO `reward_types` (id, category, item, content, comment) VALUES (4,'post', 'orinial', '[[rewardType:orinial]]', '原创:60SCC/500字，超出不满500部分按500字计算 / 文章每获得一个赞奖励1SCC');
+INSERT INTO `reward_types` (id, category, item, content, comment) VALUES (5,'post', 'translation', '[[rewardType:translation]]', '翻译:60SCC/500字，超出不满500部分按500字计算 / 文章每获得一个赞奖励1SCC');
+INSERT INTO `reward_types` (id, category, item, content, comment) VALUES (6,'post', 'reprint', '[[rewardType:reprint]]', '转载:每转载一篇文章奖励30SC');
+INSERT INTO `reward_types` (id, category, item, content, comment) VALUES (999, 'other', 'other', '[[rewardType:other]]', '其它');
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;
