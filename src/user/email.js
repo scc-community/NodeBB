@@ -11,7 +11,7 @@ var plugins = require('../plugins');
 var db = require('../database');
 var meta = require('../meta');
 var emailer = require('../emailer');
-var scc = require('../scc');
+
 var UserEmail = module.exports;
 
 UserEmail.exists = function (email, callback) {
