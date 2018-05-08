@@ -22,7 +22,9 @@ module.exports = function (User) {
 				function (_, next) {
 					next();
 				},
-			], callback);
+			], function (err) {
+				callback(err);
+			});
 		} else {
 			return callback();
 		}

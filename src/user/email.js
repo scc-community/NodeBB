@@ -165,9 +165,6 @@ UserEmail.registerReward = function (uid, callback) {
 };
 
 UserEmail.confirm = function (code, callback) {
-	scc.tx.getTxs('limit 30', null, function (results, err, cb) {
-		console.log(results);
-	});
 	async.waterfall([
 		function (next) {
 			db.getObject('confirm:' + code, next);
@@ -183,14 +180,14 @@ UserEmail.confirm = function (code, callback) {
 				function (next) {
 					async.series([
 						async.apply(user.setUserField, confirmObj.uid, 'email:confirmed', 1),
-						// async.apply(db.delete, 'confirm:' + code),
-						// async.apply(db.delete, 'uid:' + confirmObj.uid + ':confirm:email:sent'),
-						// function (next) {
-						// 	db.sortedSetRemove('users:notvalidated', confirmObj.uid, next);
-						// },
-						// function (next) {
-						// 	plugins.fireHook('action:user.email.confirmed', { uid: confirmObj.uid, email: confirmObj.email }, next);
-						// },
+						async.apply(db.delete, 'confirm:' + code),
+						async.apply(db.delete, 'uid:' + confirmObj.uid + ':confirm:email:sent'),
+						function (next) {
+							db.sortedSetRemove('users:notvalidated', confirmObj.uid, next);
+						},
+						function (next) {
+							plugins.fireHook('action:user.email.confirmed', { uid: confirmObj.uid, email: confirmObj.email }, next);
+						},
 					], next);
 				},
 			], next);

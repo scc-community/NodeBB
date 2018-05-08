@@ -10,7 +10,7 @@ var tableModels = [
 		idFieldName: 'id',
 	},
 	{
-		name: 'post_rewards',
+		name: 'topic_rewards',
 		idFieldName: 'id',
 	},
 	{
