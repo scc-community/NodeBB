@@ -32,52 +32,52 @@ CREATE TABLE `manual_rewards` (
   `date_issued` datetime NOT NULL,
   `scc_setted` mediumint(8) NOT NULL,
   `memo` varchar(40) NOT NULL,
-  `publish_id` mediumint(9) unsigned NOT NULL,
+  `publish_uid` mediumint(9) unsigned NOT NULL,
   `date_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `last_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `version` char(10)  NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `fk_users_manual_rewards_uid` (`uid`),
   KEY `fk_reward_types_manual_rewards_reward_type` (`reward_type`),
-  KEY `fk_users_manual_rewards_publish_id` (`publish_id`),
+  KEY `fk_users_manual_rewards_publish_uid` (`publish_uid`),
   CONSTRAINT `fk_reward_types_manual_rewards_reward_type` FOREIGN KEY (`reward_type`) REFERENCES `reward_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_users_manual_rewards_publish_id` FOREIGN KEY (`publish_id`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_users_manual_rewards_publish_uid` FOREIGN KEY (`publish_uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_users_manual_rewards_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='手动奖励表';
 
 -- ----------------------------
--- Table structure for post-rewards
+-- Table structure for topic-rewards
 -- ----------------------------
-DROP TABLE IF EXISTS `post_rewards`;
-CREATE TABLE `post_rewards` (
+DROP TABLE IF EXISTS `topic_rewards`;
+CREATE TABLE `topic_rewards` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `uid` mediumint(9) unsigned NOT NULL,
   `reward_type` smallint(5) unsigned NOT NULL,
-  `post_id` bigint(20) unsigned NOT NULL,
-  `post_category` smallint(6) NOT NULL,
-  `post_title` varchar(50) NOT NULL,
-  `post_link` varchar(512) NOT NULL,
-  `post_words_count` mediumint(8) unsigned NOT NULL,
-  `post_upvotes_count` mediumint(8) unsigned NOT NULL,
+  `topic_id` bigint(20) unsigned NOT NULL,
+  `topic_category` smallint(6) NOT NULL,
+  `topic_title` varchar(50) NOT NULL,
+  `topic_link` varchar(512) NOT NULL,
+  `topic_words_count` mediumint(8) unsigned NOT NULL,
+  `topic_upvotes_count` mediumint(8) unsigned NOT NULL,
   `date_posted` datetime NOT NULL,
   `scc_autoed` mediumint(8) NOT NULL,
   `scc_setted` mediumint(8) DEFAULT NULL,
   `scc_issued` mediumint(8) DEFAULT NULL,
   `date_issued` datetime DEFAULT NULL,
   `memo` varchar(40) DEFAULT NULL,
-  `publish_id` mediumint(9) unsigned NOT NULL,
+  `publish_uid` mediumint(9) unsigned NOT NULL,
   `date_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `last_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `version` char(10)  NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE KEY `index_post_id` (`post_id`) USING HASH,
-  KEY `fk_users_post_rewards_uid` (`uid`),
-  KEY `fk_reward_types_post_rewards_reward_type` (`reward_type`),
-  KEY `fk_users_post_rewards_publish_id` (`publish_id`),
-  CONSTRAINT `fk_reward_types_post_rewards_reward_type` FOREIGN KEY (`reward_type`) REFERENCES `reward_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_users_post_rewards_publish_id` FOREIGN KEY (`publish_id`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_users_post_rewards_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='文章奖励表';
+  UNIQUE KEY `index_topic_id` (`topic_id`) USING HASH,
+  KEY `fk_users_topic_rewards_uid` (`uid`),
+  KEY `fk_reward_types_topic_rewards_reward_type` (`reward_type`),
+  KEY `fk_users_topic_rewards_publish_uid` (`publish_uid`),
+  CONSTRAINT `fk_reward_types_topic_rewards_reward_type` FOREIGN KEY (`reward_type`) REFERENCES `reward_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_users_topic_rewards_publish_uid` FOREIGN KEY (`publish_uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_users_topic_rewards_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='主题奖励表';
 
 -- ----------------------------
 -- Table structure for reward-types
@@ -148,9 +148,9 @@ INSERT INTO `reward_types` (id, category, item, content, comment) VALUES (1,'reg
 INSERT INTO `reward_types` (id, category, item, content, comment) VALUES (2,'register', 'register_invited', '[[rewardType:register_invited]]', '被邀请注册');
 INSERT INTO `reward_types` (id, category, item, content, comment) VALUES (3,'register', 'invite_friend', '[[rewardType:invited_friend]]', '邀请好友注册');
 INSERT INTO `reward_types` (id, category, item, content, comment) VALUES (4,'register', 'invite_extra', '[[rewardType:invite_extra]]', '推10以下送90/人;以10人为梯度,达梯度值额外送(10人*90*比例);每梯度的比例比上一梯度递增10%;比例到100%(70人)不再增加;更多额外送(人数-70)*90');
-INSERT INTO `reward_types` (id, category, item, content, comment) VALUES (5,'post', 'orinial', '[[rewardType:orinial]]', '原创:60SCC/500字，超出不满500部分按500字计算 / 文章每获得一个赞奖励1SCC');
-INSERT INTO `reward_types` (id, category, item, content, comment) VALUES (6,'post', 'translation', '[[rewardType:translation]]', '翻译:60SCC/500字，超出不满500部分按500字计算 / 文章每获得一个赞奖励1SCC');
-INSERT INTO `reward_types` (id, category, item, content, comment) VALUES (7,'post', 'reprint', '[[rewardType:reprint]]', '转载:每转载一篇文章奖励30SC');
+INSERT INTO `reward_types` (id, category, item, content, comment) VALUES (5,'topic', 'orinial', '[[rewardType:orinial]]', '原创:60SCC/500字，超出不满500部分按500字计算 / 文章每获得一个赞奖励1SCC');
+INSERT INTO `reward_types` (id, category, item, content, comment) VALUES (6,'topic', 'translation', '[[rewardType:translation]]', '翻译:60SCC/500字，超出不满500部分按500字计算 / 文章每获得一个赞奖励1SCC');
+INSERT INTO `reward_types` (id, category, item, content, comment) VALUES (7,'topic', 'reprint', '[[rewardType:reprint]]', '转载:每转载一篇文章奖励30SC');
 INSERT INTO `reward_types` (id, category, item, content, comment) VALUES (999, 'other', 'other', '[[rewardType:other]]', '其它');
 COMMIT;
 
