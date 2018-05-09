@@ -3,6 +3,7 @@
 
 var async = require('async');
 var nconf = require('nconf');
+var winston = require('winston');
 
 var user = require('../user');
 var utils = require('../utils');
@@ -123,33 +124,6 @@ UserEmail.sendValidationEmail = function (uid, options, callback) {
 	], callback);
 };
 
-UserEmail.handleSccInviteToken = function (registerUid, callback) {
-	async.waterfall([
-		function (next) {
-			db.getObjectField('user:' + registerUid, 'sccInviteToken', next);
-		},
-		function (sccInviteToken, next) {
-			if (sccInviteToken) {
-				db.getObjectField('scc:invition:token', sccInviteToken, next);
-			} else {
-				next(new Error('sccInviteToken'));
-			}
-		},
-		function (inviteUid, next) {
-			async.series([
-				async.apply(db.incrObjectFieldBy, 'user:' + inviteUid, 'token', 90),
-				async.apply(db.incrObjectFieldBy, 'user:' + inviteUid, 'sccInvitationNumber', 1),
-			], next);
-		},
-	], function (err) {
-		if (err && err.message === 'sccInviteToken') {
-			callback();
-		} else {
-			callback(err);
-		}
-	});
-};
-
 UserEmail.confirm = function (code, callback) {
 	async.waterfall([
 		function (next) {
@@ -159,22 +133,47 @@ UserEmail.confirm = function (code, callback) {
 			if (!confirmObj || !confirmObj.uid || !confirmObj.email) {
 				return next(new Error('[[error:invalid-data]]'));
 			}
+			var registerUserId = null;
 			async.waterfall([
 				function (next) {
-					UserEmail.handleSccInviteToken(confirmObj.uid, next);
+					db.getObjectField('user:' + confirmObj.uid, 'sccInviteToken', next);
+				},
+				function (sccInviteToken, next) {
+					if (sccInviteToken) {
+						db.getObjectField('scc:invition:token', sccInviteToken, next);
+					} else {
+						return next(new Error('[[error:getSccInviteToken-noexist]]'));
+					}
+				},
+				function (uid, next) {
+					registerUserId = uid;
+					if (registerUserId) {
+						db.incrObjectFieldBy('user:' + registerUserId, 'token', 90, next);
+						var logContent = 'scc token: {incrObjectFieldBy(user:' + registerUserId + ' ,90}';
+						winston.log(logContent);
+					} else {
+						return next(new Error('[[error:setUserUidToken-exception]]'));
+					}
 				},
 				function (next) {
-					async.series([
-						async.apply(user.setUserField, confirmObj.uid, 'email:confirmed', 1),
-						async.apply(db.delete, 'confirm:' + code),
-						async.apply(db.delete, 'uid:' + confirmObj.uid + ':confirm:email:sent'),
-						function (next) {
-							db.sortedSetRemove('users:notvalidated', confirmObj.uid, next);
-						},
-						function (next) {
-							plugins.fireHook('action:user.email.confirmed', { uid: confirmObj.uid, email: confirmObj.email }, next);
-						},
-					], next);
+					db.incrObjectFieldBy('user:' + registerUserId, 'sccInvitationNumber', 1, function (err, val) {
+						if (err) {
+							return next(new Error('uid:' + registerUserId + ',newValue:' + val + ', [[error:setSccInvitationNumber-exception]]'));
+						}
+						next();
+					});
+				},
+			], function (err) {
+				callback(err);
+			});
+			async.series([
+				async.apply(db.delete, 'confirm:' + code),
+				async.apply(db.delete, 'uid:' + confirmObj.uid + ':confirm:email:sent'),
+				function (next) {
+					db.sortedSetRemove('users:notvalidated', confirmObj.uid, next);
+				},
+				function (next) {
+					plugins.fireHook('action:user.email.confirmed', { uid: confirmObj.uid, email: confirmObj.email }, next);
 				},
 			], next);
 		},
