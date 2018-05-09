@@ -1,6 +1,7 @@
 'use strict';
 
 var qr = require('qr-image');
+var topics = require('../topics');
 
 module.exports = function (app, middleware, controllers) {
 	app.get('/sitemap.xml', controllers.sitemap.render);
@@ -22,5 +23,11 @@ module.exports = function (app, middleware, controllers) {
 			res.writeHead(404, { 'Content-Type': 'text/html' });
 			res.end('<h1>' + e + '</h1>');
 		}
+	});
+
+	app.get('/test', function (req, res) {
+		topics.buildTopicsReward();
+		res.writeHead(404, { 'Content-Type': 'text/html' });
+		res.end('<h1>' + 'hello' + '</h1>');
 	});
 };

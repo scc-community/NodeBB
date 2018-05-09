@@ -148,7 +148,7 @@ INSERT INTO `reward_types` (id, category, item, content, comment) VALUES (1,'reg
 INSERT INTO `reward_types` (id, category, item, content, comment) VALUES (2,'register', 'register_invited', '[[rewardType:register_invited]]', '被邀请注册');
 INSERT INTO `reward_types` (id, category, item, content, comment) VALUES (3,'register', 'invite_friend', '[[rewardType:invited_friend]]', '邀请好友注册');
 INSERT INTO `reward_types` (id, category, item, content, comment) VALUES (4,'register', 'invite_extra', '[[rewardType:invite_extra]]', '推10以下送90/人;以10人为梯度,达梯度值额外送(10人*90*比例);每梯度的比例比上一梯度递增10%;比例到100%(70人)不再增加;更多额外送(人数-70)*90');
-INSERT INTO `reward_types` (id, category, item, content, comment) VALUES (5,'topic', 'orinial', '[[rewardType:orinial]]', '原创:60SCC/500字，超出不满500部分按500字计算 / 文章每获得一个赞奖励1SCC');
+INSERT INTO `reward_types` (id, category, item, content, comment) VALUES (5,'topic', 'original', '[[rewardType:original]]', '原创:60SCC/500字，超出不满500部分按500字计算 / 文章每获得一个赞奖励1SCC');
 INSERT INTO `reward_types` (id, category, item, content, comment) VALUES (6,'topic', 'translation', '[[rewardType:translation]]', '翻译:60SCC/500字，超出不满500部分按500字计算 / 文章每获得一个赞奖励1SCC');
 INSERT INTO `reward_types` (id, category, item, content, comment) VALUES (7,'topic', 'reprint', '[[rewardType:reprint]]', '转载:每转载一篇文章奖励30SC');
 INSERT INTO `reward_types` (id, category, item, content, comment) VALUES (999, 'other', 'other', '[[rewardType:other]]', '其它');

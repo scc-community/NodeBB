@@ -78,6 +78,23 @@ module.exports = function (mysqlClient, module) {
 		}, callback);
 	};
 
+	module.batchInsert = function (tableName, fieldsName, values, uniqueKey, callback) {
+		// ref: https://stackoverflow.com/questions/8899802/how-do-i-do-a-bulk-insert-in-mysql-using-node-js
+		// 'INSERT INTO users (uid) VALUES ? ON DUPLICATE KEY UPDATE uid = uid';
+		// values format [[uid1],[uid2]]
+		var sql = 'INSERT INTO ' + tableName + ' (';
+		fieldsName.forEach(function (fieldName) {
+			sql += fieldName;
+		});
+		sql += ') VALUES ? ';
+		if (uniqueKey) {
+			sql += 'ON DUPLICATE KEY UPDATE ' + uniqueKey + ' = ' + uniqueKey;
+		}
+		module.connect(function (conn, next) {
+			conn.query(sql, [values], next);
+		}, callback);
+	};
+
 	module.nupdateRows = function (conn, tableName, data, conditionSql, variable_binding, callback) {
 		if (!tableName) {
 			callback(new Error('tableName error'));
