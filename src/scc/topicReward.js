@@ -13,8 +13,8 @@ TopicReward.createTopicReward = function (data, callback) {
 };
 
 TopicReward.bcreateTopicReward = function (data, callback) {
-	var fieldNames = ['uid', 'reward_type', 'topic_id', 'topic_category', 'topic_title', 'topic_link',
-		'topic_words_count', 'topic_upvotes_count', 'date_posted', 'scc_autoed',
+	var fieldNames = ['uid', 'reward_type', 'topic_id', 'topic_category', 'topic_title',
+		'topic_words_count', 'topic_upvotes_count', 'date_posted', 'scc_autoed', 'publish_uid',
 	];
 	mysql.batchInsert('topic_rewards', fieldNames, data, null, callback);
 };

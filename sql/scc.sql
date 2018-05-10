@@ -52,11 +52,11 @@ DROP TABLE IF EXISTS `topic_rewards`;
 CREATE TABLE `topic_rewards` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `uid` mediumint(9) unsigned NOT NULL,
+  `status` enum('1','2','3') NOT NULL DEFAULT '1',
   `reward_type` smallint(5) unsigned NOT NULL,
   `topic_id` bigint(20) unsigned NOT NULL,
   `topic_category` smallint(6) NOT NULL,
-  `topic_title` varchar(50) NOT NULL,
-  `topic_link` varchar(512) NOT NULL,
+  `topic_title` varchar(100) NOT NULL,
   `topic_words_count` mediumint(8) unsigned NOT NULL,
   `topic_upvotes_count` mediumint(8) unsigned NOT NULL,
   `date_posted` datetime NOT NULL,
@@ -77,7 +77,7 @@ CREATE TABLE `topic_rewards` (
   CONSTRAINT `fk_reward_types_topic_rewards_reward_type` FOREIGN KEY (`reward_type`) REFERENCES `reward_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_users_topic_rewards_publish_uid` FOREIGN KEY (`publish_uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_users_topic_rewards_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='主题奖励表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='主题奖励表: status(1:未发放;2:已发放;3:已移除)';
 
 -- ----------------------------
 -- Table structure for reward-types

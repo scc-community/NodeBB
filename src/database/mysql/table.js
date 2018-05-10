@@ -82,11 +82,14 @@ module.exports = function (mysqlClient, module) {
 		// ref: https://stackoverflow.com/questions/8899802/how-do-i-do-a-bulk-insert-in-mysql-using-node-js
 		// 'INSERT INTO users (uid) VALUES ? ON DUPLICATE KEY UPDATE uid = uid';
 		// values format [[uid1],[uid2]]
-		var sql = 'INSERT INTO ' + tableName + ' (';
-		fieldsName.forEach(function (fieldName) {
-			sql += fieldName;
-		});
-		sql += ') VALUES ? ';
+		var sql = 'INSERT INTO ' + tableName + ' ( ';
+		for (var index = 0; index < fieldsName.length; index++) {
+			sql += fieldsName[index];
+			if (index !== fieldsName.length - 1) {
+				sql += ', ';
+			}
+		}
+		sql += ' ) VALUES ? ';
 		if (uniqueKey) {
 			sql += 'ON DUPLICATE KEY UPDATE ' + uniqueKey + ' = ' + uniqueKey;
 		}

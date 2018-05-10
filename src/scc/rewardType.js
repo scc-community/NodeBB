@@ -77,14 +77,14 @@ RewardType.getScc = function (category, item, params) {
 	case 'register:invite_extra':
 		result = invitedExtra;
 		break;
-	case 'post:orinial':
-		result = this.orinialPostScc;
+	case 'topic:original':
+		result = function (wordCount) { return Math.ceil(wordCount / 500) * 60; };
 		break;
-	case 'post:translation':
-		result = this.translationPostScc;
+	case 'topic:reprint':
+		result = function () { return 30; };
 		break;
-	case 'post:reprint':
-		result = this.reprintPostScc;
+	case 'topic:translation':
+		result = function (wordCount) { return Math.ceil(wordCount / 500) * 60; };
 		break;
 	case 'other:other':
 		result = function () { return 0; };
