@@ -46,7 +46,6 @@ module.exports = function (User) {
 					lastposttime: 0,
 					banned: 0,
 					token: 300,
-					scc: 300,
 					sccInviteToken: data.token,
 					sccInvitationNumber: 0,
 					status: 'online',

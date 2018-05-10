@@ -99,7 +99,10 @@ module.exports = function (User) {
 							'users:joindate',
 							'users:postcount',
 							'users:reputation',
+<<<<<<< HEAD
 							'users:token',
+=======
+>>>>>>> parent of aeb494b91... admin-user add scc details page(data still needs to fill)
 							'users:banned',
 							'users:online',
 							'users:notvalidated',

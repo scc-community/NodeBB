@@ -39,18 +39,6 @@ usersController.topPosters = function (req, res, next) {
 	getUsers('users:postcount', 'topposts', 0, '+inf', req, res, next);
 };
 
-usersController.mostScc = function (req, res, next) {
-	console.log('usersController.mostScc');
-	async.waterfall([
-		// function (next) {
-		// 	user.incrSccToken(16, 400, next);
-		// },
-		function (next) {
-			getUsers('users:token', 'mostscc', 0, '+inf', req, res, next);
-		},
-	],next);
-};
-
 usersController.mostReputaion = function (req, res, next) {
 	getUsers('users:reputation', 'mostreputation', 0, '+inf', req, res, next);
 };
