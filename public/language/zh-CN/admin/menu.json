@@ -48,6 +48,9 @@
 	"extend/widgets": "窗口部件",
 	"extend/rewards": "奖励",
 
+	"sccreward/manual": "人工奖励",
+	"sccreward/topic": "文章奖励",
+
 	"section-social-auth": "社交认证",
 
 	"section-plugins": "插件",

@@ -4,12 +4,15 @@ var mysql = require('../database/mysql');
 
 var RewardType = module.exports;
 RewardType.rewardTypes = {};
+RewardType.rewardTypeList = [];
 
 RewardType.init = function (callback) {
 	RewardType.loadRewardTypes(callback);
 };
 
 RewardType.loadRewardTypes = function (callback) {
+	RewardType.rewardTypes = {};
+	RewardType.rewardTypeList = [];
 	callback = callback || function () {};
 	var me = this;
 	me.getRewardTypes(null, null, function (err, result) {
@@ -18,6 +21,7 @@ RewardType.loadRewardTypes = function (callback) {
 		}
 		result.forEach(function (element) {
 			me.rewardTypes[element._data.category + ':' + element._data.item] = element._data;
+			me.rewardTypeList.push(element._data);
 		});
 		callback(err, result);
 	});

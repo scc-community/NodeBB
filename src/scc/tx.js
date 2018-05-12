@@ -29,3 +29,6 @@ Tx.initRow = function (category, item, txData, sccParams) {
 	return data;
 };
 
+Tx.getCount = function (callback) {
+	mysql.query('SELECT COUNT(*) AS count FROM txs', null, callback);
+};

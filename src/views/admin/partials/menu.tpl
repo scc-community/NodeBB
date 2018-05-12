@@ -278,6 +278,13 @@
 					<!-- ENDIF env -->
 				</ul>
 			</li>
+			<li class="dropdown menu-item">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">SCC奖励</a>
+				<ul class="dropdown-menu" role="menu">
+					<li><a href="{relative_path}/admin/sccreward/topic">文章奖励</a></li>
+					<li><a href="{relative_path}/admin/sccreward/manual">手动奖励</a></li>
+				</ul>
+			</li>
 		</ul>
 
 		<ul class="nav navbar-nav navbar-right hidden-xs reconnect-spinner">

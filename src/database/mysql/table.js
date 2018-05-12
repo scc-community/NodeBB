@@ -1,5 +1,7 @@
 'use strict';
 
+var mysql = require('node-mysql');
+
 module.exports = function (mysqlClient, module) {
 	module.newRow = function (model, data, callback) {
 		module.connect(function (conn, next) {
@@ -12,6 +14,7 @@ module.exports = function (mysqlClient, module) {
 			model = module.getModel(model);
 		}
 		model.create(conn, data, callback);
+		conn.end();
 	};
 
 	module.find = function (model, data, callback) {
@@ -25,6 +28,7 @@ module.exports = function (mysqlClient, module) {
 			model = module.getModel(model);
 		}
 		model.find(conn, querySql, callback);
+		conn.end();
 	};
 
 	module.findById = function (model, row_id, callback) {
@@ -38,6 +42,7 @@ module.exports = function (mysqlClient, module) {
 			model = module.getModel(model);
 		}
 		model.findById(conn, row_id, callback);
+		conn.end();
 	};
 
 	module.findAll = function (model, row_id, callback) {
@@ -51,6 +56,7 @@ module.exports = function (mysqlClient, module) {
 			model = module.getModel(model);
 		}
 		model.findAll(conn, callback);
+		conn.end();
 	};
 
 	module.nbaseQuery = function (model, sqlCondition, variable_binding) {
@@ -68,8 +74,12 @@ module.exports = function (mysqlClient, module) {
 	};
 
 	module.nquery = function (conn, querySql, variable_binding, callback) {
-		var sql = module.format(querySql, variable_binding);
+		var sql = querySql;
+		if (variable_binding !== null) {
+			sql = mysql.DB.format(querySql, variable_binding);
+		}
 		conn.query(sql, callback);
+		conn.end();
 	};
 
 	module.query = function (querySql, variable_binding, callback) {

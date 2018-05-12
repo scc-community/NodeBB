@@ -18,3 +18,7 @@ TopicReward.bcreateTopicReward = function (data, callback) {
 	];
 	mysql.batchInsert('topic_rewards', fieldNames, data, null, callback);
 };
+
+TopicReward.getCount = function (callback) {
+	mysql.query('SELECT COUNT(*) AS count FROM topic_rewards', null, callback);
+};

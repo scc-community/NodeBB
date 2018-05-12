@@ -16,3 +16,7 @@ User.createUser = function (data, callback) {
 User.deleteUser = function (uid, callback) {
 	mysql.deleteRows('users', 'WHERE uid = ' + uid, callback);
 };
+
+User.getCount = function (callback) {
+	mysql.query('SELECT COUNT(*) AS count FROM users', null, callback);
+};
