@@ -162,5 +162,7 @@
     "scc.type": "type",
     "scc.content": "content",
     "scc.timestamp": "timestamp",
-    "scc.transaction-id": "transaction id"
+    "scc.transaction-id": "transaction id",
+    "scc.memo": "notes",
+    "scc.own-token": "current SCC: "
 }

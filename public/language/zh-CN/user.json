@@ -162,5 +162,7 @@
     "scc.type": "类型",
     "scc.content": "内容",
     "scc.timestamp": "时间",
-    "scc.transaction-id": "交易号"
+    "scc.transaction-id": "交易号",
+    "scc.memo": "备注",
+    "scc.own-token": "当前拥有码力: "
 }
