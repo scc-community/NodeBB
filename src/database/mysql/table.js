@@ -14,7 +14,7 @@ module.exports = function (mysqlClient, module) {
 			model = module.getModel(model);
 		}
 		model.create(conn, data, callback);
-		conn.end();
+		conn.release();
 	};
 
 	module.find = function (model, data, callback) {
@@ -28,7 +28,7 @@ module.exports = function (mysqlClient, module) {
 			model = module.getModel(model);
 		}
 		model.find(conn, querySql, callback);
-		conn.end();
+		conn.release();
 	};
 
 	module.findById = function (model, row_id, callback) {
@@ -42,7 +42,7 @@ module.exports = function (mysqlClient, module) {
 			model = module.getModel(model);
 		}
 		model.findById(conn, row_id, callback);
-		conn.end();
+		conn.release();
 	};
 
 	module.findAll = function (model, row_id, callback) {
@@ -56,7 +56,7 @@ module.exports = function (mysqlClient, module) {
 			model = module.getModel(model);
 		}
 		model.findAll(conn, callback);
-		conn.end();
+		conn.release();
 	};
 
 	module.nbaseQuery = function (model, sqlCondition, variable_binding) {
@@ -79,7 +79,7 @@ module.exports = function (mysqlClient, module) {
 			sql = mysql.DB.format(querySql, variable_binding);
 		}
 		conn.query(sql, callback);
-		conn.end();
+		conn.release();
 	};
 
 	module.query = function (querySql, variable_binding, callback) {
