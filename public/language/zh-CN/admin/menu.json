@@ -49,9 +49,6 @@
 	"extend/widgets": "窗口部件",
 	"extend/rewards": "奖励",
 
-	"sccreward/manual": "人工奖励",
-	"sccreward/topic": "文章奖励",
-
 	"section-social-auth": "社交认证",
 
 	"section-plugins": "插件",
@@ -65,11 +62,10 @@
 	"advanced/cache": "缓存",
 	"development/logger": "记录器",
 	"development/info": "信息",
-	"section-scc": "SCC管理",
-	"scc/post": "文章奖励",
-	"sccmanage/post_rewards": "文章奖励",
-	"sccmanage/manual_rewards": "手动奖励",
-	"scc/manual": "手动奖励",
+
+	"section-scc-reward": "SCC奖励",
+	"scc-reward/manual-reward": "人工奖励",
+	"scc-reward/topic-reward": "文章奖励",
 
 	"reload-forum": "重载论坛",
 	"restart-forum": "重启论坛",

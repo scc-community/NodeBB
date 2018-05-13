@@ -49,8 +49,9 @@
 	"extend/widgets": "Widgets",
 	"extend/rewards": "Rewards",
 
-	"sccreward/manual": "Scc manual reward",
-	"sccreward/topic": "Scc Topic reward",
+	"section-scc-reward": "SCC reward",
+	"scc-reward/manual-reward": "Manual reward",
+	"scc-reward/topic-reward": "Topic reward",
 
 	"section-social-auth": "Social Authentication",
 
@@ -65,6 +66,7 @@
 	"advanced/cache": "Cache",
 	"development/logger": "Logger",
 	"development/info": "Info",
+
 	"section-scc": "SCC",
 	"scc/post": "Post Rewards",
 	"scc/manual": "Manual Rewards",

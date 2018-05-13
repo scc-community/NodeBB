@@ -106,15 +106,13 @@
 		</ul>
 	</section>
 
-
 	<section class="menu-section">
-		<h3 class="menu-section-title">[[admin/menu:section-scc]]</h3>
+		<h3 class="menu-section-title">[[admin/menu:section-scc-reward]]</h3>
 		<ul class="menu-section-list">
-			<li><a href="{relative_path}/admin/sccmanage/post_rewards">[[admin/menu:scc/post]]</a></li>
-			<li><a href="{relative_path}/admin/sccmanage/manual_rewards">[[admin/menu:scc/manual]]</a></li>
+			<li><a href="{relative_path}/admin/scc-reward/topic-reward">[[admin/menu:scc-reward/topic-reward]]</a></li>
+			<li><a href="{relative_path}/admin/scc-reward/manual-reward">[[admin/menu:scc-reward/manual-reward]]</a></li>
 		</ul>
 	</section>
-
 </nav>
 
 <main id="panel">
@@ -289,10 +287,10 @@
 				</ul>
 			</li>
 			<li class="dropdown menu-item">
-				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">[[admin/menu:section-scc]]</a>
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">[[admin/menu:section-scc-reward]]</a>
 				<ul class="dropdown-menu" role="menu">
-					<li><a href="{relative_path}/admin/sccmanage/post_rewards">[[admin/menu:scc/post]]</a></li>
-					<li><a href="{relative_path}/admin/sccmanage/manual">[[admin/menu:scc/manual]]</a></li>
+					<li><a href="{relative_path}/admin/scc-reward/topic-reward">[[admin/menu:scc-reward/topic-reward]]</a></li>
+					<li><a href="{relative_path}/admin/scc-reward/manual-reward">[[admin/menu:scc-reward/manual-reward]]</a></li>
 				</ul>
 			</li>
 		</ul>

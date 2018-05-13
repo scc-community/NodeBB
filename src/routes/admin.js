@@ -54,9 +54,6 @@ function addRoutes(router, middleware, controllers) {
 	router.get('/manage/categories', middlewares, controllers.admin.categories.getAll);
 	router.get('/manage/categories/:category_id', middlewares, controllers.admin.categories.get);
 	router.get('/manage/categories/:category_id/analytics', middlewares, controllers.admin.categories.getAnalytics);
-	//router.get('/sccmanage/post_rewards', middlewares, controllers.admin.post_rewards.get);
-	router.get('/sccmanage/post_rewards/:q?', middlewares, controllers.admin.post_rewards.get);
-
 
 	router.get('/manage/privileges/:cid?', middlewares, controllers.admin.privileges.get);
 	router.get('/manage/tags', middlewares, controllers.admin.tags.get);
@@ -98,8 +95,8 @@ function addRoutes(router, middleware, controllers) {
 	router.get('/development/logger', middlewares, controllers.admin.logger.get);
 	router.get('/development/info', middlewares, controllers.admin.info.get);
 
-	// router.get('/sccreward/topic', middlewares, controllers.admin.topicreward.get);
-	//router.get('/sccreward/manual', middlewares, controllers.admin.manualreward.get);
+	router.get('/scc-reward/topic-reward/:q?', middlewares, controllers.admin.sccReward.topicReward.get);
+	router.get('/scc-reward/manual-reward', middlewares, controllers.admin.sccReward.manualReward.get);
 }
 
 module.exports = function (app, middleware, controllers) {

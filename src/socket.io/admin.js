@@ -28,7 +28,6 @@ var SocketAdmin = {
 	navigation: require('./admin/navigation'),
 	rooms: require('./admin/rooms'),
 	social: require('./admin/social'),
-	post_rewards: require('./admin/post_rewards'),
 	themes: {},
 	plugins: {},
 	widgets: {},
@@ -38,7 +37,7 @@ var SocketAdmin = {
 	analytics: {},
 	logs: {},
 	errors: {},
-	//sccReward: require('./admin/sccreward'),
+	sccReward: require('./admin/scc-reward'),
 };
 
 SocketAdmin.before = function (socket, method, data, next) {
