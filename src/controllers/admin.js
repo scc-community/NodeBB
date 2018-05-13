@@ -31,7 +31,7 @@ var adminController = {
 	users: require('./admin/users'),
 	uploads: require('./admin/uploads'),
 	info: require('./admin/info'),
-	// manualreward: require('./admin/manualreward'),
+	manualreward: require('./admin/manualreward'),
 	// topicreward: require('./admin/topicreward'),
 };
 

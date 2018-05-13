@@ -48,6 +48,9 @@
 	"extend/widgets": "Widgets",
 	"extend/rewards": "Rewards",
 
+	"sccreward/manual": "Scc manual reward",
+	"sccreward/topic": "Scc Topic reward",
+
 	"section-social-auth": "Social Authentication",
 
 	"section-plugins": "Plugins",

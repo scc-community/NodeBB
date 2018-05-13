@@ -14,10 +14,12 @@ module.exports = function (mysqlClient, module) {
 	};
 
 	module.transaction = function (customFunc, callback) {
-		mysqlClient.transaction(null, function (conn) {
-			customFunc(null, conn);
-		}, function (err) {
-			callback(err);
+		mysqlClient.connect(function (conn) {
+			mysqlClient.transaction(conn, function (conn) {
+				customFunc(conn, callback);
+			}, function (err) {
+				callback(err);
+			});
 		});
 	};
 
