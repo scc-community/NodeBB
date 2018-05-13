@@ -105,6 +105,16 @@
 			<!-- ENDIF env -->
 		</ul>
 	</section>
+
+
+	<section class="menu-section">
+		<h3 class="menu-section-title">[[admin/menu:section-scc]]</h3>
+		<ul class="menu-section-list">
+			<li><a href="{relative_path}/admin/sccmanage/post_rewards">[[admin/menu:scc/post]]</a></li>
+			<li><a href="{relative_path}/admin/sccmanage/manual_rewards">[[admin/menu:scc/manual]]</a></li>
+		</ul>
+	</section>
+
 </nav>
 
 <main id="panel">
@@ -279,10 +289,10 @@
 				</ul>
 			</li>
 			<li class="dropdown menu-item">
-				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">SCC奖励</a>
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">[[admin/menu:section-scc]]</a>
 				<ul class="dropdown-menu" role="menu">
-					<li><a href="{relative_path}/admin/sccreward/topic">文章奖励</a></li>
-					<li><a href="{relative_path}/admin/sccreward/manual">手动奖励</a></li>
+					<li><a href="{relative_path}/admin/sccmanage/post_rewards">[[admin/menu:scc/post]]</a></li>
+					<li><a href="{relative_path}/admin/sccmanage/manual">[[admin/menu:scc/manual]]</a></li>
 				</ul>
 			</li>
 		</ul>

@@ -28,6 +28,7 @@ var SocketAdmin = {
 	navigation: require('./admin/navigation'),
 	rooms: require('./admin/rooms'),
 	social: require('./admin/social'),
+	post_rewards: require('./admin/post_rewards'),
 	themes: {},
 	plugins: {},
 	widgets: {},

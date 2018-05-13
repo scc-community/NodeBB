@@ -54,6 +54,9 @@ function addRoutes(router, middleware, controllers) {
 	router.get('/manage/categories', middlewares, controllers.admin.categories.getAll);
 	router.get('/manage/categories/:category_id', middlewares, controllers.admin.categories.get);
 	router.get('/manage/categories/:category_id/analytics', middlewares, controllers.admin.categories.getAnalytics);
+	//router.get('/sccmanage/post_rewards', middlewares, controllers.admin.post_rewards.get);
+	router.get('/sccmanage/post_rewards/:q?', middlewares, controllers.admin.post_rewards.get);
+
 
 	router.get('/manage/privileges/:cid?', middlewares, controllers.admin.privileges.get);
 	router.get('/manage/tags', middlewares, controllers.admin.tags.get);
