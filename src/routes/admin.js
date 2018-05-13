@@ -99,7 +99,7 @@ function addRoutes(router, middleware, controllers) {
 	router.get('/development/info', middlewares, controllers.admin.info.get);
 
 	// router.get('/sccreward/topic', middlewares, controllers.admin.topicreward.get);
-	router.get('/sccreward/manual', middlewares, controllers.admin.manualreward.get);
+	//router.get('/sccreward/manual', middlewares, controllers.admin.manualreward.get);
 }
 
 module.exports = function (app, middleware, controllers) {

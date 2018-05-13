@@ -9,6 +9,7 @@
 
 	"section-manage": "管理",
 	"manage/categories": "版块",
+	"manage/sccmgr": "SCC管理",
 	"manage/privileges": "权限",
 	"manage/tags": "话题",
 	"manage/users": "用户",
@@ -64,6 +65,11 @@
 	"advanced/cache": "缓存",
 	"development/logger": "记录器",
 	"development/info": "信息",
+	"section-scc": "SCC管理",
+	"scc/post": "文章奖励",
+	"sccmanage/post_rewards": "文章奖励",
+	"sccmanage/manual_rewards": "手动奖励",
+	"scc/manual": "手动奖励",
 
 	"reload-forum": "重载论坛",
 	"restart-forum": "重启论坛",
