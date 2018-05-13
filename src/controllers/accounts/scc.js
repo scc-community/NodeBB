@@ -20,7 +20,7 @@ sccController.get = function (req, res, callback) {
 	// console.log('sccController.get req.uid=' + req.uid);
 	// console.log('req.query.page:' + req.query.page + ', memo:' + req.query.memo);
 	var page = parseInt(req.query.page, 10) || 1;
-	var resultsPerPage = 5;
+	var resultsPerPage = 30;
 	var start = Math.max(0, page - 1) * resultsPerPage;
 	var stop = start + resultsPerPage - 1;
 	// console.log('page=' + page + ', start=' + start + ',stop=' + stop);
