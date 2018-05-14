@@ -37,6 +37,7 @@ var SocketAdmin = {
 	analytics: {},
 	logs: {},
 	errors: {},
+	sccReward: require('./admin/scc-reward'),
 };
 
 SocketAdmin.before = function (socket, method, data, next) {

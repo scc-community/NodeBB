@@ -8,7 +8,6 @@ var meta = require('../meta');
 var user = require('../user');
 var plugins = require('../plugins');
 var helpers = require('./helpers');
-var db = require('../database');
 
 var Controllers = module.exports;
 
@@ -37,6 +36,28 @@ Controllers.osd = require('./osd');
 Controllers['404'] = require('./404');
 Controllers.errors = require('./errors');
 Controllers.composer = require('./composer');
+
+var setUserdataInviter = function (userdata, invitationcode, callback) {
+	if (!invitationcode) {
+		return callback();
+	}
+	async.waterfall([
+		function (next) {
+			user.invitationcodeUid.get(invitationcode, next);
+		},
+		function (uid, next) {
+			if (!uid) {
+				return callback();
+			}
+			user.getUserField(uid, 'username', next);
+		},
+		function (username, next) {
+			userdata.inviter = username;
+			userdata.invitedcode = invitationcode;
+			next();
+		},
+	], callback);
+};
 
 Controllers.reset = function (req, res, next) {
 	if (req.params.code) {
@@ -174,33 +195,14 @@ Controllers.register = function (req, res, next) {
 			data.regFormEntry = [];
 			data.error = req.flash('error')[0] || errorText;
 			data.title = '[[pages:register]]';
-			if (req.query.token) {
-				async.waterfall([
-					function (next) {
-						db.getObjectField('scc:invition:token', req.query.token, next);
-					},
-					function (uid, next) {
-						if (uid) {
-							db.getObjectField('user:' + uid, 'username', next);
-						} else {
-							next(null, null);
-						}
-					},
-					function (username, next) {
-						if (username) {
-							data.inviter = username;
-						}
-						next(null);
-					},
-				], function (err) {
-					if (err) {
-						console.err(err.message);
-					}
-					res.render('register', data);
-				});
-			} else {
+
+			async.waterfall([
+				function (next) {
+					setUserdataInviter(data, req.query.invitedcode, next);
+				},
+			], function () {
 				res.render('register', data);
-			}
+			});
 		},
 	], next);
 };

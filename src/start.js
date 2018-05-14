@@ -9,7 +9,6 @@ var start = module.exports;
 
 start.start = function () {
 	var db = require('./database');
-
 	setupConfigs();
 
 	printStartupInfo();
@@ -42,6 +41,12 @@ start.start = function () {
 		},
 		function (next) {
 			db.initSessionStore(next);
+		},
+		function (next) {
+			startMysql(next);
+		},
+		function (next) {
+			require('./scc').init(next);
 		},
 		function (next) {
 			var webserver = require('./webserver');
@@ -85,6 +90,18 @@ start.start = function () {
 	});
 };
 
+function startMysql(cb) {
+	var mysql = require('./database/mysql');
+	async.waterfall([
+		function (next) {
+			mysql.init(next);
+		},
+		function (next) {
+			mysql.checkCompatibility(next);
+		},
+	], cb);
+}
+
 function setupConfigs() {
 	// nconf defaults, if not set in config
 	if (!nconf.get('sessionKey')) {
@@ -97,7 +114,7 @@ function setupConfigs() {
 	nconf.set('secure', urlObject.protocol === 'https:');
 	nconf.set('use_port', !!urlObject.port);
 	nconf.set('relative_path', relativePath);
-	nconf.set('port', nconf.get('PORT') || nconf.get('port') || urlObject.port || (nconf.get('PORT_ENV_VAR') ? nconf.get(nconf.get('PORT_ENV_VAR')) : false) || 4567);
+	nconf.set('port', nconf.get('PORT') || nconf.get('port') || urlObject.port || (nconf.get('PORT_ENV_VAR') ? nconf.get(nconf.get('PORT_ENV_VAR')) : false) || 5678);
 	nconf.set('upload_url', '/assets/uploads');
 }
 
@@ -153,6 +170,7 @@ function restart() {
 function shutdown(code) {
 	winston.info('[app] Shutdown (SIGTERM/SIGINT) Initialised.');
 	require('./database').close();
+	require('./database/mysql').close();
 	winston.info('[app] Database connection closed.');
 	require('./webserver').server.close();
 	winston.info('[app] Web server closed to connections.');

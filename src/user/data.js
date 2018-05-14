@@ -23,7 +23,8 @@ module.exports = function (User) {
 		'aboutme', 'signature', 'uploadedpicture', 'profileviews', 'reputation',
 		'postcount', 'topiccount', 'lastposttime', 'banned', 'banned:expire',
 		'status', 'flags', 'followerCount', 'followingCount', 'cover:url',
-		'cover:position', 'groupTitle', 'invitelink', 'token', 'sccInvitationNumber',
+		'cover:position', 'groupTitle', 'scctoken', 'invitationcount',
+		'invitationcode', 'invitedcode',
 	];
 
 	User.getUserField = function (uid, field, callback) {
@@ -249,6 +250,22 @@ module.exports = function (User) {
 				next(null, value);
 			},
 		], callback);
+	}
+
+	User.getInvitedcode = function (uid, callback) {
+		User.getUserField(uid, 'invitedcode', callback);
+	};
+
+	User.setInvitedcode = function (uid, value, callback) {
+		User.setUserField(uid, 'invitedcode', value, callback);
+	};
+
+	User.getInvitationcode = function (uid, callback) {
+		User.getUserField(uid, 'invitationcode', callback);
+	};
+
+	User.setInvitationcode = function (uid, value, callback) {
+		User.setUserField(uid, 'invitationcode', value, callback);
 	};
 
 	User.incrSccToken = function (uid, value, callback) {
@@ -258,30 +275,29 @@ module.exports = function (User) {
 			},
 			function (currentToken, next) {
 				console.log('currentToken:' + currentToken);
-				if (currentToken == null || currentToken == undefined) {
-					db.sortedSetAdd('users:token', parseInt(value, 10), uid, next); // sort by token number
+				if (currentToken === null || currentToken === undefined) {
+					db.sortedSetAdd('users:scctoken', parseInt(value, 10), uid, next); // sort by token number
 				} else {
 					var newToken = parseInt(currentToken, 10) + parseInt(value, 10);
 					console.log('token != null token=' + parseInt(currentToken, 10) + ', value=' + parseInt(value, 10) + ', total=' + newToken);
-					db.sortedSetAdd('users:token', newToken, uid, next); // sort by token number
+					db.sortedSetAdd('users:scctoken', newToken, uid, next); // sort by token number
 				}
 			},
 			function (next) {
 				console.log('db.incrObjectFieldBy uid=' + uid + ', value=' + value);
-				db.incrObjectFieldBy('user:' + uid, 'token', value, next);
+				db.incrObjectFieldBy('user:' + uid, 'scctoken', value, next);
 			},
 		], callback);
 	};
 
 	User.getSccToken = function (uid, sccToken, callback) {
 		console.log('User.getSccToken');
-		db.getObjectField('user:' + uid, 'token', callback);
+		db.getObjectField('user:' + uid, 'scctoken', callback);
 	};
 
 	User.setSccToken = function (uid, value, callback) {
 		console.log('User.setSccToken');
-		db.setObjectField('user:' + uid, 'token', value, callback);
-		db.sortedSetAdd('users:token', parseInt(value, 10), uid); // sort by token number
+		db.setObjectField('user:' + uid, 'scctoken', value, callback);
+		db.sortedSetAdd('users:scctoken', parseInt(value, 10), uid); // sort by token number
 	};
-
 };

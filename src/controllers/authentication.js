@@ -65,27 +65,9 @@ authenticationController.register = function (req, res) {
 		if (err) {
 			return helpers.noScriptErrors(req, res, err.message, 400);
 		}
-
 		if (data.uid && req.body.userLang) {
 			user.setSetting(data.uid, 'userLang', req.body.userLang);
 		}
-
-
-		if (req.body.token) {
-			async.waterfall([
-				function (_, next) {
-					var sccToken = 30;
-					db.incrObjectFieldBy('user:' + data.uid, 'token', sccToken, next);
-					var logContent = 'scc token: {incrObjectFieldBy(user:' + data.uid + ' ,30}';
-					winston.log(logContent);
-				},
-			], function (err) {
-				if (err) {
-					return helpers.noScriptErrors(req, res, err.message, 400);
-				}
-			});
-		}
-
 		res.json(data);
 	});
 };

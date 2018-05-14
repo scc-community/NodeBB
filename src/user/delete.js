@@ -9,6 +9,7 @@ var topics = require('../topics');
 var groups = require('../groups');
 var plugins = require('../plugins');
 var batch = require('../batch');
+var scc = require('../scc');
 
 module.exports = function (User) {
 	User.delete = function (callerUid, uid, callback) {
@@ -67,6 +68,12 @@ module.exports = function (User) {
 			function (next) {
 				deleteChats(uid, next);
 			},
+			// function (next) {
+			// 	scc.user.deleteUser(uid, next);
+			// },
+			function (next) {
+				deleteInvitationcodeUid(uid, next);
+			},
 			function (next) {
 				User.auth.revokeAllSessions(uid, next);
 			},
@@ -99,6 +106,7 @@ module.exports = function (User) {
 							'users:joindate',
 							'users:postcount',
 							'users:reputation',
+							'users:scctoken',
 							'users:banned',
 							'users:online',
 							'users:notvalidated',
@@ -162,6 +170,17 @@ module.exports = function (User) {
 		], function (err) {
 			callback(err);
 		});
+	}
+
+	function deleteInvitationcodeUid(uid, callback) {
+		async.waterfall([
+			function (next) {
+				User.getUserField(uid, 'invitationcode', next);
+			},
+			function (invitationcode, next) {
+				db.deleteObjectField('invitationcode:uid', invitationcode, next);
+			},
+		], callback);
 	}
 
 	function deleteChats(uid, callback) {

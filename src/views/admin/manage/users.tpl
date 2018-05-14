@@ -36,7 +36,7 @@
 					<li><a href='{config.relative_path}/admin/manage/users/not-validated'>[[admin/manage/users:pills.unvalidated]]</a></li>
 					<li><a href='{config.relative_path}/admin/manage/users/no-posts'>[[admin/manage/users:pills.no-posts]]</a></li>
 					<li><a href='{config.relative_path}/admin/manage/users/top-posters'>[[admin/manage/users:pills.top-posters]]</a></li>
-					<li><a href='{config.relative_path}/admin/manage/users/most-reputation'>[[admin/manage/users:pills.top-rep]]</a></li>
+					<li><a href='{config.relative_path}/admin/manage/users/most-scc'>[[admin/manage/users:pills.top-scc]]</a></li>
 					<li><a href='{config.relative_path}/admin/manage/users/inactive'>[[admin/manage/users:pills.inactive]]</a></li>
 					<li><a href='{config.relative_path}/admin/manage/users/flagged'>[[admin/manage/users:pills.flagged]]</a></li>
 					<li><a href='{config.relative_path}/admin/manage/users/banned'>[[admin/manage/users:pills.banned]]</a></li>
@@ -77,7 +77,7 @@
 								<th>[[admin/manage/users:users.username]]</th>
 								<th>[[admin/manage/users:users.email]]</th>
 								<th class="text-right">[[admin/manage/users:users.postcount]]</th>
-								<th class="text-right">[[admin/manage/users:users.reputation]]</th>
+								<th class="text-right">[[admin/manage/users:users.scc]]</th>
 								<th class="text-right">[[admin/manage/users:users.flags]]</th>
 								<th>[[admin/manage/users:users.joined]]</th>
 								<th>[[admin/manage/users:users.last-online]]</th>
@@ -97,7 +97,7 @@
 								<i class="notvalidated fa fa-times text-danger<!-- IF users.email:confirmed --> hidden<!-- ENDIF users.email:confirmed -->" title="not validated"></i>
 								<!-- ENDIF config.requireEmailConfirmation --> {users.email}</td>
 								<td class="text-right">{users.postcount}</td>
-								<td class="text-right">{users.reputation}</td>
+								<td class="text-right"><a href="{config.relative_path}/user/{users.userslug}/scc?memo=true">{users.scctoken}</a></td>
 								<td class="text-right"><!-- IF users.flags -->{users.flags}<!-- ELSE -->0<!-- ENDIF users.flags --></td>
 								<td><span class="timeago" title="{users.joindateISO}"></span></td>
 								<td><span class="timeago" title="{users.lastonlineISO}"></span></td>

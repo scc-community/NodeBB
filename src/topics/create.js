@@ -161,6 +161,18 @@ module.exports = function (Topics) {
 				onNewPost(postData, data, next);
 			},
 			function (postData, next) {
+				var rewardTopicData = {
+					cid: postData.cid,
+					pid: postData.pid,
+					uid: postData.uid,
+					tid: postData.tid,
+				};
+				var value = JSON.stringify(rewardTopicData);
+				db.setObjectField('topics:rewardcheck', postData.tid, value, function (err) {
+					next(err, postData);
+				});
+			},
+			function (postData, next) {
 				async.parallel({
 					postData: function (next) {
 						next(null, postData);

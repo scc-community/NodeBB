@@ -1,14 +1,14 @@
 'use strict';
 
-var winston = require('winston');
 var async = require('async');
 var db = require('../database');
+
 var utils = require('../utils');
 var validator = require('validator');
 var plugins = require('../plugins');
 var groups = require('../groups');
 var meta = require('../meta');
-var invite = require('./invite_scc');
+var scc = require('../scc');
 
 module.exports = function (User) {
 	User.create = function (data, callback) {
@@ -45,9 +45,10 @@ module.exports = function (User) {
 					topiccount: 0,
 					lastposttime: 0,
 					banned: 0,
-					token: 300,
-					sccInviteToken: data.token,
-					sccInvitationNumber: 0,
+					scctoken: 0,
+					invitedcode: data.invitedcode,
+					invitationcode: utils.generateUUID(),
+					invitationcount: 0,
 					status: 'online',
 				};
 				User.uniqueUsername(userData, next);
@@ -67,15 +68,15 @@ module.exports = function (User) {
 			},
 			function (uid, next) {
 				userData.uid = uid;
-				userData.token = 300;
 				db.setObject('user:' + uid, userData, next);
-				var logContent = 'scc token: {setObject(user:' + uid + ' , userData.token:300}';
-				winston.log(logContent);
 			},
 			function (next) {
+				scc.user.createUser(userData, next);
+			},
+			function (_, next) {
 				async.parallel([
 					function (next) {
-						invite.createInviteLink(userData.uid, next);
+						User.invitationcodeUid.set(userData.invitationcode, userData.uid, next);
 					},
 					function (next) {
 						db.incrObjectField('global', 'userCount', next);

@@ -33,6 +33,7 @@ require('./topics/tools')(Topics);
 require('./topics/thumb')(Topics);
 require('./topics/bookmarks')(Topics);
 require('./topics/merge')(Topics);
+require('./topics/reward')(Topics);
 
 Topics.exists = function (tid, callback) {
 	db.isSortedSetMember('topics:tid', tid, callback);

@@ -124,6 +124,47 @@ UserEmail.sendValidationEmail = function (uid, options, callback) {
 	], callback);
 };
 
+UserEmail.registerReward = function (uid, callback) {
+	async.waterfall([
+		function (next) {
+			user.registerReward('register', uid, null, next);
+		},
+		function (next) {
+			user.getInvitedcode(uid, next);
+		},
+		function (invitedode, next) {
+			if (invitedode) {
+				user.invitationcodeUid.get(invitedode, next);
+			} else {
+				return callback();
+			}
+		},
+		function (inviteduid, next) {
+			if (inviteduid) {
+				async.series([
+					async.apply(user.registerReward, 'register_invited', uid, null),
+					async.apply(user.registerReward, 'invite_friend', inviteduid, null),
+					function (next) {
+						async.waterfall([
+							function (next) {
+								user.incrementUserFieldBy(inviteduid, 'invitationcount', 1, next);
+							},
+							function (invitationcount, next) {
+								user.registerReward('invite_extra', inviteduid, invitationcount, next);
+							},
+						], next);
+					},
+				], next);
+			} else {
+				return callback();
+			}
+		},
+		function (_, next) {
+			next();
+		},
+	], callback);
+};
+
 UserEmail.confirm = function (code, callback) {
 	async.waterfall([
 		function (next) {
@@ -136,41 +177,7 @@ UserEmail.confirm = function (code, callback) {
 			var registerUserId = null;
 			async.waterfall([
 				function (next) {
-					db.getObjectField('user:' + confirmObj.uid, 'sccInviteToken', next);
-				},
-				function (sccInviteToken, next) {
-					if (sccInviteToken) {
-						db.getObjectField('scc:invition:token', sccInviteToken, next);
-					} else {
-						return next(new Error('[[error:getSccInviteToken-noexist]]'));
-					}
-				},
-				function (uid, next) {
-					registerUserId = uid;
-					if (registerUserId) {
-						db.incrObjectFieldBy('user:' + registerUserId, 'token', 90, next);
-						var logContent = 'scc token: {incrObjectFieldBy(user:' + registerUserId + ' ,90}';
-						winston.log(logContent);
-					} else {
-						return next(new Error('[[error:setUserUidToken-exception]]'));
-					}
-				},
-				function (next) {
-					db.incrObjectFieldBy('user:' + registerUserId, 'sccInvitationNumber', 1, function (err, val) {
-						if (err) {
-							return next(new Error('uid:' + registerUserId + ',newValue:' + val + ', [[error:setSccInvitationNumber-exception]]'));
-						}
-						next();
-					});
-				},
-			], function (err) {
-				callback(err);
-			});
-			async.series([
-				async.apply(db.delete, 'confirm:' + code),
-				async.apply(db.delete, 'uid:' + confirmObj.uid + ':confirm:email:sent'),
-				function (next) {
-					db.sortedSetRemove('users:notvalidated', confirmObj.uid, next);
+					UserEmail.registerReward(confirmObj.uid, next);
 				},
 				function (next) {
 					plugins.fireHook('action:user.email.confirmed', { uid: confirmObj.uid, email: confirmObj.email }, next);

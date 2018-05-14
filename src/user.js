@@ -36,6 +36,7 @@ require('./user/invite')(User);
 require('./user/password')(User);
 require('./user/info')(User);
 require('./user/online')(User);
+require('./user/reward')(User);
 
 User.getUidsFromSet = function (set, start, stop, callback) {
 	if (set === 'users:online') {
@@ -105,7 +106,7 @@ User.getUsers = function (uids, uid, callback) {
 	User.getUsersWithFields(uids, [
 		'uid', 'username', 'userslug', 'picture', 'status',
 		'postcount', 'reputation', 'email:confirmed', 'lastonline',
-		'flags', 'banned', 'banned:expire', 'joindate', 'token'
+		'flags', 'banned', 'banned:expire', 'joindate', 'scctoken',
 	], uid, callback);
 };
 
@@ -145,10 +146,10 @@ User.getUidByUserslug = function (userslug, callback) {
 User.getTokenByUid = function (uid, callback) {
 	async.waterfall([
 		function (next) {
-			User.getUserField(uid, 'token', next);
-		}
+			User.getUserField(uid, 'scctoken', next);
+		},
 	], callback);
-}
+};
 
 User.getUsernamesByUids = function (uids, callback) {
 	async.waterfall([
@@ -376,8 +377,4 @@ User.addInterstitials = function (callback) {
 
 	callback();
 };
-
-User.getInviteToken = function(uid, callback) {
-	db.getObjectField('scc:invition:uid', uid,  callback);
-}
 

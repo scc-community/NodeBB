@@ -105,6 +105,14 @@
 			<!-- ENDIF env -->
 		</ul>
 	</section>
+
+	<section class="menu-section">
+		<h3 class="menu-section-title">[[admin/menu:section-scc-reward]]</h3>
+		<ul class="menu-section-list">
+			<li><a href="{relative_path}/admin/scc-reward/topic-reward">[[admin/menu:scc-reward/topic-reward]]</a></li>
+			<li><a href="{relative_path}/admin/scc-reward/manual-reward">[[admin/menu:scc-reward/manual-reward]]</a></li>
+		</ul>
+	</section>
 </nav>
 
 <main id="panel">
@@ -276,6 +284,13 @@
 					<!-- IF env -->
 					<li><a href="{relative_path}/admin/development/logger">[[admin/menu:development/logger]]</a></li>
 					<!-- ENDIF env -->
+				</ul>
+			</li>
+			<li class="dropdown menu-item">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">[[admin/menu:section-scc-reward]]</a>
+				<ul class="dropdown-menu" role="menu">
+					<li><a href="{relative_path}/admin/scc-reward/topic-reward">[[admin/menu:scc-reward/topic-reward]]</a></li>
+					<li><a href="{relative_path}/admin/scc-reward/manual-reward">[[admin/menu:scc-reward/manual-reward]]</a></li>
 				</ul>
 			</li>
 		</ul>

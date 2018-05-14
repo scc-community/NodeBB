@@ -8,6 +8,7 @@
 	"general/social": "Social",
 
 	"section-manage": "Manage",
+	"manage/sccmgr": "SCC",
 	"manage/categories": "Categories",
 	"manage/privileges": "Privileges",
 	"manage/tags": "Tags",
@@ -48,6 +49,10 @@
 	"extend/widgets": "Widgets",
 	"extend/rewards": "Rewards",
 
+	"section-scc-reward": "SCC reward",
+	"scc-reward/manual-reward": "Manual reward",
+	"scc-reward/topic-reward": "Topic reward",
+
 	"section-social-auth": "Social Authentication",
 
 	"section-plugins": "Plugins",
@@ -61,6 +66,10 @@
 	"advanced/cache": "Cache",
 	"development/logger": "Logger",
 	"development/info": "Info",
+
+	"section-scc": "SCC",
+	"scc/post": "Post Rewards",
+	"scc/manual": "Manual Rewards",
 
 	"reload-forum": "Reload Forum",
 	"restart-forum": "Restart Forum",
