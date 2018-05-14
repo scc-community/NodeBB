@@ -116,6 +116,7 @@ DROP TABLE IF EXISTS `txs`;
 CREATE TABLE `txs` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `uid` mediumint(20) unsigned NOT NULL,
+  `transaction_uid` mediumint(20) unsigned NOT NULL DEFAULT 0,
   `publish_uid` mediumint(8) unsigned NOT NULL,
   `transaction_type` enum('1','2') NOT NULL,
   `tx_no` varchar(40) NOT NULL,

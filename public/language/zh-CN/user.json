@@ -164,5 +164,6 @@
     "scc.timestamp": "时间",
     "scc.transaction-id": "交易号",
     "scc.memo": "备注",
-    "scc.own-token": "当前拥有码力: "
+    "scc.own-token": "当前拥有码力: ",
+    "forum.username": "SCC社区"
 }

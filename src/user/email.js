@@ -3,6 +3,7 @@
 
 var async = require('async');
 var nconf = require('nconf');
+var winston = require('winston');
 
 var user = require('../user');
 var utils = require('../utils');

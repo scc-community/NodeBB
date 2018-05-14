@@ -29,12 +29,14 @@ sccController.get = function (req, res, callback) {
 	var totalCount = 0;
 	var sccTokenNumber = 0;
 	// console.log('totalCount1:' + totalCount);
+
+	var results = [];
 	async.waterfall([
 		function (next) {
 			// console.log('before getTxs');
 			scc.tx.getTxs('where uid = ?', [req.uid], next);
 			// console.log('after getTxs');
-		}, 
+		},
 		function (totalResult, next) {
 			if (undefined != totalResult) {
 				totalCount = totalResult.length;
@@ -61,7 +63,27 @@ sccController.get = function (req, res, callback) {
 			scc.tx.getTxs('where uid = ?' + ' limit ' + start + ',' + resultsPerPage, [req.uid], next);
 			// console.log('after getTxs2');
 		},
-		function (results) {
+		function (datas, next) {
+			datas.forEach(function (item) {
+				results.push(item._data);
+			});
+			async.each(results, function (item, next) {
+				item.transactionTypeText = scc.tx.getTransactionTypeText(item.transaction_type);
+				item.rewardtypeText = scc.rewardType.getRewardTypeText(item.reward_type);
+				async.waterfall([
+					function (next) {
+						db.getObjectField('user:' + item.transaction_uid, 'username', next);
+					},
+					function (username, next) {
+						item.transactionUsername = username;
+						next();
+					},
+				], next);
+			}, function (err) {
+				next(err);
+			});
+		},
+		function () {
 			// console.log('len=' + results.length);
 			txsData.page = page;
 			txsData.memo = req.query.memo;
@@ -77,19 +99,14 @@ sccController.get = function (req, res, callback) {
 				},
 			]);
 
-			if (results != undefined && results.length > 0) {
-				var txsResult = [];
-				for (var index = 0; index < results.length; index++) {
-					txsResult[index] = results[index]._data;
-				}
-	
+			if (results.length > 0) {
 				var pageCount = Math.max(1, Math.ceil(totalCount / resultsPerPage));
 				// console.log('pageCount:' + pageCount);
 				// console.log('username:' + txsData.username + ', userslug:' + txsData.userslug);
-				txsData.txs = txsResult;
+				txsData.txs = results;
 				txsData.pageCount = pageCount;
 				txsData.pagination = pagination.create(page, pageCount, req.query);
-	
+
 				// console.log('txsData:' + JSON.stringify(txsData));
 			}
 			res.render('account/scc', txsData);

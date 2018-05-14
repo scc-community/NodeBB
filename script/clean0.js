@@ -13,6 +13,9 @@ async.waterfall([
 		client.select(0, next);
 	},
 	function (status, next) {
+		client.hset('user:0', 'username', '[[user:forum.username]]', next);
+	},
+	function (_, next) {
 		client.del('scc:invition:uid', function (err) {
 			if (err) {
 				console.log(err);
