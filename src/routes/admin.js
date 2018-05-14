@@ -95,7 +95,7 @@ function addRoutes(router, middleware, controllers) {
 	router.get('/development/logger', middlewares, controllers.admin.logger.get);
 	router.get('/development/info', middlewares, controllers.admin.info.get);
 
-	router.get('/scc-reward/topic-reward/:q?', middlewares, controllers.admin.sccReward.topicReward.get);
+	router.get('/scc-reward/topic-reward', middlewares, controllers.admin.sccReward.topicReward.get);
 	router.get('/scc-reward/manual-reward', middlewares, controllers.admin.sccReward.manualReward.get);
 }
 
