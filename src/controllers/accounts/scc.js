@@ -72,10 +72,10 @@ sccController.get = function (req, res, callback) {
 				item.rewardtypeText = scc.rewardType.getRewardTypeText(item.reward_type);
 				async.waterfall([
 					function (next) {
-						db.getObjectField('user:' + item.uid, 'username', next);
+						db.getObjectField('user:' + item.transaction_uid, 'username', next);
 					},
 					function (username, next) {
-						item.username = username;
+						item.transactionUsername = username;
 						next();
 					},
 				], next);
@@ -100,15 +100,10 @@ sccController.get = function (req, res, callback) {
 			]);
 
 			if (results.length > 0) {
-				var txsResult = [];
-				for (var index = 0; index < results.length; index++) {
-					txsResult[index] = results[index]._data;
-				}
-
 				var pageCount = Math.max(1, Math.ceil(totalCount / resultsPerPage));
 				// console.log('pageCount:' + pageCount);
 				// console.log('username:' + txsData.username + ', userslug:' + txsData.userslug);
-				txsData.txs = txsResult;
+				txsData.txs = results;
 				txsData.pageCount = pageCount;
 				txsData.pagination = pagination.create(page, pageCount, req.query);
 

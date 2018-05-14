@@ -164,5 +164,6 @@
     "scc.timestamp": "timestamp",
     "scc.transaction-id": "transaction id",
     "scc.memo": "notes",
-    "scc.own-token": "current SCC: "
+    "scc.own-token": "current SCC: ",
+    "forum.username": "scc forum"
 }
