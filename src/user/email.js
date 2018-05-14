@@ -174,13 +174,22 @@ UserEmail.confirm = function (code, callback) {
 			if (!confirmObj || !confirmObj.uid || !confirmObj.email) {
 				return next(new Error('[[error:invalid-data]]'));
 			}
-			var registerUserId = null;
 			async.waterfall([
 				function (next) {
 					UserEmail.registerReward(confirmObj.uid, next);
 				},
 				function (next) {
-					plugins.fireHook('action:user.email.confirmed', { uid: confirmObj.uid, email: confirmObj.email }, next);
+					async.series([
+						async.apply(user.setUserField, confirmObj.uid, 'email:confirmed', 1),
+						async.apply(db.delete, 'confirm:' + code),
+						async.apply(db.delete, 'uid:' + confirmObj.uid + ':confirm:email:sent'),
+						function (next) {
+							db.sortedSetRemove('users:notvalidated', confirmObj.uid, next);
+						},
+						function (next) {
+							plugins.fireHook('action:user.email.confirmed', { uid: confirmObj.uid, email: confirmObj.email }, next);
+						},
+					], next);
 				},
 			], next);
 		},
