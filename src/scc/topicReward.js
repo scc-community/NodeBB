@@ -1,6 +1,7 @@
 'use strict';
 
 var mysql = require('../database/mysql');
+var winston = require('winston');
 
 var TopicReward = module.exports;
 
@@ -20,7 +21,7 @@ TopicReward.bcreateTopicReward = function (data, callback) {
 };
 
 
-// Dummy data, supposed to be to get from DB
+// Dummy data, supposed to be got from DB
 TopicReward.getUnvestedRewards = function (postType, modType, sortType, callback) {
 	var dummyData = {
 		records: [
@@ -94,15 +95,15 @@ TopicReward.getUnvestedRewards = function (postType, modType, sortType, callback
 	// Simulate filter conditions
 	// TODO: we should use this types to filter data from DB.
 
-	if (postType === 2) {
+	if (postType == 2) {
 		dummyData.records.pop();
 	}
 
-	if (modType === 2) {
+	if (modType == 2) {
 		dummyData.records.unshift();
 	}
 
-	if (sortType === 2) {
+	if (sortType == 2) {
 		dummyData.records.reverse();
 	}
 

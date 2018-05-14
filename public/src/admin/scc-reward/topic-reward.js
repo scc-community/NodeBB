@@ -219,8 +219,8 @@ define('admin/scc-reward/topic-reward', ['translator', 'benchpress'], function (
 					userData.Data.isEmpty = true;
 					userData.Data.records = [];
 				} else {
-					userData.Data.isEmpty = !(data.unvested.records.length > 1);
-					userData.Data.records = data.unvested.records;
+					userData.Data.isEmpty = !(data.records.length > 1);
+					userData.Data.records = data.records;
 				}
 
 				// Refresh page
