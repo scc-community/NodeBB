@@ -19,6 +19,7 @@ ManualReward.createManualRewardWithTxs = function (manualRewardData, topicReward
 				mysql.nnewRow('txs', conn, topicRewardData, next);
 			},
 			function (row, next) {
+				conn.commit();
 				conn.release();
 				next();
 			},
