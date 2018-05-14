@@ -27,6 +27,15 @@ RewardType.loadRewardTypes = function (callback) {
 	});
 };
 
+RewardType.getRewardTypeText = function (rewardTypeId) {
+	for (var index = 0; index < RewardType.rewardTypeList.length; index++) {
+		var rewardType = RewardType.rewardTypeList[index];
+		if (rewardType.id === rewardTypeId) {
+			return rewardType.content;
+		}
+	}
+};
+
 RewardType.getRewardTypeKey = function (category, item) {
 	return category + ':' + item;
 };

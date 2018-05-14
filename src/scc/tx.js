@@ -32,3 +32,14 @@ Tx.initRow = function (category, item, txData, sccParams) {
 Tx.getCount = function (callback) {
 	mysql.query('SELECT COUNT(*) AS count FROM txs', null, callback);
 };
+
+Tx.getTransactionTypeText = function (transactionType) {
+	switch (transactionType) {
+	case '2':
+		return '[[admin/scc-reward/tx:outgoings]]';
+	case '1':
+		return '[[admin/scc-reward/tx:income]]';
+	default:
+		return '[[admin/scc-reward/tx:income]]';
+	}
+};
