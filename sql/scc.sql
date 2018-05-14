@@ -61,7 +61,7 @@ CREATE TABLE `topic_rewards` (
   `topic_upvotes_count` mediumint(8) unsigned NOT NULL,
   `date_posted` datetime NOT NULL,
   `scc_autoed` mediumint(8) NOT NULL,
-  `scc_setted` mediumint(8) DEFAULT NULL,
+  `scc_setted` mediumint(8) NOT NULL,
   `scc_issued` mediumint(8) DEFAULT NULL,
   `date_issued` datetime DEFAULT NULL,
   `memo` varchar(40) DEFAULT NULL,

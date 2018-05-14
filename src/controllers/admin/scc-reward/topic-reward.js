@@ -12,9 +12,23 @@ TopicRewardController.get = function (req, res, next) {
 	var resultsPerPage = 50;
 	var start = Math.max(0, page - 1) * resultsPerPage;
 
-	var sortByDateIssued = req.query.sortByDateIssued;
-	var filterBySccIsModdify = req.query.filterBySccIsModdify;
-	var filterByTopicRewardType = req.query.filterByTopicRewardType;
+	var sortBySql = [];
+	var sortBySqlIndex = 0;
+	if (req.query.sortByscc) {
+		sortBySql[sortBySqlIndex] = { key: 'scc_issued', value: req.query.sortByScc };
+	}
+	sortBySql[sortBySqlIndex] = { key: 'date_posted', value: 'DESC' };
+
+	var whereSql = [];
+	var whereSqlIndex = 0;
+	if (req.query.filterByTopicRewardType) {
+		whereSql[whereSqlIndex] = { key: 'reward_type', value: req.query.filterByTopicRewardType };
+	}
+	if (req.query.filterBySccIsModdify === 0) {
+		whereSql[whereSqlIndex] = { key: 'scc_setted', value: 0, oper: '<>' };
+	} else if (req.query.filterBySccIsModdify === 1) {
+		whereSql[whereSqlIndex] = { key: 'scc_setted', value: 0, oper: '<>' };
+	}
 
 	async.waterfall([
 		function (next) {

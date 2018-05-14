@@ -74,6 +74,26 @@ module.exports = function (mysqlClient, module) {
 		}, callback);
 	};
 
+	module.pageQuery = function (model, where, orderby, limit, callback) {
+		var sqlCondition = '';
+		if (where) {
+			for (var whereIndex = 0; whereIndex < where.length; whereIndex++) {
+				sqlCondition += (' ' + where[whereIndex].key + ' = "' + where[whereIndex].value + '" AND');
+			}
+			sqlCondition = sqlCondition.substring(0, sqlCondition.length - 3);
+		}
+		if (orderby) {
+			for (var orderByIndex = 0; orderByIndex < orderby.length; orderByIndex++) {
+				sqlCondition += (' ORDER BY ' + orderby[orderByIndex].key + ' ' + orderby[orderByIndex].value + ',');
+			}
+			sqlCondition = sqlCondition.substring(0, sqlCondition.length - 1);
+		}
+		if (limit) {
+			sqlCondition += ' LIMIT ' + limit[0] + ',' + limit[1];
+		}
+		module.baseQuery(model, sqlCondition, null, callback);
+	};
+
 	module.nquery = function (conn, querySql, variable_binding, callback) {
 		var sql = querySql;
 		if (variable_binding !== null) {

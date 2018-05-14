@@ -5,18 +5,8 @@ var mysql = require('../database/mysql');
 
 var ManualReward = module.exports;
 
-ManualReward.getManualRewards = function (where_binding, orderby_binding, limit_binding, callback) {
-	var sqlCondition = '';
-	if (where_binding) {
-		for (const whereKey in where_binding) {
-			if (where_binding.hasOwnProperty(whereKey)) {
-				var whereValue = where_binding[whereKey];
-
-			}
-		}
-		sqlCondition +=  ;
-	}
-	mysql.baseQuery('manual_rewards', sqlCondition, limit_binding, callback);
+ManualReward.getManualRewards = function (where, orderby, limit, callback) {
+	mysql.pageQuery('manual_rewards', where, orderby, limit, callback);
 };
 
 ManualReward.createManualRewardWithTxs = function (manualRewardData, txData, callback) {
@@ -29,6 +19,7 @@ ManualReward.createManualRewardWithTxs = function (manualRewardData, txData, cal
 				mysql.nnewRow('txs', conn, txData, next);
 			},
 			function (row, next) {
+				conn.commit();
 				conn.release();
 				next();
 			},
