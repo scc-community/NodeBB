@@ -177,7 +177,6 @@ function getUsers(set, section, min, max, req, res, next) {
 				pageCount: Math.max(1, Math.ceil(results.count / resultsPerPage)),
 			};
 			data[section] = true;
-			console.log('data=' + JSON.stringify(data));
 			render(req, res, data);
 		},
 	], next);
