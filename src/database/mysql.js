@@ -36,9 +36,9 @@ mysqlModule.checkCompatibility = function (next) {
 };
 
 mysqlModule.checkCompatibilityVersion = function (version, next) {
-	if (semver.lt(version, '5.7.0')) {
-		return next(new Error('Your mysql version is not new enough to support NodeBB, please upgrade mysql to v2.8.9 or higher.'));
-	}
+	// if (semver.lt(version, '5.7.0')) {
+	// 	return next(new Error('Your mysql version is not new enough to support NodeBB, please upgrade mysql to v2.8.9 or higher.'));
+	// }
 	if (typeof next === 'function') {
 		next();
 	}
