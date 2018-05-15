@@ -6,7 +6,9 @@ var utils = require('../src/utils');
 var mysql = require('../src/database/mysql');
 
 var client = redis.createClient('6379', '127.0.0.1');
-
+var lastData = {};
+var txData = {};
+var count = 0;
 async.waterfall([
 	function (next) {
 		startMysql(next);
@@ -15,17 +17,29 @@ async.waterfall([
 		client.select(0, next);
 	},
 	function (status, next) {
+		mysql.deleteRows('txs', null, null, next);
+	},
+	function (result, err, next) {
 		client.keys('user:*', next);
 	},
-	function (results, next) {
-		async.each(results, function (item, next) {
+	function (res, next) {
+		var arr1 = [];
+		res.forEach(function (item) {
+			var item1 = item.split(':', 3);
+			if (item1.length === 2) {
+				var item2 = item1.join(':');
+				arr1.push(item2);
+			}
+		});
+		console.log(arr1.length);
+		async.eachSeries(arr1, function (item, next) {
 			async.waterfall([
 				function (next) {
 					client.hgetall(item, next);
 				},
 				function (data, next) {
-					var txData = {
-						uid: data.uid,
+					txData = {
+						uid: data.uid || 0,
 						date_issued: new Date().toLocaleString(),
 						transaction_uid: 0,
 						memo: 'update scc token for new function',
@@ -36,7 +50,15 @@ async.waterfall([
 						content: 'set scc token for last scc token',
 						scc: data.scctoken || 0,
 					};
+					if (txData.uid === '') {
+						console.log(txData.uid);
+					}
 					mysql.newRow('txs', txData, next);
+				},
+				function (row, next) {
+					count += 1;
+					console.log(count, row._data.uid);
+					next();
 				},
 			], next);
 		}, next);

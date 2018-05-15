@@ -16,8 +16,8 @@ async.waterfall([
 	function (res, next) {
 		var arr1 = [];
 		res.forEach(function (item) {
-			var item1 = item.split(':', 2);
-			if (item1[1].length < 20) {
+			var item1 = item.split(':', 3);
+			if (item1.length === 2) {
 				var item2 = item1.join(':');
 				arr1.push(item2);
 			}

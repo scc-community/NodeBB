@@ -158,7 +158,10 @@ module.exports = function (mysqlClient, module) {
 			callback(new Error('tableName error'));
 		}
 		var deleteSql = 'DELETE FROM ' + tableName + ' ';
-		module.nQuery(conn, deleteSql, conditionSql, variable_binding, callback);
+		if (conditionSql) {
+			deleteSql += conditionSql;
+		}
+		module.nquery(conn, deleteSql, variable_binding, callback);
 	};
 
 	module.deleteRows = function (tableName, conditionSql, variable_binding, callback) {
