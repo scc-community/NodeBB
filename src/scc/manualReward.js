@@ -5,8 +5,8 @@ var mysql = require('../database/mysql');
 
 var ManualReward = module.exports;
 
-ManualReward.getManualRewards = function (limit_binding, callback) {
-	mysql.baseQuery('manual_rewards', 'ORDER BY date_issued DESC LIMIT ?,?', limit_binding, callback);
+ManualReward.getManualRewards = function (where, orderby, limit, callback) {
+	mysql.pageQuery('manual_rewards', where, orderby, limit, callback);
 };
 
 ManualReward.createManualRewardWithTxs = function (manualRewardData, topicRewardData, callback) {

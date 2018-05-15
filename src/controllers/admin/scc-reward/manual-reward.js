@@ -29,7 +29,7 @@ RewardManualController.get = function (req, res, next) {
 					var manualrewards = [];
 					async.waterfall([
 						function (next) {
-							scc.manualReward.getManualRewards([start, resultsPerPage], next);
+							scc.manualReward.getManualRewards(null, [{ key: 'date_issued', value: 'DESC' }], [start, resultsPerPage], next);
 						},
 						function (result, next) {
 							result.forEach(function (item) {

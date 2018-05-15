@@ -28,7 +28,7 @@
 								<td class="text-right">{manualrewards.scc_setted}</td>
 								<td>{manualrewards.rewardtype_content}</td>
 								<td>{manualrewards.content}</td>
-								<td>{manualrewards.demo}</td>
+								<td>{manualrewards.memo}</td>
 								<td><span class="timeago" title="{manualrewards.date_issued}"></span></td>
 							</tr>
 							<!-- END manualrewards -->

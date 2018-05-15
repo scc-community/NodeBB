@@ -66,6 +66,27 @@ module.exports = function (mysqlClient, module) {
 		return model.baseQuery(sqlCondition, variable_binding);
 	};
 
+	module.pageQuery = function (model, where, orderby, limit, callback) {
+		var sqlCondition = '';
+		if (where) {
+			for (var whereIndex = 0; whereIndex < where.length; whereIndex++) {
+				var compaser = where[whereIndex].compaser || 'AND';
+				sqlCondition += (' WHERE ' + where[whereIndex].key + '=' + where[whereIndex].value + ' ' + compaser);
+			}
+			sqlCondition = sqlCondition.substring(0, sqlCondition.length - 3);
+		}
+		if (orderby) {
+			for (var orderByIndex = 0; orderByIndex < orderby.length; orderByIndex++) {
+				sqlCondition += (' ORDER BY ' + orderby[orderByIndex].key + ' ' + orderby[orderByIndex].value + ',');
+			}
+			sqlCondition = sqlCondition.substring(0, sqlCondition.length - 1);
+		}
+		if (limit) {
+			sqlCondition += ' LIMIT ' + limit[0] + ',' + limit[1];
+		}
+		module.baseQuery(model, sqlCondition, null, callback);
+	};
+
 	module.baseQuery = function (model, sqlCondition, variable_binding, callback) {
 		module.connect(function (conn, next) {
 			var selectSql = module.nbaseQuery(model, sqlCondition, variable_binding);
