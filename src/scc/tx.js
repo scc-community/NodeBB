@@ -17,6 +17,7 @@ Tx.createTx = function (data, callback) {
 Tx.initRow = function (category, item, txData, sccParams) {
 	var data = {
 		uid: txData.uid,
+		transaction_uid: 0,
 		date_issued: txData.date_issued,
 		memo: txData.memo,
 		publish_uid: txData.publish_uid ? txData.publish_uid : 0,
