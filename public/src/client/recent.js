@@ -30,11 +30,11 @@ define('forum/recent', ['forum/infinitescroll', 'components'], function (infinit
 
 		$(window).trigger('action:topics.loaded', { topics: ajaxify.data.topics });
 
-		if (window.document.location.pathname === '/') {
-			$('#customSCCfooter').removeClass('hidden');
-		} else {
-			$('#customSCCfooter').addClass('hidden');
-		}
+		// if (window.document.location.pathname === '/') {
+		// 	$('#customSCCfooter').removeClass('hidden');
+		// } else {
+		// 	$('#customSCCfooter').addClass('hidden');
+		// }
 	};
 
 	Recent.watchForNewPosts = function () {

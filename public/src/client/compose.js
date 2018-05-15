@@ -13,11 +13,11 @@ define('forum/compose', [], function () {
 			});
 		}
 
-		if (window.document.location.pathname === '/') {
-			$('#customSCCfooter').removeClass('hidden');
-		} else {
-			$('#customSCCfooter').addClass('hidden');
-		}
+		// if (window.document.location.pathname === '/') {
+		// 	$('#customSCCfooter').removeClass('hidden');
+		// } else {
+		// 	$('#customSCCfooter').addClass('hidden');
+		// }
 	};
 
 	return Compose;

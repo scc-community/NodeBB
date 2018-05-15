@@ -29,11 +29,11 @@ define('forum/search', ['search', 'autocomplete', 'storage'], function (searchMo
 
 		fillOutForm();
 
-		if (window.document.location.pathname === '/') {
-			$('#customSCCfooter').removeClass('hidden');
-		} else {
-			$('#customSCCfooter').addClass('hidden');
-		}
+		// if (window.document.location.pathname === '/') {
+		// 	$('#customSCCfooter').removeClass('hidden');
+		// } else {
+		// 	$('#customSCCfooter').addClass('hidden');
+		// }
 	};
 
 	function getSearchDataFromDOM() {

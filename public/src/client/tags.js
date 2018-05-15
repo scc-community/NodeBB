@@ -32,11 +32,11 @@ define('forum/tags', ['forum/infinitescroll'], function (infinitescroll) {
 
 		infinitescroll.init(Tags.loadMoreTags);
 
-		if (window.document.location.pathname === '/') {
-			$('#customSCCfooter').removeClass('hidden');
-		} else {
-			$('#customSCCfooter').addClass('hidden');
-		}
+		// if (window.document.location.pathname === '/') {
+		// 	$('#customSCCfooter').removeClass('hidden');
+		// } else {
+		// 	$('#customSCCfooter').addClass('hidden');
+		// }
 	};
 
 	Tags.loadMoreTags = function (direction) {

@@ -26,11 +26,11 @@ define('forum/top', ['forum/recent', 'forum/infinitescroll'], function (recent, 
 
 		$(window).trigger('action:topics.loaded', { topics: ajaxify.data.topics });
 
-		if (window.document.location.pathname === '/') {
-			$('#customSCCfooter').removeClass('hidden');
-		} else {
-			$('#customSCCfooter').addClass('hidden');
-		}
+		// if (window.document.location.pathname === '/') {
+		// 	$('#customSCCfooter').removeClass('hidden');
+		// } else {
+		// 	$('#customSCCfooter').addClass('hidden');
+		// }
 	};
 
 	function loadMoreTopics(direction) {

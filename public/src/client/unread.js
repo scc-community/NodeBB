@@ -107,11 +107,11 @@ define('forum/unread', ['forum/recent', 'topicSelect', 'forum/infinitescroll', '
 			});
 		}
 
-		if (window.document.location.pathname === '/') {
-			$('#customSCCfooter').removeClass('hidden');
-		} else {
-			$('#customSCCfooter').addClass('hidden');
-		}
+		// if (window.document.location.pathname === '/') {
+		// 	$('#customSCCfooter').removeClass('hidden');
+		// } else {
+		// 	$('#customSCCfooter').addClass('hidden');
+		// }
 	};
 
 	function doneRemovingTids(tids) {

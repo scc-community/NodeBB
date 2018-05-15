@@ -27,10 +27,10 @@ define('forum/pagination', function () {
 		ajaxify.go(url, callback);
 	};
 
-	if (window.document.location.pathname === '/') {
-		$('#customSCCfooter').removeClass('hidden');
-	} else {
-		$('#customSCCfooter').addClass('hidden');
-	}
+	// if (window.document.location.pathname === '/') {
+	// 	$('#customSCCfooter').removeClass('hidden');
+	// } else {
+	// 	$('#customSCCfooter').addClass('hidden');
+	// }
 	return pagination;
 });

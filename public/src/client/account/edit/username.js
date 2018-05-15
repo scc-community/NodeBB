@@ -5,11 +5,11 @@ define('forum/account/edit/username', ['forum/account/header'], function (header
 	var AccountEditUsername = {};
 
 	AccountEditUsername.init = function () {
-		if (window.document.location.pathname === '/') {
-			$('#customSCCfooter').removeClass('hidden');
-		} else {
-			$('#customSCCfooter').addClass('hidden');
-		}
+		// if (window.document.location.pathname === '/') {
+		// 	$('#customSCCfooter').removeClass('hidden');
+		// } else {
+		// 	$('#customSCCfooter').addClass('hidden');
+		// }
 		header.init();
 
 		$('#submitBtn').on('click', function updateUsername() {
