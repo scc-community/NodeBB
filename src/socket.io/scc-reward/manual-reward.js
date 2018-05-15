@@ -13,7 +13,6 @@ ManualReward.createManualRewardWithTxs = function (socket, manualRewardData, cal
 
 	var txsData = {
 		uid: manualRewardData.uid,
-		transaction_uid: 0,
 		publish_uid: manualRewardData.publish_uid,
 		transaction_uid: 0,
 		transaction_type: '1',
