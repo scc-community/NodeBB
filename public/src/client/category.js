@@ -61,11 +61,11 @@ define('forum/category', [
 		$(window).trigger('action:topics.loaded', { topics: ajaxify.data.topics });
 		$(window).trigger('action:category.loaded', { cid: ajaxify.data.cid });
 
-		if (window.document.location.pathname === '/') {
-			$('#customSCCfooter').removeClass('hidden');
-		} else {
-			$('#customSCCfooter').addClass('hidden');
-		}
+		// if (window.document.location.pathname === '/') {
+		// 	$('#customSCCfooter').removeClass('hidden');
+		// } else {
+		// 	$('#customSCCfooter').addClass('hidden');
+		// }
 	};
 
 	function handleScrollToTopicIndex() {
