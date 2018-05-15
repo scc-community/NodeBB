@@ -5,11 +5,11 @@ define('forum/account/edit', ['forum/account/header', 'translator', 'components'
 	var AccountEdit = {};
 
 	AccountEdit.init = function () {
-		if (window.document.location.pathname === '/') {
-			$('#customSCCfooter').removeClass('hidden');
-		} else {
-			$('#customSCCfooter').addClass('hidden');
-		}
+		// if (window.document.location.pathname === '/') {
+		// 	$('#customSCCfooter').removeClass('hidden');
+		// } else {
+		// 	$('#customSCCfooter').addClass('hidden');
+		// }
 		header.init();
 
 		$('#submitBtn').on('click', updateProfile);

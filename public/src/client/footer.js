@@ -100,9 +100,9 @@ define('forum/footer', ['notifications', 'chat', 'components', 'translator'], fu
 
 	initUnreadTopics();
 
-	if (window.document.location.pathname === '/') {
-		$('#customSCCfooter').removeClass('hidden');
-	} else {
-		$('#customSCCfooter').addClass('hidden');
-	}
+	// if (window.document.location.pathname === '/') {
+	// 	$('#customSCCfooter').removeClass('hidden');
+	// } else {
+	// 	$('#customSCCfooter').addClass('hidden');
+	// }
 });
