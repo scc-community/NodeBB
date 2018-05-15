@@ -20,26 +20,6 @@ TopicReward.bcreateTopicReward = function (data, callback) {
 	mysql.batchInsert('topic_rewards', fieldNames, data, null, callback);
 };
 
-TopicReward.getManualRewards = function (where, orderby, limit, callback) {
-	var sqlCondition = '';
-	if (where) {
-		for (var whereIndex = 0; whereIndex < where.length; whereIndex++) {
-			sqlCondition += (' ORDER BY ' + where[whereIndex].key + ' ' + where[whereIndex].value + ',');
-		}
-		sqlCondition = sqlCondition.substring(0, sqlCondition.length - 3);
-	}
-	if (orderby) {
-		for (var orderByIndex = 0; orderByIndex < orderby.length; orderByIndex++) {
-			sqlCondition += (' ORDER BY ' + orderby[orderByIndex].key + ' ' + orderby[orderByIndex].value + ',');
-		}
-		sqlCondition = sqlCondition.substring(0, sqlCondition.length - 1);
-	}
-	if (limit) {
-		sqlCondition += ' LIMIT ' + limit[0] + ',' + limit[1];
-	}
-	mysql.baseQuery('topic_rewards', sqlCondition, null, callback);
-};
-
 TopicReward.updateTopicRewardsWithTxs = function (topicRewardData, txData, callback) {
 	mysql.transaction(function (conn, next) {
 		async.waterfall([
