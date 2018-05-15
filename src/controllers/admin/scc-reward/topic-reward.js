@@ -1,6 +1,8 @@
 'use strict';
 
 var async = require('async');
+var db = require('../../../database');
+var pagination = require('../../../pagination');
 var scc = require('../../../scc');
 var pagination = require('../../../pagination');
 var db = require('../../../database');
@@ -12,23 +14,32 @@ TopicRewardController.get = function (req, res, next) {
 	var resultsPerPage = 50;
 	var start = Math.max(0, page - 1) * resultsPerPage;
 
-	var sortBySql = [];
-	var sortBySqlIndex = 0;
-	if (req.query.sortByscc) {
-		sortBySql[sortBySqlIndex] = { key: 'scc_issued', value: req.query.sortByScc };
+	var where = [];
+	var whereIndex = 0;
+	if (req.query.filterByRewardType) {
+		where[whereIndex] = {
+			key: 'reward_type', value: req.query.filterByRewardType,
+		};
+		whereIndex += 1;
 	}
-	sortBySql[sortBySqlIndex] = { key: 'date_posted', value: 'DESC' };
-
-	var whereSql = [];
-	var whereSqlIndex = 0;
-	if (req.query.filterByTopicRewardType) {
-		whereSql[whereSqlIndex] = { key: 'reward_type', value: req.query.filterByTopicRewardType };
+	if (req.query.filterByIsModifyScc) {
+		where[whereIndex] = {
+			key: 'scc_setted',
+			value: 0,
+		};
+		whereIndex += 1;
 	}
-	if (req.query.filterBySccIsModdify === 0) {
-		whereSql[whereSqlIndex] = { key: 'scc_setted', value: 0, oper: '<>' };
-	} else if (req.query.filterBySccIsModdify === 1) {
-		whereSql[whereSqlIndex] = { key: 'scc_setted', value: 0, oper: '<>' };
+	if (req.query.filterByIsModifyScc) {
+		where[whereIndex] = {
+			key: 'reward_type',
+			value: req.query.filterByTopicRewardType,
+		};
+		whereIndex += 1;
 	}
+	where[whereIndex] = {
+		key: 'scc_setted',
+		value: req.query.whereTopicRewardType,
+	};
 
 	async.waterfall([
 		function (next) {
