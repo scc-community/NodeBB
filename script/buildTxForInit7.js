@@ -6,9 +6,10 @@ var utils = require('../src/utils');
 var mysql = require('../src/database/mysql');
 
 var client = redis.createClient('6379', '127.0.0.1');
-var lastData = {};
+
 var txData = {};
 var count = 0;
+
 async.waterfall([
 	function (next) {
 		startMysql(next);

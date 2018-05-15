@@ -6,6 +6,9 @@ var mysql = require('../src/database/mysql');
 
 var client = redis.createClient('6379', '127.0.0.1');
 
+var userData = {};
+var count = 0;
+
 async.waterfall([
 	function (next) {
 		startMysql(next);
@@ -14,16 +17,39 @@ async.waterfall([
 		client.select(0, next);
 	},
 	function (status, next) {
-		client.zrange('username:uid', 0, -1, 'WITHSCORES', next);
+		mysql.deleteRows('users', null, null, next);
 	},
-	function (results, next) {
-		var data = [];
-		for (var index = 0; index < results.length / 2; index++) {
-			var item = [];
-			item[0] = results[(index * 2) + 1];
-			data[index] = item;
-		}
-		mysql.batchInsert('users', ['uid'], data, 'uid', next);
+	function (result, err, next) {
+		client.keys('user:*', next);
+	},
+	function (res, next) {
+		var arr1 = [];
+		res.forEach(function (item) {
+			var item1 = item.split(':', 3);
+			if (item1.length === 2) {
+				var item2 = item1.join(':');
+				arr1.push(item2);
+			}
+		});
+		console.log(arr1.length);
+		async.eachSeries(arr1, function (item, next) {
+			async.waterfall([
+				function (next) {
+					client.hgetall(item, next);
+				},
+				function (data, next) {
+					userData = {
+						uid: data.uid || 0,
+					};
+					mysql.newRow('users', userData, next);
+				},
+				function (row, next) {
+					count += 1;
+					console.log(count, row._data.uid);
+					next();
+				},
+			], next);
+		}, next);
 	},
 ], function (err) {
 	if (err) {
