@@ -109,13 +109,26 @@ module.exports = function (mysqlClient, module) {
 
 	module.pageQuery = function (model, where, orderby, limit, callback) {
 		var sqlCondition = '';
-		if (where) {
+		if (where && where.length > 0) {
+			sqlCondition += ' WHERE ';
+			var lastLogic = '';
 			for (var whereIndex = 0; whereIndex < where.length; whereIndex++) {
-				sqlCondition += (' ' + where[whereIndex].key + ' = "' + where[whereIndex].value + '" AND');
+				switch (where[whereIndex].compaser) {
+				case 'IS NULL':
+				case 'IS NOT NULL':
+					sqlCondition += (' ' + where[whereIndex].key + ' ' + where[whereIndex].compaser);
+					break;
+				default:
+					where[whereIndex].compaser = where[whereIndex].compaser || 'AND';
+					sqlCondition += (' ' + where[whereIndex].key + where[whereIndex].compaser + where[whereIndex].value);
+					break;
+				}
+				lastLogic = where[whereIndex].logic || 'AND';
+				sqlCondition += (' ' + lastLogic);
 			}
-			sqlCondition = sqlCondition.substring(0, sqlCondition.length - 3);
+			sqlCondition = sqlCondition.substring(0, sqlCondition.length - lastLogic.length);
 		}
-		if (orderby) {
+		if (orderby && orderby.length > 0) {
 			for (var orderByIndex = 0; orderByIndex < orderby.length; orderByIndex++) {
 				sqlCondition += (' ORDER BY ' + orderby[orderByIndex].key + ' ' + orderby[orderByIndex].value + ',');
 			}

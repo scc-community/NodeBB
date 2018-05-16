@@ -6,7 +6,7 @@
 
 				<div class="clearfix">
 					<div class="btn-group pull-right">
-                        <button id="buildReward" class="btn btn-primary pull-right">构建奖励 </button>
+                        <button id="buildReward" class="btn btn-primary pull-left">构建奖励 </button>
 						<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button">编辑 <span class="caret"></span></button>
 						<ul class="dropdown-menu">
 							<li><a href="#" class="validate-email"><i class="fa fa-fw fa-key"></i> 修改SCC</a></li>
@@ -26,8 +26,6 @@
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu">
-                                <li>文章奖励类型</li>
-                                <li class="divider"></li>
                                 <li> <a href="#" class="dropdown-item" data-value="all">全部</a></li>
                                 <!-- BEGIN rewardtypes -->
                                 <li> <a href="#" class="dropdown-item" data-value="{rewardtypes.text}">{rewardtypes.text}</a></li>
@@ -52,18 +50,18 @@
 							</tr>
 						</thead>
 						<tbody>
-							<!-- BEGIN topicRewards -->
+							<!-- BEGIN topicrewards -->
 							<tr class="topicreward-row">
-								<th><input component="topic-reward/select/single" data-uid="{topicRewards.uid}" type="checkbox"/></th>
+								<th><input component="topic-reward/select/single" data-uid="{topicrewards.uid}" type="checkbox"/></th>
 								<td><i class="administrator fa fa-shield text-success"></i><a href="{config.relative_path}/topic/{topicRewards.tid}"> {topicRewards.topic_title}</a></td>
 								<td><i class="administrator fa fa-shield text-success"></i><a href="{config.relative_path}/user/{topicRewards.username}"> {topicRewards.username}</a></td>
-                                <td class="text-right">{topicRewards.reward_type_text}</td>
-								<td class="timeago">{topicRewards.date_issued}</td>
-								<td class="text-right">{topicRewards.topic_words_count}</a></td>
-								<td class="text-right">{topicRewards.topic_upvotes_count}</td>
-								<td><span class="text-right" title="{topicRewards.scc}"></span></td>
+                                <td class="text-right">{topicrewards.reward_type_text}</td>
+								<td class="timeago">{topicrewards.date_issued}</td>
+								<td class="text-right">{topicrewards.topic_words_count}</a></td>
+								<td class="text-right">{topicrewards.topic_upvotes_count}</td>
+								<td><span class="text-right" title="{topicrewards.scc}"></span></td>
 							</tr>
-							<!-- END topicRewards -->
+							<!-- END topicrewards -->
 						</tbody>
 					</table>
 				</div>
