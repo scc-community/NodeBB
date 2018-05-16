@@ -23,6 +23,9 @@ module.exports = function (User) {
 					next();
 				},
 			], function (err) {
+				if (err) {
+					// log
+				}
 				callback(err);
 			});
 		} else {

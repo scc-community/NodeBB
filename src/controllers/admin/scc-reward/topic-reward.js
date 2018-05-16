@@ -7,34 +7,73 @@ var scc = require('../../../scc');
 
 var TopicRewardController = module.exports;
 
-TopicRewardController.get = function (req, res, next) {
-	var page = parseInt(req.query.page, 10) || 1;
-	var resultsPerPage = 50;
-	var start = Math.max(0, page - 1) * resultsPerPage;
-
+TopicRewardController.initWhereSql = function (req) {
 	var where = [];
 	var whereIndex = 0;
 	if (req.query.filterByRewardType) {
 		where[whereIndex] = {
-			key: 'reward_type', value: req.query.filterByRewardType,
+			key: 'reward_type',
+			value: scc.rewardType.getRewardType('topic', 'req.query.filterByIsModifyScc'),
 		};
 		whereIndex += 1;
 	}
 	if (req.query.filterByIsModifyScc) {
 		where[whereIndex] = {
 			key: 'scc_setted',
-			value: 0,
-			compaser: '<=',
 		};
+		switch (req.query.filterByIsModifyScc) {
+		case 'true':
+			where[whereIndex].compaser = 'IS NOT NULL';
+			break;
+		case 'false':
+			where[whereIndex].compaser = 'IS NULL';
+			break;
+		}
 		whereIndex += 1;
 	}
-	if (req.query.orderByIsModifyScc) {
-		where[whereIndex] = {
-			key: 'reward_type',
-			value: req.query.filterByTopicRewardType,
+	return where;
+};
+
+TopicRewardController.initOrderbySql = function (req) {
+	var orderby = [];
+	var orderbyIndex = 0;
+	if (req.query.orderByIssueScc) {
+		orderby[orderbyIndex] = {
+			key: 'scc_issued',
 		};
-		whereIndex += 1;
+		orderby[orderbyIndex].value = req.query.orderByIssueScc.toUpperCase();
+		orderbyIndex += 1;
 	}
+
+	orderby[orderbyIndex] = {
+		key: 'date_posted',
+	};
+	orderby[orderbyIndex].value = req.query.orderByPostDate.toUpperCase();
+	orderbyIndex += 1;
+	return orderby;
+};
+
+TopicRewardController.getAllRewardTypes = function (socket, callback) {
+	function recursive(rewardtype, datas) {
+		var data = {};
+		if (rewardtype.category === 'topic') {
+			data.value = rewardtype.id;
+			data.text = rewardtype.content;
+			datas.push(data);
+		}
+	}
+
+	var rewardtypesData = [];
+	scc.rewardType.rewardTypeList.forEach(function (rewardtype) {
+		recursive(rewardtype, rewardtypesData);
+	});
+	return rewardtypesData;
+};
+
+TopicRewardController.get = function (req, res, next) {
+	var page = parseInt(req.query.page, 10) || 1;
+	var resultsPerPage = 50;
+	var start = Math.max(0, page - 1) * resultsPerPage;
 
 	async.waterfall([
 		function (next) {
@@ -53,7 +92,10 @@ TopicRewardController.get = function (req, res, next) {
 					var topicRewards = [];
 					async.waterfall([
 						function (next) {
-							scc.topicReward.getTopicRewards([start, resultsPerPage], next);
+							scc.topicReward.getTopicRewards(
+								TopicRewardController.initWhereSql,
+								TopicRewardController.initOrderbySql,
+								[start, resultsPerPage], next);
 						},
 						function (result, next) {
 							result.forEach(function (item) {

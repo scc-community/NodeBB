@@ -1,7 +1,7 @@
 <div class="row manage-manualrewards">
 	<div class="col-lg-12">
 		<div class="panel panel-default">
-			<div class="panel-heading"><i class="fa fa-manualreward"></i>手动奖励</div>
+			<div class="panel-heading"><i class="fa fa-user"></i> 手动奖励</div>
 			<div class="panel-body">
 
 				<div class="clearfix">

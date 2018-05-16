@@ -1,9 +1,9 @@
 {
-    "rewards": "Post rewards",
+    "rewards": "Topic rewards",
     "released": "Released",
     "unvested": "Un-vested",
     "removed": "Removed",
-    "type": "Post type",
+    "type": "Topic type",
     "all": "All",
     "original": "Original article",
     "forwarded": "Forwarded",
@@ -38,5 +38,9 @@
     "modal/reject_other": "Other",
     "warning": "Warning!",
     "norecords": "No records found.",
-    "updated": "updated"
+    "updated": "updated",
+    "username": "username",
+    "word_count": "wordCount",
+    "upvote_count": "upvoteCount",
+    "scc": "SCC"
 }

@@ -45,7 +45,7 @@ sccController.get = function (req, res, callback) {
 			next();
 		},
 		function (next) {
-			user.getSccToken(req.uid, '', next);
+			user.getSccToken(req.uid, next);
 		},
 		function (tokenNumber, next) {
 			// console.log('sccTokenNumber:' + tokenNumber);

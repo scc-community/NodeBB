@@ -271,7 +271,7 @@ module.exports = function (User) {
 	User.incrSccToken = function (uid, value, callback) {
 		async.waterfall([
 			function (next) {
-				User.getSccToken(uid, 0, next);
+				User.getSccToken(uid, next);
 			},
 			function (currentToken, next) {
 				console.log('currentToken:' + currentToken);
@@ -290,7 +290,7 @@ module.exports = function (User) {
 		], callback);
 	};
 
-	User.getSccToken = function (uid, sccToken, callback) {
+	User.getSccToken = function (uid, callback) {
 		console.log('User.getSccToken');
 		db.getObjectField('user:' + uid, 'scctoken', callback);
 	};

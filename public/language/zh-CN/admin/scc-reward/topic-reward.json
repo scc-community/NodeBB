@@ -38,5 +38,9 @@
   "modal/reject_other": "其他",
   "warning": "警告！",
   "norecords": "没有发现记录.",
-  "updated": "改"
+  "updated": "改",
+  "username": "对象",
+  "word_count": "字数",
+  "upvote_count": "赞",
+  "scc": "奖励数量"
 }

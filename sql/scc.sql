@@ -40,7 +40,7 @@ CREATE TABLE `manual_rewards` (
   CONSTRAINT `fk_reward_types_manual_rewards_reward_type` FOREIGN KEY (`reward_type`) REFERENCES `reward_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_users_manual_rewards_publish_uid` FOREIGN KEY (`publish_uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_users_manual_rewards_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='手动奖励表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='手动奖励表';
 
 -- ----------------------------
 -- Table structure for reward_types
@@ -113,7 +113,7 @@ CREATE TABLE `topic_rewards` (
 DROP TABLE IF EXISTS `txs`;
 CREATE TABLE `txs` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `uid` mediumint(20) unsigned NOT NULL,
+  `uid` mediumint(9) unsigned NOT NULL,
   `transaction_uid` mediumint(20) unsigned NOT NULL DEFAULT '0',
   `publish_uid` mediumint(8) unsigned NOT NULL,
   `transaction_type` enum('1','2') NOT NULL,
@@ -142,13 +142,13 @@ CREATE TABLE `txs` (
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` mediumint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `uid` mediumint(20) unsigned NOT NULL,
+  `uid` mediumint(9) unsigned NOT NULL,
   `date_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `last_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `version` char(10) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_uid` (`uid`) USING HASH
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='用户表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户表';
 
 -- ----------------------------
 -- Records of users
