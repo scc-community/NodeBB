@@ -48,3 +48,108 @@ TopicReward.updateTopicRewardsWithTxs = function (topicRewardData, txData, callb
 TopicReward.getCount = function (callback) {
 	mysql.query('SELECT COUNT(*) AS count FROM topic_rewards', null, callback);
 };
+
+TopicReward.getUnvestedRewards = function(postType, modType, sortType, pageNo, pageSize ,callback) {
+	var sqlstr = "SELECT r.id as id, " +
+				"r.uid as uid, " +
+				"t.content as topic_category, " +
+				"r.topic_id as topic_id, " +
+				"r.topic_title as topic_title, " +
+				"r.topic_words_count as topic_words_count, " +
+				"r.topic_upvotes_count as topic_upvotes_count," +
+				"r.date_posted as data_posted, " +
+				"r.scc_autoed as scc_autoed," +
+				"r.scc_setted as scc_setted," +
+				"r.scc_autoed - ifnull(r.scc_setted, r.scc_autoed) != 0 as is_modified, " +
+				"r.scc_issued as scc_issued " +
+				"FROM topic_rewards r, reward_types t WHERE r.status=1 AND t.id=r.reward_type ";
+
+	//tainted check, in case SQL injection, we should validate every input
+	//check postType
+	if(!/^\w{2,20}$/.test(postType)){
+		callback(new Error("Invalid postType"), null);
+	}
+	if(postType !== "all") {
+		sqlstr += " AND t.item='" + postType + "'";
+	}
+
+	//check modType
+	if(!isNum(modType) || !isNum(sortType)) {
+		callback(new Error("Invalid modType or pageNo"), null);
+	}
+
+	switch(modType){
+		case 1:
+			break;
+		case 2:
+			sqlstr += " AND r.scc_autoed - ifnull(r.scc_setted, r.scc_autoed) != 0 ";
+			break;
+		case 3:
+			sqlstr += " AND r.scc_autoed - ifnull(r.scc_setted, r.scc_autoed) = 0 ";
+			break;
+	}
+	//check sortType
+	if(sortType == 1) {
+		sqlstr += " ORDER BY scc_setted, scc_autoed DESC ";
+	} else {
+		sqlstr += " ORDER BY scc_setted, scc_autoed ASC ";
+	}
+
+	//Check pageSize
+	if(!isNum(pageNo) || !isNum(pageSize)) {
+		pageNo = 1;
+		pageSize = 30;
+	}
+
+	pageNo = pageNo > 0 ? pageNo : 1;
+	var startRecord = (pageNo - 1) * pageSize;
+
+	sqlstr += " LIMIT " + startRecord + "," + pageSize;
+
+	//var condition = [ {key: "status", value: "1"}];
+	mysql.query(sqlstr, null, callback);
+};
+
+TopicReward.getRejectedRewards = function(callback) {
+	//TODO
+	callback(null, null);
+};
+
+
+TopicReward.releaseSCC = function(data, callback) {
+	var _ret = {};
+
+	//data.records structure [{id:xx, uid:xxx, scc:xxx}]
+	//TODO: update from DB
+	_ret.code = 0;
+	_ret.message = "Released " + data.totalSCC + " to users.";
+
+	callback(null, _ret);
+};
+
+TopicReward.modifySCCNum = function(data, callback) {
+	//TODO: data structure {Id: rewardsId, sccNum: NewNum, sccComment: Comment}, write to DB
+	var _retScc = {code: 0, message: "Successfully."};
+
+	callback(null, _retScc);
+};
+
+TopicReward.rejectSCC = function(data, callback) {
+	//TODO: data schema: {Id: rewardId, reason: reasonId[0,1,2,3]
+	// 0, poor quality, 1, copy, 2 unqualified 3, other
+	var _retRej = {code: 0, message: "Succeed"};
+	callback(null, _retRej);
+};
+
+TopicReward.restoreSCC = function(id, callback) {
+	//TODO: restore rewardId, write to DB
+	var _retRes = {code: 0, message: "Succeed."};
+
+	callback(null, _retRes);
+};
+
+function isNum(input) {
+	if(input == null) return false;
+	return /^\d+$/.test(input);
+}
+
