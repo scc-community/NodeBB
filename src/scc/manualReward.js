@@ -18,12 +18,15 @@ ManualReward.createManualRewardWithTxs = function (manualRewardData, txData, cal
 			function (row, next) {
 				mysql.nnewRow('txs', conn, txData, next);
 			},
-			function (row, next) {
+		], function (err) {
+			if (err) {
+				conn.rollback();
+			} else {
 				conn.commit();
-				conn.release();
-				next();
-			},
-		], next);
+			}
+			conn.release();
+			next(err);
+		});
 	}, callback);
 };
 
