@@ -4,9 +4,11 @@
 define('admin/scc-reward/topic-reward', ['translator', 'benchpress'], function (translator, Benchpress) {
 	var TopicReward = {};
 	var recordsFilter = {
-		topicType: 1, // 1 全部， 2， 原创， 3， 转发， 4， 翻译
+		topicType: "all", // 1 全部， 2， 原创， 3， 转发， 4， 翻译
 		modType: 1, // 1 全部， 2， 是， 3， 否
 		sortType: 1, // 1 for desc, 2 for asc
+		pageNo: 1,
+		pageSize: 30, //default
 	};
 
 	var userData = { Page: { isUnvested: true, isRejected: false, isReleased: false }, Data: { isEmpty: false } };
@@ -193,7 +195,8 @@ define('admin/scc-reward/topic-reward', ['translator', 'benchpress'], function (
 				{
 					id: $(element).val(),
 					uid: _uid,
-					scc: _scc,
+					scc_setted: _scc,
+					scc_issued: _scc,
 				}
 			);
 
@@ -219,8 +222,8 @@ define('admin/scc-reward/topic-reward', ['translator', 'benchpress'], function (
 					userData.Data.isEmpty = true;
 					userData.Data.records = [];
 				} else {
-					userData.Data.isEmpty = !(data.records.length > 1);
-					userData.Data.records = data.records;
+					userData.Data.isEmpty = !(data && data.length > 1);
+					userData.Data.records = data;
 				}
 
 				// Refresh page

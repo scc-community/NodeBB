@@ -19,12 +19,18 @@
                 <input type="hidden" name="scc-count" value="{records.scc_setted}" />
                 <input type="hidden" name="scc-uid" value="{records.uid}" />
               </td>
-              <td><a href="/topic/{records.topic_category}/{records.topic_title}">{records.topic_title}</a></td>
+              <td><a href="/topic/{records.topic_id}/">{records.topic_title}</a></td>
               <td><a href="/user/{records.author}">{records.author}</a></td>
               <td>{records.topic_category}</td>
               <td>{records.date_posted}</td>
               <td>{records.topic_words_count}/{records.topic_upvotes_count}</td>
-              <td>{records.scc_setted} <!-- IF records.is_modified -->([[admin/scc-reward/topic-reward:updated]])<!-- ENDIF records.is_modified --></td>
+              <td>
+              <!-- IF records.is_modified -->
+                 {records.scc_setted}([[admin/scc-reward/topic-reward:updated]])
+               <!-- ELSE -->
+                    {records.scc_autoed}
+              <!-- ENDIF records.is_modified --></td>
+
               <td>
                 <a href="#" class="scc-mgr-op-action" data-value="mod" data-id="{records.id}">[[admin/scc-reward/topic-reward:modify]]</a>
                 <!-- IF records.is_modified -->

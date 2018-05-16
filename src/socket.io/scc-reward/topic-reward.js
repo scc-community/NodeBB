@@ -5,7 +5,7 @@ var scc = require('../../scc');
 var TopicReward = module.exports;
 
 TopicReward.getUnvested = function (socket, filters, callback) {
-	scc.topicReward.getUnvestedRewards(filters.topicType, filters.modType, filters.sortType, callback);
+	scc.topicReward.getUnvestedRewards(filters.topicType, filters.modType, filters.sortType, filters.pageNo, filters.pageSize, callback);
 };
 
 TopicReward.releaseSCC = function (socket, data, callback) {

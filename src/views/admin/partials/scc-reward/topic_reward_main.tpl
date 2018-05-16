@@ -13,16 +13,16 @@
                 <div class="btn-group">
                   <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span id="scc-mgr-filter-art" class="scc-mgr-dropdown-title">[[admin/scc-reward/topic-reward:type]]</span>
-                    <span style="display:none" id="filter-topic-type">1</span>
+                    <span style="display:none" id="filter-topic-type">all</span>
                     <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu">
                         <li> [[admin/scc-reward/topic-reward:type]] </li>
                         <li class="divider"></li>
-                        <li> <a href="#" class="dropdown-item" data-value="1">[[admin/scc-reward/topic-reward:all]]</a></li>
-                        <li> <a href="#" class="dropdown-item" data-value="2">[[admin/scc-reward/topic-reward:original]]</a></li>
-                        <li> <a href="#" class="dropdown-item" data-value="3">[[admin/scc-reward/topic-reward:forwarded]]</a></li>
-                        <li> <a href="#" class="dropdown-item" data-value="4">[[admin/scc-reward/topic-reward:translate]]</a></li>
+                        <li> <a href="#" class="dropdown-item" data-value="all">[[admin/scc-reward/topic-reward:all]]</a></li>
+                        <li> <a href="#" class="dropdown-item" data-value="original">[[admin/scc-reward/topic-reward:original]]</a></li>
+                        <li> <a href="#" class="dropdown-item" data-value="reprint">[[admin/scc-reward/topic-reward:forwarded]]</a></li>
+                        <li> <a href="#" class="dropdown-item" data-value="translation">[[admin/scc-reward/topic-reward:translate]]</a></li>
                   </ul>
                 </div>
 

@@ -2,6 +2,8 @@
 
 var async = require('async');
 var mysql = require('../database/mysql');
+var db = require('../database');
+var winston = require('winston');
 
 var TopicReward = module.exports;
 
@@ -53,9 +55,9 @@ TopicReward.getUnvestedRewards = function(postType, modType, sortType, pageNo, p
 				"r.topic_title as topic_title, " +
 				"r.topic_words_count as topic_words_count, " +
 				"r.topic_upvotes_count as topic_upvotes_count," +
-				"r.date_posted as data_posted, " +
+				"DATE_FORMAT(r.date_posted,'%Y-%m-%d %H:%i:%s') as date_posted, " +
 				"r.scc_autoed as scc_autoed," +
-				"r.scc_setted as scc_setted," +
+				"ifnull(r.scc_setted, r.scc_autoed) as scc_setted," +
 				"r.scc_autoed - ifnull(r.scc_setted, r.scc_autoed) != 0 as is_modified, " +
 				"r.scc_issued as scc_issued " +
 				"FROM topic_rewards r, reward_types t WHERE r.status=1 AND t.id=r.reward_type ";
@@ -63,7 +65,7 @@ TopicReward.getUnvestedRewards = function(postType, modType, sortType, pageNo, p
 	//tainted check, in case SQL injection, we should validate every input
 	//check postType
 	if(!/^\w{2,20}$/.test(postType)){
-		callback(new Error("Invalid postType"), null);
+		callback(null, null);
 	}
 	if(postType !== "all") {
 		sqlstr += " AND t.item='" + postType + "'";
@@ -71,24 +73,24 @@ TopicReward.getUnvestedRewards = function(postType, modType, sortType, pageNo, p
 
 	//check modType
 	if(!isNum(modType) || !isNum(sortType)) {
-		callback(new Error("Invalid modType or pageNo"), null);
+		callback(new Error("Invalid modType or sortType"), null);
 	}
 
 	switch(modType){
-		case 1:
+		case "1":
 			break;
-		case 2:
+		case "2":
 			sqlstr += " AND r.scc_autoed - ifnull(r.scc_setted, r.scc_autoed) != 0 ";
 			break;
-		case 3:
+		case "3":
 			sqlstr += " AND r.scc_autoed - ifnull(r.scc_setted, r.scc_autoed) = 0 ";
 			break;
 	}
 	//check sortType
 	if(sortType == 1) {
-		sqlstr += " ORDER BY scc_setted, scc_autoed DESC ";
+		sqlstr += " ORDER BY scc_setted DESC ";
 	} else {
-		sqlstr += " ORDER BY scc_setted, scc_autoed ASC ";
+		sqlstr += " ORDER BY scc_setted ASC ";
 	}
 
 	//Check pageSize
@@ -102,8 +104,34 @@ TopicReward.getUnvestedRewards = function(postType, modType, sortType, pageNo, p
 
 	sqlstr += " LIMIT " + startRecord + "," + pageSize;
 
-	//var condition = [ {key: "status", value: "1"}];
-	mysql.query(sqlstr, null, callback);
+	//winston.info(sqlstr);
+	async.waterfall([
+		function(next) {
+			mysql.query(sqlstr, null, next);
+		},
+		function(records, next) {
+			if(!records || !Array.isArray(records) || records.length < 1) {
+				callback(null, null);
+			}
+			//We need to read user name from redis for each user, this may cause performance issue
+			//It's better to move user name to users table as well, so that we can get it via SQL directly
+			async.each(records, function(item, next) {
+				async.waterfall([
+					function (next) {
+						db.getObjectField('user:' + item.uid, 'username', next);
+					},
+					function (username, next) {
+						item.author =  username;
+						next();
+					},
+				], next);
+			}, function(err) {
+				callback(err, records);
+			});
+		}
+	  ], callback
+	);
+
 };
 
 TopicReward.getRejectedRewards = function(callback) {
@@ -113,14 +141,36 @@ TopicReward.getRejectedRewards = function(callback) {
 
 
 TopicReward.releaseSCC = function(data, callback) {
-	var _ret = {};
+	if(!data.records || !Array.isArray(data.records)) {
+		callback(new Error("Error! Inputs format invalid."), null)
+	}
 
-	//data.records structure [{id:xx, uid:xxx, scc:xxx}]
-	//TODO: update from DB
-	_ret.code = 0;
-	_ret.message = "Released " + data.totalSCC + " to users.";
+	async.each(data.records, function(item, next) {
+		async.waterfall([
+			function(next) {
+				mysql.nfindById('topic_rewards', item.id, next);
+			},
+			function(next) {
+				//tx_no, reward_type should got from blockchain and db?
+				//dummy tx no
+				var txData = {
+					uid: item.uid,
+					scc: item.scc_setted,
+					reward_type: 6,
+					memo: item.memo,
+					transaction_type: 1
+				};
 
-	callback(null, _ret);
+				//set status to released
+				item.status = 2;
+				//
+				TopicReward.updateTopicRewardsWithTxs(item, txData, next);
+			},
+			function(result) {
+				next();
+			}
+		], next);
+	});
 };
 
 TopicReward.modifySCCNum = function(data, callback) {
