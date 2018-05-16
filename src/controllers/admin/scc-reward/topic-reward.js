@@ -4,8 +4,6 @@ var async = require('async');
 var db = require('../../../database');
 var pagination = require('../../../pagination');
 var scc = require('../../../scc');
-var pagination = require('../../../pagination');
-var db = require('../../../database');
 
 var TopicRewardController = module.exports;
 
@@ -26,20 +24,17 @@ TopicRewardController.get = function (req, res, next) {
 		where[whereIndex] = {
 			key: 'scc_setted',
 			value: 0,
+			compaser: '<=',
 		};
 		whereIndex += 1;
 	}
-	if (req.query.filterByIsModifyScc) {
+	if (req.query.orderByIsModifyScc) {
 		where[whereIndex] = {
 			key: 'reward_type',
 			value: req.query.filterByTopicRewardType,
 		};
 		whereIndex += 1;
 	}
-	where[whereIndex] = {
-		key: 'scc_setted',
-		value: req.query.whereTopicRewardType,
-	};
 
 	async.waterfall([
 		function (next) {
@@ -94,7 +89,7 @@ TopicRewardController.get = function (req, res, next) {
 				topicRewards: receiveData.topicRewards,
 				pagination: pagination.create(page, Math.max(1, Math.ceil(receiveData.count / resultsPerPage)), req.query),
 			};
-			res.render('admin/scc-reward/manual-reward', data);
+			res.render('admin/scc-reward/topic-reward', data);
 		},
 	], next);
 };

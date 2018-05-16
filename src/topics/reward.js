@@ -74,6 +74,7 @@ module.exports = function (Topics) {
 					}, function (err, receiveData) {
 						var upvotes = parseInt(receiveData.postData.upvotes, 10) || 0;
 						var postdate = new Date(parseInt(receiveData.postData.timestamp, 10)).toLocaleString();
+						var autoscc = scc.rewardType.getScc('topic', receiveData.rewardtype.item, receiveData.postData.content.length) + upvotes;
 						var data = [
 							topicReward.uid,
 							receiveData.rewardtype.id,
@@ -83,7 +84,9 @@ module.exports = function (Topics) {
 							receiveData.postData.content.length,
 							upvotes,
 							postdate,
-							scc.rewardType.getScc('topic', receiveData.rewardtype.item, receiveData.postData.content.length) + upvotes,
+							autoscc,
+							null,
+							autoscc,
 							publishuid,
 						];
 						next(err, data);
