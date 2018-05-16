@@ -17,7 +17,7 @@ TopicReward.createTopicReward = function (data, callback) {
 
 TopicReward.bcreateTopicReward = function (data, callback) {
 	var fieldNames = ['uid', 'reward_type', 'topic_id', 'topic_category', 'topic_title',
-		'topic_words_count', 'topic_upvotes_count', 'date_posted', 'scc_autoed', 'publish_uid',
+		'topic_words_count', 'topic_upvotes_count', 'date_posted', 'scc_autoed', 'scc_setted', 'scc_issued', 'publish_uid',
 	];
 	mysql.batchInsert('topic_rewards', fieldNames, data, null, callback);
 };
@@ -34,12 +34,16 @@ TopicReward.updateTopicRewardsWithTxs = function (topicRewardData, txData, callb
 			function (row, next) {
 				mysql.nnewRow('txs', conn, txData, next);
 			},
-			function (row, next) {
+		],
+		function (err) {
+			if (err) {
+				conn.rollback();
+			} else {
 				conn.commit();
-				conn.release();
-				next();
-			},
-		], next);
+			}
+			conn.release();
+			next(err);
+		});
 	}, callback);
 };
 
