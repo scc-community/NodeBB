@@ -2,16 +2,15 @@
 
 var async = require('async');
 var scc = require('../../../scc');
-var winston = require("winston")
-;
+var winston = require("winston");
 var TopicRewardController = module.exports;
 
 var userData = { Page: { isUnvested: true, isRejected: false, isReleased: false }, Data: { isEmpty: false } };
 var releasedData = { Page: { isUnvested: false, isRejected: false, isReleased: true }, Data: { isEmpty: false } };
 var rejectedData = { Page: { isUnvested: false, isRejected: true, isReleased: false }, Data: { isEmpty: false } };
 var defaultFilter = {
-	topicType: 1, // 1 全部，2， 原创， 3， 转发， 4， 翻译
-	modType: 1, // 1 全部， 2， 是， 3， 否
+	topicType: "all",
+	modType: 1,
 	sortType: 1, // 1 for desc, 2 for asc
 	pageNo: 1,
 	pageSize: 30, //default
@@ -36,7 +35,7 @@ function unvestedRewards(req, res, callback) {
 	// Get all unvested rewards records
 	async.waterfall([
 		function (next) {
-			TopicRewardController.getUnvestedRewards("all", 1, 1, 1, 30, next);
+			TopicRewardController.getUnvestedRewards(defaultFilter, next);
 		},
 		function (data) {
 			//winston.info(JSON.stringify(data));
@@ -90,10 +89,10 @@ function rejectedRewards(req, res, callback) {
 	], callback);
 }
 
-TopicRewardController.getUnvestedRewards = function (postType, modType, sortType, pageNo, pageSize, callback) {
+TopicRewardController.getUnvestedRewards = function (filters, callback) {
 	async.parallel({
 			unvested: function (next) {
-				scc.topicReward.getUnvestedRewards(postType, modType, sortType, pageNo, pageSize, next);
+				scc.topicReward.getUnvestedRewards(filters.topicType, filters.modType, filters.sortType, filters.pageNo, filters.pageSize, next);
 			},
 		},
 		callback);

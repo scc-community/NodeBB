@@ -115,7 +115,7 @@ TopicReward.getUnvestedRewards = function(postType, modType, sortType, pageNo, p
 		},
 		function(records, next) {
 			if(!records || !Array.isArray(records) || records.length < 1) {
-				callback(null, null);
+				return callback(null, null);
 			}
 			//We need to read user name from redis for each user, this may cause performance issue
 			//It's better to move user name to users table as well, so that we can get it via SQL directly
