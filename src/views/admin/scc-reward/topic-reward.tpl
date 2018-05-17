@@ -1,8 +1,5 @@
-<div class="row manage-topicrewards">
-	<div class="col-lg-12">
-		<div class="panel panel-default">
-			<div class="panel-heading"><i class="fa fa-user"></i> 文章奖励</div>
-			<div class="panel-body">
+<!-- IMPORT admin/partials/scc-reward/topic_reward_main.tpl -->
+<div class="row" id="scc-mgr-ajax-datazone">
 
 				<div class="clearfix">
 					<div class="btn-group pull-right">
@@ -72,3 +69,4 @@
 	</div>
 </div>
 
+</div>

@@ -106,8 +106,34 @@ TopicReward.getUnvestedRewards = function(postType, modType, sortType, pageNo, p
 
 	sqlstr += " LIMIT " + startRecord + "," + pageSize;
 
-	//var condition = [ {key: "status", value: "1"}];
-	mysql.query(sqlstr, null, callback);
+	//winston.info(sqlstr);
+	async.waterfall([
+		function(next) {
+			mysql.query(sqlstr, null, next);
+		},
+		function(records, next) {
+			if(!records || !Array.isArray(records) || records.length < 1) {
+				return callback(null, null);
+			}
+			//We need to read user name from redis for each user, this may cause performance issue
+			//It's better to move user name to users table as well, so that we can get it via SQL directly
+			async.each(records, function(item, next) {
+				async.waterfall([
+					function (next) {
+						db.getObjectField('user:' + item.uid, 'username', next);
+					},
+					function (username, next) {
+						item.author =  username;
+						next();
+					},
+				], next);
+			}, function(err) {
+				callback(err, records);
+			});
+		}
+	  ], callback
+	);
+
 };
 
 TopicReward.getRejectedRewards = function(callback) {
