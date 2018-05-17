@@ -68,24 +68,12 @@ module.exports = function (mysqlClient, module) {
 
 	module.pageQuery = function (model, where, orderby, limit, callback) {
 		var sqlCondition = '';
-		var lastLogicLength = 0;
 		if (where) {
-			sqlCondition += ' WHERE ';
 			for (var whereIndex = 0; whereIndex < where.length; whereIndex++) {
-				var logic = where[whereIndex].logic || 'AND';
-				lastLogicLength = logic.length;
-				var compaser = where[whereIndex].compaser || '=';
-				switch (compaser) {
-				case 'IS NULL':
-				case 'IS NOT NULL':
-					sqlCondition += (' ' + where[whereIndex].key + ' ' + compaser + ' ' + logic);
-					break;
-				default:
-					sqlCondition += (' ' + where[whereIndex].key + compaser + where[whereIndex].value + ' ' + logic);
-					break;
-				}
+				var compaser = where[whereIndex].compaser || 'AND';
+				sqlCondition += (' WHERE ' + where[whereIndex].key + '=' + where[whereIndex].value + ' ' + compaser);
 			}
-			sqlCondition = sqlCondition.substring(0, sqlCondition.length - lastLogicLength);
+			sqlCondition = sqlCondition.substring(0, sqlCondition.length - 3);
 		}
 		if (orderby) {
 			for (var orderByIndex = 0; orderByIndex < orderby.length; orderByIndex++) {
