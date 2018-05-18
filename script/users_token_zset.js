@@ -42,7 +42,9 @@ async.waterfall([
 	if (err) {
 		console.log(err);
 		throw err;
+		process.exit(-1);
 	} else {
 		console.log('finish');
+		process.exit(0);
 	}
 });

@@ -23,11 +23,11 @@ async.waterfall([
 ], function (err) {
 	if (err) {
 		console.log(err);
-	} else {
-		console.log('finish');
+		process.exit(-1);
+	}else {
+		console.log("finish!");
+		process.exit(0);
 	}
-	client.end(true);
-	client.close();
 });
 
 var count = 0;

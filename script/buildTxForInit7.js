@@ -75,8 +75,10 @@ async.waterfall([
 ], function (err) {
 	if (err) {
 		console.log(err);
+		process.exit(-1);
 	} else {
-		console.log('finish');
+		console.log('finish!');
+		process.exit(0);
 	}
 	client.end(true);
 	client.close();
