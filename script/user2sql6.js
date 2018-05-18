@@ -65,7 +65,7 @@ async.waterfall([
 function startMysql(cb) {
 	var path = require('path');
 	var nconf = require('nconf');
-	var configFile = path.resolve('', 'config.json');
+	var configFile = path.resolve('', '../config.json');
 	nconf.file({
 		file: configFile,
 	});

@@ -39,11 +39,11 @@ async.waterfall([
 		});
 	},
 ], function (err) {
+	client.end(true);
 	if (err) {
-		console.log(err);
+		console.error(err);
 		throw err;
 	} else {
-		console.log('8 finish');
+		console.info('8 finish');
 	}
-	client.end(true);
 });
