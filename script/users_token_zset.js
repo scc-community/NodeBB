@@ -30,7 +30,7 @@ async.waterfall([
 				},
 				function (currentToken) {
 					console.log('currentToken:' + currentToken);
-					if ((currentToken != null || currentToken !== undefined) && (item != null || item !== undefined)) {
+					if (currentToken != null && currentToken !== undefined && item != null && item !== undefined) {
 						// 根据SCC排序功能，score是用户scc个数，value是用户uid
 						client.zadd('users:scctoken', currentToken, item);
 					}
