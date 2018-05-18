@@ -21,6 +21,10 @@ var tableModels = [
 		name: 'txs',
 		idFieldName: 'id',
 	},
+	{
+		name: 'tx_log',
+		idFieldName: 'id',
+	},
 ];
 var schema = module.exports;
 

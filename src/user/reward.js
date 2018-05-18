@@ -4,32 +4,46 @@ var async = require('async');
 var scc = require('../scc');
 
 module.exports = function (User) {
-	User.registerReward = function (rewardItem, uid, /* tx_no, */ params, callback) {
-		var txData = {
+	User.registerReward = function (rewardItem, uid, sccParams, callback, data) {
+		data = data || {};
+		data.registerReward = {
+			rewardItem: rewardItem,
 			uid: uid,
-			date_issued: new Date().toLocaleString(),
-			// tx_no require fill data
 		};
-		txData = scc.tx.initRow('register', rewardItem, txData, params);
-		if (txData.scc > 0) {
+		var initTxData = User.buildTxRow(rewardItem, uid, sccParams, scc.tx.initDefaultRow());
+		data.registerReward.initTxData = initTxData;
+		if (initTxData.scc > 0) {
 			async.waterfall([
 				function (next) {
-					scc.tx.createTx(txData, next);
+					User.getSccToken(uid, next);
+				},
+				function (oldSccToken, next) {
+					data.registerReward.oldSccToken = oldSccToken;
+					scc.tx.createTx(initTxData, next);
 				},
 				function (row, next) {
+					data.registerReward.createTxData = row._data;
+					data.txs_id = row._data.id;
 					User.incrSccToken(uid, row._data.scc, next);
 				},
-				function (_, next) {
+				function (newSccToken, next) {
+					data.registerReward.newSccToken = newSccToken;
 					next();
 				},
 			], function (err) {
-				if (err) {
-					// log
-				}
 				callback(err);
 			});
 		} else {
-			return callback();
+			return callback(new Error('initTxData.scc must greater than zero.'));
 		}
+	};
+
+	User.buildTxRow = function (rewardItem, uid, sccParams, data) {
+		var category = 'register';
+		data.uid = uid;
+		data.reward_type = scc.rewardType.getRewardType(category, rewardItem);
+		data.content = scc.rewardType.getContentTemplate(category, rewardItem);
+		data.scc = scc.rewardType.getScc(category, rewardItem, sccParams);
+		return data;
 	};
 };
