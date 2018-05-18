@@ -39,7 +39,7 @@ async.waterfall([
 					client.hgetall(item, next);
 				},
 				function (data, next) {
-					if (data['email:confirmed'] === '1') {
+					if (data['email:confirmed'] !== '1') {
 						return _next();
 					}
 					next(null, data);
