@@ -51,7 +51,7 @@ function checkInviteToken(dbKey) {
 			if (typeof next !== 'function') {
 				console.log('2 next is not function!');
 			}
-			if (data.scctoken && data['email:confirmed'] === '1') {
+			if (data.token && data['email:confirmed'] === '1') {
 				client.hset(dbKey, 'scctoken', data.token, next);
 			} else {
 				client.hset(dbKey, 'scctoken', 0, next);
