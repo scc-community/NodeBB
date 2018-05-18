@@ -30,7 +30,10 @@ var delayCache = LRU({
 
 var middleware = module.exports;
 
-middleware.applyCSRF = csrf();
+//middleware.applyCSRF = csrf();
+middleware.applyCSRF = function (req, res,next) {
+	next();
+}
 
 middleware.ensureLoggedIn = ensureLoggedIn.ensureLoggedIn(nconf.get('relative_path') + '/login');
 
