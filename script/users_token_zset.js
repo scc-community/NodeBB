@@ -43,7 +43,7 @@ async.waterfall([
 		console.log(err);
 		throw err;
 	} else {
-		console.log('finish');
+		console.log('8 finish');
 	}
 	client.end(true);
 });

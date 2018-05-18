@@ -28,13 +28,13 @@ async.waterfall([
 		next();
 	},
 ], function (err) {
-	if (err) {
-		console.log(err);
-	} else {
-		console.log('finish');
-	}
 	client.end(true);
-	client.close();
+	if (err) {
+		console.error(err);
+		throw err;
+	} else {
+		console.info('4 finish');
+	}
 });
 
 var count0 = 0;

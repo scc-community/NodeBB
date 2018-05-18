@@ -52,13 +52,14 @@ async.waterfall([
 		}, next);
 	},
 ], function (err) {
-	if (err) {
-		console.log(err);
-	} else {
-		console.log('finish');
-	}
 	mysql.close();
 	client.end(true);
+	if (err) {
+		console.error(err);
+		throw err;
+	} else {
+		console.info('6 finish');
+	}
 });
 
 function startMysql(cb) {
