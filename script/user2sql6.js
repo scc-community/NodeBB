@@ -54,10 +54,11 @@ async.waterfall([
 ], function (err) {
 	if (err) {
 		console.log(err);
-		throw err;
 	} else {
 		console.log('finish');
 	}
+	client.end(true);
+	client.close();
 });
 
 function startMysql(cb) {

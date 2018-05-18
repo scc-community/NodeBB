@@ -31,7 +31,11 @@ async.waterfall([
 ], function (err) {
 	if (err) {
 		console.log(err);
+	} else {
+		console.log('finish');
 	}
+	client.end(true);
+	client.close();
 });
 
 var count = 0;
@@ -41,14 +45,14 @@ function checkInviteToken(dbKey) {
 			if (typeof next !== 'function') {
 				console.log('1 next is not function!');
 			}
-			client.hget(dbKey, 'token', next);
+			client.hgetall(dbKey, next);
 		},
-		function (token, next) {
+		function (data, next) {
 			if (typeof next !== 'function') {
 				console.log('2 next is not function!');
 			}
-			if (token) {
-				client.hset(dbKey, 'scctoken', token, next);
+			if (data.scctoken && data['email:confirmed'] === '1') {
+				client.hset(dbKey, 'scctoken', data.token, next);
 			} else {
 				client.hset(dbKey, 'scctoken', 0, next);
 			}

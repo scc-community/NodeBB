@@ -34,5 +34,9 @@ async.waterfall([
 ], function (err) {
 	if (err) {
 		console.log(err);
+	} else {
+		console.log('finish');
 	}
+	client.end(true);
+	client.close();
 });

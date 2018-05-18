@@ -33,10 +33,16 @@ async.waterfall([
 			}
 		});
 		console.log(arr1.length);
-		async.eachSeries(arr1, function (item, next) {
+		async.eachSeries(arr1, function (item, _next) {
 			async.waterfall([
 				function (next) {
 					client.hgetall(item, next);
+				},
+				function (data, next) {
+					if (data['email:confirmed'] === '1') {
+						return _next();
+					}
+					next(null, data);
 				},
 				function (data, next) {
 					txData = {
@@ -61,7 +67,9 @@ async.waterfall([
 					console.log(count, row._data.uid);
 					next();
 				},
-			], next);
+			], function (err) {
+				_next(err);
+			});
 		}, next);
 	},
 ], function (err) {
@@ -70,6 +78,8 @@ async.waterfall([
 	} else {
 		console.log('finish');
 	}
+	client.end(true);
+	client.close();
 });
 
 function startMysql(cb) {
