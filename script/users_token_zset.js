@@ -29,7 +29,7 @@ async.waterfall([
 				},
 				function (currentToken) {
 					console.log('currentToken:' + currentToken);
-					if (currentToken != null || currentToken !== undefined) {
+					if ((currentToken != null || currentToken !== undefined) && (item != null || item !== undefined)) {
 						client.zadd('users:scctoken', currentToken, item);
 					}
 				},
