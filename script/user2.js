@@ -22,11 +22,9 @@ async.waterfall([
 				arr1.push(item2);
 			}
 		});
-		console.log(arr1.length);
-		arr1.forEach(function (item) {
-			checkInviteToken(item);
-		});
-		next();
+		async.eachSeries(arr1, function (item, next) {
+			checkInviteToken(item, next);
+		}, next);
 	},
 ], function (err) {
 	client.end(true);
@@ -39,7 +37,7 @@ async.waterfall([
 });
 
 var count = 0;
-function checkInviteToken(dbKey) {
+function checkInviteToken(dbKey, cb) {
 	async.waterfall([
 		function (next) {
 			if (typeof next !== 'function') {
@@ -211,5 +209,5 @@ function checkInviteToken(dbKey) {
 				});
 			}
 		},
-	]);
+	], cb);
 }

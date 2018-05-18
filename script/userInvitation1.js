@@ -13,12 +13,23 @@ async.waterfall([
 		client.hgetall('scc:invition:token', next);
 	},
 	function (results, next) {
+		var arr1 = [];
+		var arr2 = [];
+		var arr3 = [];
+		var index = 0;
 		for (var key in results) {
 			if (results.hasOwnProperty(key)) {
-				checkInviteToken(key, results[key]);
+				arr1.push(key);
+				arr2.push(results[key]);
+				arr3.push(index);
+				index += 1;
 			}
 		}
-		next();
+		async.eachSeries(arr3, function (index, next) {
+			var key = arr1[index];
+			var value = arr2[index];
+			checkInviteToken(key, value, next);
+		}, next);
 	},
 ], function (err) {
 	client.end(true);
@@ -31,7 +42,7 @@ async.waterfall([
 });
 
 var count = 0;
-function checkInviteToken(key, value) {
+function checkInviteToken(key, value, cb) {
 	async.waterfall([
 		function (next) {
 			client.exists('user:' + value, next);
@@ -60,5 +71,5 @@ function checkInviteToken(key, value) {
 			}
 			next();
 		},
-	]);
+	], cb);
 }

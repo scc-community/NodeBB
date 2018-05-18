@@ -36,16 +36,16 @@ async.waterfall([
 				arr1.push(item2);
 			}
 		});
-		console.log(arr1.length);
-		arr1.forEach(function (item) {
+		async.eachSeries(arr1, function (item, next) {
 			client.del(item, function (err) {
 				if (err) {
-					console.log(err);
+					console.error(err);
+				} else {
+					console.info('delete long item');
 				}
-				console.log('delete long item');
+				next(err);
 			});
-		});
-		next();
+		}, next);
 	},
 ], function (err) {
 	client.end(true);

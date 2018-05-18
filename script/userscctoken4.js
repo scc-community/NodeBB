@@ -21,11 +21,9 @@ async.waterfall([
 				arr1.push(item2);
 			}
 		});
-		console.log(arr1.length);
-		arr1.forEach(function (item) {
-			checkInviteToken(item);
-		});
-		next();
+		async.eachSeries(arr1, function (item, next) {
+			checkInviteToken(item, next);
+		}, next);
 	},
 ], function (err) {
 	client.end(true);
@@ -43,7 +41,7 @@ var count2 = 0;
 var count3 = 0;
 var count4 = 0;
 
-function checkInviteToken(dbKey) {
+function checkInviteToken(dbKey, cb) {
 	async.waterfall([
 		function (next) {
 			if (typeof next !== 'function') {
@@ -58,21 +56,29 @@ function checkInviteToken(dbKey) {
 			if (scctoken === 0) {
 				count0 += 1;
 				console.log(dbKey, scctoken, count0);
+				next();
 			} else if (scctoken > 0 && scctoken <= 10) {
-				async.apply(client.hset, dbKey, 'scctoken', 300);
-				async.apply(client.hset, dbKey, 'invitationcount', 0);
 				count1 += 1;
 				console.log(dbKey, scctoken, count1);
+				async.parallel([
+					async.apply(client.hset, dbKey, 'scctoken', 300),
+					async.apply(client.hset, dbKey, 'invitationcount', 0),
+				], next);
 			} else if (scctoken > 10 && scctoken <= 100) {
 				count2 += 1;
 				console.log(dbKey, scctoken, count2);
+				next();
 			} else if (scctoken > 100 && scctoken <= 330) {
 				count3 += 1;
 				console.log(dbKey, scctoken, count3);
+				next();
 			} else if (scctoken > 330) {
 				count4 += 1;
 				console.log(dbKey, scctoken, count4);
+				next();
+			} else {
+				next();
 			}
 		},
-	]);
+	], cb);
 }
