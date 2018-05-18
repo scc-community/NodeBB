@@ -10,6 +10,7 @@ async.waterfall([
 		client.select(0, next);
 	},
 	function (status, next) {
+		// 获取用户uid
 		client.zrange('username:uid', 0, -1, 'WITHSCORES', next);
 	},
 	function (results, next) {
@@ -30,6 +31,7 @@ async.waterfall([
 				function (currentToken) {
 					console.log('currentToken:' + currentToken);
 					if ((currentToken != null || currentToken !== undefined) && (item != null || item !== undefined)) {
+						// 根据SCC排序功能，score是用户scc个数，value是用户uid
 						client.zadd('users:scctoken', currentToken, item);
 					}
 				},
