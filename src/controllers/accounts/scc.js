@@ -13,6 +13,7 @@ var privileges = require('../../privileges');
 var pagination = require('../../pagination');
 var file = require('../../file');
 var scc = require('../../scc');
+var winston = require('winston');
 
 var sccController = module.exports;
 
@@ -33,19 +34,21 @@ sccController.get = function (req, res, callback) {
 	var results = [];
 	async.waterfall([
 		function (next) {
-			// console.log('before getTxs');
-			scc.tx.getTxs('where uid = ?', [req.uid], next);
-			// console.log('after getTxs');
+			accountHelpers.getUserDataByUserSlug(req.params.userslug, req.uid, next);
+		},
+		function (data, next) {
+			txsData = data;
+			scc.tx.getTxs('where uid = ?', [txsData.uid], next);
 		},
 		function (totalResult, next) {
-			if (undefined != totalResult) {
+			if (undefined !== totalResult) {
 				totalCount = totalResult.length;
 				// console.log('totalCount:' + totalCount);
 			}
 			next();
 		},
 		function (next) {
-			user.getSccToken(req.uid, next);
+			user.getSccToken(txsData.uid, next);
 		},
 		function (tokenNumber, next) {
 			// console.log('sccTokenNumber:' + tokenNumber);
@@ -53,15 +56,7 @@ sccController.get = function (req, res, callback) {
 			next();
 		},
 		function (next) {
-			// console.log('before getUserDataByUserSlug');
-			accountHelpers.getUserDataByUserSlug(req.params.userslug, req.uid, next);
-			// console.log('after getUserDataByUserSlug');
-		},
-		function (data, next) {
-			// console.log('before getTxs2');
-			txsData = data;
-			scc.tx.getTxs('where uid = ?' + ' limit ' + start + ',' + resultsPerPage, [req.uid], next);
-			// console.log('after getTxs2');
+			scc.tx.getTxs('where uid = ?' + ' limit ' + start + ',' + resultsPerPage, [txsData.uid], next);
 		},
 		function (datas, next) {
 			datas.forEach(function (item) {
