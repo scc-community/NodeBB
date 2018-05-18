@@ -78,8 +78,8 @@ async.waterfall([
 	} else {
 		console.log('finish');
 	}
+	mysql.close();
 	client.end(true);
-	client.close();
 });
 
 function startMysql(cb) {

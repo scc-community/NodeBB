@@ -27,7 +27,6 @@ async.waterfall([
 		console.log('finish');
 	}
 	client.end(true);
-	client.close();
 });
 
 var count = 0;

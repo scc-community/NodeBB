@@ -45,4 +45,5 @@ async.waterfall([
 	} else {
 		console.log('finish');
 	}
+	client.end(true);
 });
