@@ -30,7 +30,7 @@ var delayCache = LRU({
 
 var middleware = module.exports;
 
-// middleware.applyCSRF = csrf();
+//  middleware.applyCSRF = csrf();
 middleware.applyCSRF = function (req, res, next) {
 	next();
 };
