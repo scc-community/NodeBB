@@ -56,6 +56,14 @@ define('admin/scc-reward/manual-reward', ['translator', 'benchpress', 'autocompl
 				err = {
 					message: '内容不能为空',
 				};
+			} else if (manualReward.content.trim().length > 40) {
+				err = {
+					message: '内容长度不能超过40',
+				};
+			} else if (manualReward.memo && manualReward.memo.trim().length > 40) {
+				err = {
+					message: '备注长度不能超过40',
+				};
 			}
 			return err;
 		}

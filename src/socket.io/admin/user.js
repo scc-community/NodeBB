@@ -83,7 +83,14 @@ User.validateEmail = function (socket, uids, callback) {
 	async.waterfall([
 		function (next) {
 			async.each(uids, function (uid, next) {
-				user.setUserField(uid, 'email:confirmed', 1, next);
+				async.waterfall([
+					function (next) {
+						user.email.registerReward(uid, next);
+					},
+					function (next) {
+						user.setUserField(uid, 'email:confirmed', 1, next);
+					},
+				], next);
 			}, next);
 		},
 		function (next) {

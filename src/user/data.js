@@ -18,7 +18,7 @@ module.exports = function (User) {
 	];
 
 	var fieldWhitelist = [
-		'uid', 'username', 'userslug', 'email', 'email:confirmed', 'joindate',
+		'uid', 'username', 'userslug', 'email', 'email:confirmed', 'email:confirmtime', 'joindate',
 		'lastonline', 'picture', 'fullname', 'location', 'birthday', 'website',
 		'aboutme', 'signature', 'uploadedpicture', 'profileviews', 'reputation',
 		'postcount', 'topiccount', 'lastposttime', 'banned', 'banned:expire',

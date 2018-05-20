@@ -20,10 +20,13 @@ ManualReward.createManualRewardWithTxs = function (socket, manualRewardData, cal
 		reward_type: manualRewardData.reward_type,
 		date_issued: manualRewardData.date_issued,
 		scc: manualRewardData.scc_setted,
-		content: manualRewardData.content,
-		memo: manualRewardData.memo,
 	};
-
+	if (manualRewardData.content) {
+		txsData.content = manualRewardData.content.trim();
+	}
+	if (manualRewardData.memo) {
+		txsData.memo = manualRewardData.memo.trim();
+	}
 	scc.manualReward.createManualRewardWithTxs(manualRewardData, txsData, function (err) {
 		callback(err);
 	});
