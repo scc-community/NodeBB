@@ -211,10 +211,7 @@ function setupCookie() {
 	}
 
 	if (nconf.get('secure')) {
-		cookie.secure = true;
-	} else {
-		// fix bug: can't login in http request
-		cookie.secure = false;
+		cookie.secure = nconf.get('secure');
 	}
 
 	var relativePath = nconf.get('relative_path');
