@@ -211,7 +211,7 @@ function setupCookie() {
 	}
 
 	if (nconf.get('secure')) {
-		cookie.secure = true;
+		cookie.secure = nconf.get('secure');
 	}
 
 	var relativePath = nconf.get('relative_path');
