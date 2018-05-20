@@ -4,7 +4,7 @@ var async = require('async');
 var scc = require('../scc');
 
 module.exports = function (User) {
-	User.registerReward = function (rewardItem, uid, sccParams, callback, data) {
+	User.registerReward = function (rewardItem, uid, sccParams, data, callback) {
 		data = data || {};
 		data.registerReward = {
 			rewardItem: rewardItem,
@@ -34,7 +34,8 @@ module.exports = function (User) {
 				callback(err);
 			});
 		} else {
-			return callback(new Error('initTxData.scc must greater than zero.'));
+			data.txs_id = null;
+			return callback();
 		}
 	};
 

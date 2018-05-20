@@ -129,17 +129,8 @@ UserEmail.registerReward = function (uid, callback) {
 		event: 'UserEmail.registerReward',
 		uid: uid,
 	};
+
 	async.waterfall([
-		function (next) {
-			user.getUserField(data.uid, 'register:reward', next);
-		},
-		function (registerReward, next) {
-			data.registerReward = registerReward;
-			if (registerReward === 1) {
-				return callback();
-			}
-			next();
-		},
 		function (next) {
 			user.getInvitedcode(data.uid, next);
 		},
@@ -162,7 +153,7 @@ UserEmail.registerReward = function (uid, callback) {
 						data.invitedUidSccToken = invitedUidSccToken;
 						next();
 					},
-				]);
+				], next);
 			} else {
 				next();
 			}
@@ -179,7 +170,7 @@ UserEmail.registerReward = function (uid, callback) {
 					},
 					function (next) {
 						if (data.inviteduid) {
-							user.getSccToken(uid, next);
+							user.getSccToken(data.inviteduid, next);
 						} else {
 							next(null, null);
 						}
@@ -197,7 +188,7 @@ UserEmail.registerReward = function (uid, callback) {
 				txlog.begin(data, next);
 			};
 			var registerReward = function (next) {
-				user.registerReward('register', data.uid, null, next, data);
+				user.registerReward('register', data.uid, null, data, next);
 			};
 			var logRecord = function (next) {
 				txlog.record(data, next);
@@ -209,10 +200,10 @@ UserEmail.registerReward = function (uid, callback) {
 			tasks.push(logRecord);
 			if (data.inviteduid) {
 				var registerInvitedReward = function (next) {
-					user.registerReward('register_invited', data.uid, null, next, data);
+					user.registerReward('register_invited', data.uid, null, data, next);
 				};
 				var inviteFriendReward = function (next) {
-					user.registerReward('invite_friend', data.inviteduid, null, next);
+					user.registerReward('invite_friend', data.inviteduid, null, data, next);
 				};
 				var inviteExtraReward = function (next) {
 					async.waterfall([
@@ -221,7 +212,7 @@ UserEmail.registerReward = function (uid, callback) {
 						},
 						function (invitationcount, next) {
 							data.invitationcount = invitationcount;
-							user.registerReward('invite_extra', data.inviteduid, invitationcount, next);
+							user.registerReward('invite_extra', data.inviteduid, invitationcount, data, next);
 						},
 					], next);
 				};
@@ -232,28 +223,15 @@ UserEmail.registerReward = function (uid, callback) {
 				tasks.push(inviteExtraReward);
 				tasks.push(logRecord);
 			}
-			var setRegisterRewardFlag = function (next) {
-				async.waterfall([
-					function (next) {
-						user.setUserField(data.uid, 'register:reward', 1, next);
-					},
-					function (next) {
-						user.getUserField(data.uid, 'register:reward', 1, next);
-					},
-					function (registerRreward, next) {
-						data.registerRreward = registerRreward;
-						next();
-					},
-				], next);
-			};
 			tasks.push(recordSccToken);
-			tasks.push(setRegisterRewardFlag);
-
 			async.series(tasks, next);
 		},
 	], function (err) {
 		if (err) {
-			data.err = err;
+			data.err = {
+				message: err.message,
+				stack: err.stack,
+			};
 		}
 		txlog.end(data, callback);
 	});
@@ -268,18 +246,64 @@ UserEmail.confirm = function (code, callback) {
 			if (!confirmObj || !confirmObj.uid || !confirmObj.email) {
 				return next(new Error('[[error:invalid-data]]'));
 			}
+
+			var checkConfirmFlag = function (uid, next) {
+				async.waterfall([
+					function (next) {
+						user.getUserFields(uid, ['email:confirmed', 'email:confirmtime'], next);
+					},
+					function (data, next) {
+						if (!data['email:confirmed']) {
+							data['email:confirmed'] = '0';
+							data['email:confirmtime'] = new Date().getTime();
+							user.setUserFields(uid, data, function (err) {
+								data.init = true;
+								next(err, data);
+							});
+						} else {
+							next(null, data);
+						}
+					},
+					function (data, next) {
+						switch (data['email:confirmed']) {
+						case '1':
+							return next(new Error('email confim was ended.'));
+						case '0':
+							if (data.init) {
+								return next();
+							}
+							var checkTime = new Date(parseInt(data['email:confirmtime'], 10));
+							checkTime.setSeconds(checkTime.getSeconds() + 10);
+							var curTime = new Date();
+							if (curTime < checkTime) {
+								return next(new Error('email confim frequency is higher.'));
+							}
+							user.setUserField(uid, 'email:confirmtime', new Date().getTime(), next);
+							break;
+						default:
+							return next(new Error('email:confirmed value is not exist.'));
+						}
+					},
+				], next);
+			};
 			async.waterfall([
+				function (next) {
+					checkConfirmFlag(confirmObj.uid, next);
+				},
 				function (next) {
 					UserEmail.registerReward(confirmObj.uid, next);
 				},
 				function (next) {
 					async.series([
-						async.apply(user.setUserField, confirmObj.uid, 'email:confirmed', 1),
-						// async.apply(db.delete, 'confirm:' + code),
-						// async.apply(db.delete, 'uid:' + confirmObj.uid + ':confirm:email:sent'),
-						// function (next) {
-						//	db.sortedSetRemove('users:notvalidated', confirmObj.uid, next);
-						// },
+						async.apply(user.setUserFields, confirmObj.uid, {
+							'email:confirmed': 1,
+							'email:confirmtime': new Date().getTime(),
+						}),
+						async.apply(db.delete, 'confirm:' + code),
+						async.apply(db.delete, 'uid:' + confirmObj.uid + ':confirm:email:sent'),
+						function (next) {
+							db.sortedSetRemove('users:notvalidated', confirmObj.uid, next);
+						},
 						function (next) {
 							plugins.fireHook('action:user.email.confirmed', { uid: confirmObj.uid, email: confirmObj.email }, next);
 						},

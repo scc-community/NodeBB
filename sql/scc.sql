@@ -147,11 +147,13 @@ CREATE TABLE `tx_log` (
   `group_id` varchar(40) NOT NULL COMMENT '事务组ID,用于同一笔事务的交易分组',
   `method` enum('1','2','3') NOT NULL COMMENT '方法,1:begin/3:end/2:record',
   `txs_id` bigint(20) DEFAULT NULL COMMENT '交易表id',
-  `data` varchar(2048) DEFAULT NULL COMMENT '自定义数据',
+  `data` varchar(4096) DEFAULT NULL COMMENT '自定义数据',
   `date_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'node-mysql扩展(必须)，主要用于迁移数据库',
   `last_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'node-mysql扩展(必须)，主要用于迁移数据库',
   `version` char(10) NOT NULL DEFAULT '0' COMMENT 'node-mysql扩展(必须)，主要用于迁移数据库',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `index_txsid` (`txs_id`) USING HASH,
+  KEY `index_groupid` (`group_id`) USING HASH
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='交易日志表';
 
 -- ----------------------------
