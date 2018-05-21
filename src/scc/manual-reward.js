@@ -22,6 +22,10 @@ ManualReward.createManualRewardWithTxs = function (manualRewardData, txData, cal
 		parameters: {
 			manualReward: manualRewardData,
 			tx: txData,
+			oldSccToken: null,
+			newSccToken: null,
+			txs_id: null,
+			err: null,
 		},
 		result: {},
 	};
@@ -46,7 +50,6 @@ ManualReward.createManualRewardWithTxs = function (manualRewardData, txData, cal
 					},
 				], function (err) {
 					if (err) {
-						data.txs_id = null;
 						conn.rollback();
 					} else {
 						conn.commit();

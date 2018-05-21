@@ -8,7 +8,12 @@ module.exports = function (User) {
 		data = data || {};
 		data.registerReward = {
 			rewardItem: rewardItem,
+			sccParams: sccParams,
 			uid: uid,
+			txs_id: null,
+			oldSccToken: null,
+			createTxData: null,
+			newSccToken: null,
 		};
 		var initTxData = User.buildTxRow(rewardItem, uid, sccParams, scc.tx.initDefaultRow());
 		data.registerReward.initTxData = initTxData;
@@ -34,7 +39,6 @@ module.exports = function (User) {
 				callback(err);
 			});
 		} else {
-			data.txs_id = null;
 			return callback();
 		}
 	};
