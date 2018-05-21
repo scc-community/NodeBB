@@ -4,7 +4,8 @@ var async = require('async');
 var mysql = require('../database/mysql');
 
 var user = require('../user');
-
+var scc = require('../scc');
+var utils = require('../utils');
 var ManualReward = module.exports;
 
 ManualReward.getManualRewards = function (where, orderby, limit, callback) {
@@ -12,7 +13,22 @@ ManualReward.getManualRewards = function (where, orderby, limit, callback) {
 };
 
 ManualReward.createManualRewardWithTxs = function (manualRewardData, txData, callback) {
+	if (!manualRewardData.uid || !txData.uid || manualRewardData.uid !== txData.uid) {
+		return callback(new Error('manual-rewards.uid !== txs.uid'));
+	}
+	var data = {
+		event: 'ManualReward.createManualRewardWithTxs',
+		group_id: utils.generateUUID(),
+		parameters: {
+			manualReward: manualRewardData,
+			tx: txData,
+		},
+		result: {},
+	};
 	async.waterfall([
+		function (next) {
+			scc.txLog.begin(data, next);
+		},
 		function (next) {
 			mysql.transaction(function (conn, next) {
 				async.waterfall([
@@ -20,10 +36,17 @@ ManualReward.createManualRewardWithTxs = function (manualRewardData, txData, cal
 						mysql.nnewRow('manual_rewards', conn, manualRewardData, next);
 					},
 					function (row, next) {
+						data.result.manualReward = row._data;
 						mysql.nnewRow('txs', conn, txData, next);
+					},
+					function (row, next) {
+						data.result.tx = row._data;
+						data.txs_id = row._data.id;
+						next();
 					},
 				], function (err) {
 					if (err) {
+						data.txs_id = null;
 						conn.rollback();
 					} else {
 						conn.commit();
@@ -34,9 +57,28 @@ ManualReward.createManualRewardWithTxs = function (manualRewardData, txData, cal
 			}, next);
 		},
 		function (next) {
+			scc.txLog.record(data, next);
+		},
+		function (next) {
+			user.getSccToken(txData.uid, next);
+		},
+		function (scctoken, next) {
+			data.oldSccToken = scctoken;
 			user.incrSccToken(txData.uid, txData.scc, next);
 		},
-	], callback);
+		function (scctoken, next) {
+			data.newSccToken = scctoken;
+			scc.txLog.record(data, next);
+		},
+	], function (err) {
+		if (err) {
+			data.err = {
+				message: err.message,
+				stack: err.stack,
+			};
+		}
+		scc.txLog.end(data, callback);
+	});
 };
 
 ManualReward.getCount = function (callback) {
