@@ -5,15 +5,15 @@
 		<input type="text" class="form-control" id="create-manualreward-uid"/>
 	</div>
 	<div class="form-group">
-		<label for="group-name">用户</label>
-		<input type="text" class="form-control" id="create-manualreward-username" placeholder="搜索用户" />
+		<label for="group-name">[[admin/scc-reward/manual-reward:title.username]]</label>
+		<input type="text" class="form-control" id="create-manualreward-username" placeholder="[[admin/scc-reward/manual-reward:input.search-user]]" />
 	</div>
 	<div class="form-group">
-		<label for="group-name">奖励数量</label>
+		<label for="group-name">[[admin/scc-reward/manual-reward:title.reward-scc]]</label>
 		<input type="text" class="form-control" id="create-manualreward-scc_setted" placeholder="SCC" />
 	</div>
 	<div class="form-group">
-		<label for="group-name">类型</label>
+		<label for="group-name">[[admin/scc-reward/manual-reward:title.reward-type]]</label>
 		<select class="form-control" id="create-manualreward-rewardtype" >
 			<!-- BEGIN allrewardtypes -->
 			<option value="{allrewardtypes.value}" <!-- IF allrewardtypes.selected -->selected<!-- ENDIF allrewardtypes.selected -->>{allrewardtypes.text}</option>
@@ -21,12 +21,12 @@
 		</select>
 	</div>
 	<div class="form-group">
-		<label for="group-name">内容</label>
-		<input type="text" class="form-control" id="create-manualreward-content" placeholder="内容" />
+		<label for="group-name">[[admin/scc-reward/manual-reward:title.reward-content]]</label>
+		<input type="text" class="form-control" id="create-manualreward-content" placeholder="[[admin/scc-reward/manual-reward:title.reward-content]]" />
 	</div>
 
 	<div class="form-group">
-		<label for="group-name">备注</label>
-		<input type="text" class="form-control" id="create-manualreward-memo" placeholder="备注" />
+		<label for="group-name">[[admin/scc-reward/manual-reward:title.reward-memo]]</label>
+		<input type="text" class="form-control" id="create-manualreward-memo" placeholder="[[admin/scc-reward/manual-reward:title.reward-memo]]" />
 	</div>
 </form>

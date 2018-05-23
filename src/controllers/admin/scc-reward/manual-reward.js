@@ -38,10 +38,11 @@ RewardManualController.get = function (req, res, next) {
 							async.each(manualrewards, function (manualReward, next) {
 								async.waterfall([
 									function (next) {
-										db.getObjectField('user:' + manualReward.uid, 'username', next);
+										db.getObjectFields('user:' + manualReward.uid, ['username', 'userslug'], next);
 									},
-									function (username, next) {
-										manualReward.username = username;
+									function (userData, next) {
+										manualReward.username = userData.username;
+										manualReward.userslug = userData.userslug;
 										manualReward.rewardtype_content = scc.rewardType.getRewardTypeText(manualReward.reward_type);
 										next();
 									},

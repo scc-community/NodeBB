@@ -1,0 +1,11 @@
+{
+    "manual-reward": "manual rewards",
+    "menu.new-reward": "new reward",
+    "title.username": "topic type",
+    "title.reward-scc": "modify status",
+    "title.reward-type": "reward order",
+    "title.reward-content": "action",
+    "title.reward-memo": "modify reward",
+    "title.issue-time": "remove reward",
+    "input.search-user": "search user"
+}
