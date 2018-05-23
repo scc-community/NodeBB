@@ -150,7 +150,6 @@ TopicReward.buildTopicsReward = function (socket, data, callback) {
 			},
 			function (topicsRewards, next) {
 				cleanTopicRewards(topicsRewards, next);
-				next();
 			},
 		], function (err) {
 			callback = callback || function () {};
