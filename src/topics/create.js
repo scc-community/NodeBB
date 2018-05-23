@@ -168,7 +168,7 @@ module.exports = function (Topics) {
 					tid: postData.tid,
 				};
 				var value = JSON.stringify(rewardTopicData);
-				db.setObjectField('topics:rewardcheck', postData.tid, value, function (err) {
+				db.setObjectField('topics:rewardscheck', postData.tid, value, function (err) {
 					next(err, postData);
 				});
 			},

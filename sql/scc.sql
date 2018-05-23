@@ -29,14 +29,14 @@ CREATE TABLE `manual_rewards` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `uid` mediumint(9) unsigned NOT NULL COMMENT '用户ID',
   `reward_type` smallint(5) unsigned NOT NULL COMMENT '奖励类型ID，外键关联',
-  `content` varchar(40) NOT NULL COMMENT '奖励内容，如项目名/文章名/源码号等',
+  `content` varchar(40) NOT NULL COMMENT '内容，如项目名/文章名/源码号等',
   `date_issued` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '奖励发放日期',
-  `scc_setted` mediumint(8) NOT NULL COMMENT '奖励发放日期',
-  `memo` varchar(40) DEFAULT NULL COMMENT '奖励备注',
+  `scc_setted` mediumint(9) NOT NULL COMMENT '奖励',
+  `memo` varchar(40) DEFAULT NULL COMMENT '备注',
   `publish_uid` mediumint(9) unsigned NOT NULL COMMENT '发布管理员用户ID，外键关联',
   `date_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'node-mysql扩展(必须)，主要用于迁移数据库',
   `last_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'node-mysql扩展(必须)，主要用于迁移数据库',
-  `version` char(10) NOT NULL DEFAULT '0' COMMENT 'node-mysql扩展(必须)，主要用于迁移数据库',
+  `version` mediumint(9) NOT NULL DEFAULT '0' COMMENT 'node-mysql扩展(必须)，主要用于迁移数据库',
   PRIMARY KEY (`id`),
   KEY `fk_users_manual_rewards_uid` (`uid`),
   KEY `fk_reward_types_manual_rewards_reward_type` (`reward_type`),
@@ -58,7 +58,7 @@ CREATE TABLE `reward_types` (
   `comment` varchar(512) DEFAULT NULL COMMENT '内容注释',
   `date_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'node-mysql扩展(必须)，主要用于迁移数据库',
   `last_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'node-mysql扩展(必须)，主要用于迁移数据库',
-  `version` char(10) NOT NULL DEFAULT '0' COMMENT 'node-mysql扩展(必须)，主要用于迁移数据库',
+  `version` mediumint(9) NOT NULL DEFAULT '0' COMMENT 'node-mysql扩展(必须)，主要用于迁移数据库',
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_cagegory_item` (`category`,`item`) USING HASH
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='奖励类型表';
@@ -118,18 +118,18 @@ DROP TABLE IF EXISTS `txs`;
 CREATE TABLE `txs` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `uid` mediumint(9) unsigned NOT NULL COMMENT '用户ID，外键关联',
-  `transaction_uid` mediumint(20) unsigned NOT NULL DEFAULT '0' COMMENT '交易用户ID，外键关联',
+  `transaction_uid` mediumint(9) unsigned NOT NULL DEFAULT '0' COMMENT '交易用户ID，外键关联',
   `publish_uid` mediumint(8) unsigned NOT NULL COMMENT '发布管理员用户ID，外键关联',
   `transaction_type` enum('1','2') NOT NULL COMMENT '1:收入/2:支出',
   `tx_no` varchar(40) NOT NULL COMMENT '交易编号，同步至区块链系统',
   `reward_type` smallint(5) unsigned NOT NULL COMMENT '奖励类型ID，外键关联',
   `date_issued` datetime NOT NULL COMMENT '交易发放日期',
   `scc` mediumint(9) NOT NULL COMMENT '交易SCC',
-  `content` varchar(100) NOT NULL COMMENT '内容,数据来源人工奖励/文章奖励',
+  `content` varchar(100) COMMENT '内容,数据来源人工奖励/文章奖励',
   `memo` varchar(40) DEFAULT NULL COMMENT '备注,数据来源人工奖励/文章奖励',
   `date_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'node-mysql扩展(必须)，主要用于迁移数据库',
   `last_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'node-mysql扩展(必须)，主要用于迁移数据库',
-  `version` char(10) NOT NULL DEFAULT '0' COMMENT 'node-mysql扩展(必须)，主要用于迁移数据库',
+  `version` mediumint(9) NOT NULL DEFAULT '0' COMMENT 'node-mysql扩展(必须)，主要用于迁移数据库',
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_tx_no` (`tx_no`) USING HASH,
   KEY `fk_users_txs_uid` (`uid`),
@@ -154,7 +154,7 @@ CREATE TABLE `tx_log` (
   `data` varchar(4096) DEFAULT NULL COMMENT '自定义数据',
   `date_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'node-mysql扩展(必须)，主要用于迁移数据库',
   `last_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'node-mysql扩展(必须)，主要用于迁移数据库',
-  `version` char(10) NOT NULL DEFAULT '0' COMMENT 'node-mysql扩展(必须)，主要用于迁移数据库',
+  `version` mediumint(9) NOT NULL DEFAULT '0' COMMENT 'node-mysql扩展(必须)，主要用于迁移数据库',
   PRIMARY KEY (`id`),
   KEY `index_txsid` (`txs_id`) USING HASH,
   KEY `index_groupid` (`group_id`) USING HASH
@@ -165,11 +165,11 @@ CREATE TABLE `tx_log` (
 -- ----------------------------
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
-  `id` mediumint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `id` mediumint(9) unsigned NOT NULL AUTO_INCREMENT,
   `uid` mediumint(9) unsigned NOT NULL COMMENT '用户ID',
   `date_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'node-mysql扩展(必须)，主要用于迁移数据库',
   `last_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'node-mysql扩展(必须)，主要用于迁移数据库',
-  `version` char(10) NOT NULL DEFAULT '0' COMMENT 'node-mysql扩展(必须)，主要用于迁移数据库',
+  `version` mediumint(9) NOT NULL DEFAULT '0' COMMENT 'node-mysql扩展(必须)，主要用于迁移数据库',
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_uid` (`uid`) USING HASH
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户表，数据来源NOSQL';

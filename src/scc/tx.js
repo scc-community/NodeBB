@@ -31,10 +31,10 @@ Tx.getCount = function (callback) {
 Tx.getTransactionTypeText = function (transactionType) {
 	switch (transactionType) {
 	case '2':
-		return '[[admin/scc-reward/tx:outgoings]]';
+		return '[[admin/scc-reward/index:outgoings]]';
 	case '1':
-		return '[[admin/scc-reward/tx:income]]';
+		return '[[admin/scc-reward/index:income]]';
 	default:
-		return '[[admin/scc-reward/tx:income]]';
+		return '[[admin/scc-reward/index:income]]';
 	}
 };

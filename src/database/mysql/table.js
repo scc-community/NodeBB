@@ -113,24 +113,35 @@ module.exports = function (mysqlClient, module) {
 			sqlCondition += ' WHERE ';
 			var lastLogic = '';
 			for (var whereIndex = 0; whereIndex < where.length; whereIndex++) {
-				switch (where[whereIndex].compaser) {
-				case 'IS NULL':
-				case 'IS NOT NULL':
-					sqlCondition += (' ' + where[whereIndex].key + ' ' + where[whereIndex].compaser);
+				lastLogic = (where[whereIndex].logic || 'AND').toUpperCase();
+				switch (lastLogic) {
+				case 'AND':
+				case 'OR':
 					break;
 				default:
-					where[whereIndex].compaser = where[whereIndex].compaser || 'AND';
-					sqlCondition += (' ' + where[whereIndex].key + where[whereIndex].compaser + where[whereIndex].value);
+					lastLogic = 'AND';
 					break;
 				}
-				lastLogic = where[whereIndex].logic || 'AND';
-				sqlCondition += (' ' + lastLogic);
+				where[whereIndex].compaser = where[whereIndex].compaser || '=';
+				if (where[whereIndex].key && where[whereIndex].value) {
+					sqlCondition += (' ' + where[whereIndex].key + ' ' + where[whereIndex].compaser + ' ' + where[whereIndex].value);
+					sqlCondition += (' ' + lastLogic);
+				}
 			}
 			sqlCondition = sqlCondition.substring(0, sqlCondition.length - lastLogic.length);
 		}
 		if (orderby && orderby.length > 0) {
+			sqlCondition += ' ORDER BY ';
 			for (var orderByIndex = 0; orderByIndex < orderby.length; orderByIndex++) {
-				sqlCondition += (' ORDER BY ' + orderby[orderByIndex].key + ' ' + orderby[orderByIndex].value + ',');
+				var element = orderby[orderByIndex];
+				for (var fieldName in element) {
+					if (element.hasOwnProperty(fieldName)) {
+						var item = element[fieldName];
+						if (item && (item.toUpperCase() === 'DESC' || item.toUpperCase() === 'ASC')) {
+							sqlCondition += (fieldName + ' ' + item + ',');
+						}
+					}
+				}
 			}
 			sqlCondition = sqlCondition.substring(0, sqlCondition.length - 1);
 		}

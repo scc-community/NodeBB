@@ -1,82 +1,145 @@
 'use strict';
 
-
 define('admin/scc-reward/topic-reward', ['translator', 'benchpress'], function (translator, Benchpress) {
-	var TopicRewards = {};
+	var TopicReward = {};
+	TopicReward.init = function () {
+		function getSelected() {
+			var topicRewards = [];
+			$('.topicrewards-table [component="topicreward/select/single"]').each(function () {
+				if ($(this).is(':checked')) {
+					topicRewards.push(JSON.parse($(this).attr('data-value')));
+				}
+			});
+			return topicRewards;
+		}
 
-		// Once user clicked "select all" or unselect all checkbox
-		toggleCheckbox();
+		function update(className, state) {
+			$('.topicrewards-table [component="topicreward/select/single"]:checked').parents('.topicreward-row').find(className).each(function () {
+				$(this).toggleClass('hidden', !state);
+			});
+		}
 
-		// Clicked released button
-		releaseSCC();
+		function unselectAll() {
+			$('.topicrewards-table [component="topicreward/select/single"]').prop('checked', false);
+			$('.topicrewards-table [component="topicreward/select/all"]').prop('checked', false);
+		}
 
-		// Event for clicked operation hyperlinks
-		clickedOperateButtons();
+		function removeSelected() {
+			$('.topicrewards-table [component="topicreward/select/single"]:checked').parents('.topicreward-row').remove();
+		}
 
-		// Page initialze
+		function done(successMessage, className, flag) {
+			return function (err) {
+				if (err) {
+					return app.alertError(err.message);
+				}
+				app.alertSuccess(successMessage);
+				// if (className) {
+				// 	update(className, flag);
+				// }
+				// unselectAll();
+				ajaxify.refresh();
+			};
+		}
 
-		// Bind modal event
-		bindModalEvent();
-	};
-
-	function bindModalEvent() {
-		// Bind reject modal event
-
-		$('body').on('click', '.btn-reject-reason', function (e) {
-			e.preventDefault();
-
-			if (!$(this).hasClass('btn-primary')) {
-				$(this).addClass('btn-primary');
+		$('[component="topicreward/select/all"]').on('click', function () {
+			if ($(this).is(':checked')) {
+				$('.topicrewards-table [component="topicreward/select/single"]').prop('checked', true);
+			} else {
+				$('.topicrewards-table [component="topicreward/select/single"]').prop('checked', false);
 			}
-
-			$(this).siblings('a').removeClass('btn-primary');
-			rejectReason = $(this).data('value');
 		});
-	}
 
-	function clickedOperateButtons() {
-		$('#scc-mgr-ajax-datazone').on('click', '.scc-mgr-op-action', function () {
-			switch ($(this).data('value')) {
-				case 'mod':
-					modifyNum($(this).data('id'));
-					break;
-				case 'reject':
-					rejectSCC($(this).data('id'));
-					break;
-				case 'restore':
-					restoreSCC($(this).data('id'));
-					break;
-				default:
-					break;
+		function getQuery() {
+			var result = config.relative_path + '/admin/scc-reward/topic-reward?';
+			var dataValue = {
+				filterByStatus: $('.statuses button').attr('data-value'),
+				filterByRewardType: $('.rewardtype button').attr('data-value'),
+				filterByModifyStatus: $('.modifystatus button').attr('data-value'),
+				orderByIssueScc: $('.rewardorder button').attr('data-value'),
+			};
+			for (var key in dataValue) {
+				if (dataValue.hasOwnProperty(key)) {
+					if (dataValue[key]) {
+						result += (key + '=' + dataValue[key] + '&');
+					}
+				}
 			}
-		});
-	}
+			result = result.substring(0, result.length - 1);
+			return result;
+		}
 
-	function modifyNum(id) {
-		Benchpress.parse('admin/partials/scc-reward/topic_submit_modal', {}, function (html) {
-			translator.translate(html, function (htm) {
+		function bindConditionMenu(className) {
+			$(className).on('click', 'a', function () {
+				$(className + ' button').attr('data-value', $(this).attr('data-value'));
+				ajaxify.go(getQuery());
+			});
+		}
+
+		['.statuses', '.rewardtype', '.modifystatus', '.rewardorder'].forEach(function (value) {
+			bindConditionMenu(value);
+		});
+
+		$('.calc-reward').on('click', function () {
+			bootbox.confirm('[[admin/scc-reward/topic-reward:alerts.confirm-calc-reward]]', function (confirm) {
+				if (confirm) {
+					var data = {
+						publish_uid: app.user.uid,
+					};
+					socket.emit('admin.sccReward.topicReward.buildTopicsReward', data, function (err) {
+						if (err) {
+							app.alertError(err.message);
+							return false;
+						}
+						ajaxify.refresh();
+						app.alertSuccess('[[admin/scc-reward/topic-reward:alerts.confirm-calc-finsih]]');
+					});
+				}
+			});
+		});
+
+		$('.send-reward').on('click', function () {
+			var topicRewards = getSelected();
+			if (!topicRewards.length) {
+				app.alertError('[[admin/scc-reward/topic-reward:errors.no-reward-selected]]');
+				return false; // specifically to keep the menu open
+			}
+			Benchpress.parse('admin/partials/scc-reward/topic_send_reward_modal', {}, function (html) {
 				bootbox.dialog({
 					className: 'ban-modal',
-					title: '[[admin/scc-reward/topic-reward:modal/release_title]]',
-					message: htm,
+					title: '[[admin/scc-reward/topic-reward:dialog.title.send-reward]]',
+					message: html,
 					show: true,
 					buttons: {
 						close: {
-							label: '[[admin/scc-reward/topic-reward:modal/cancel]]',
+							label: '[[global:close]]',
 							className: 'btn-link',
 						},
 						submit: {
-							label: '[[admin/scc-reward/topic-reward:modal/confirm]]',
+							label: '[[admin/scc-reward/topic-reward:alerts.confirm-send-reward-x, ' + topicRewards.length + ']]',
 							callback: function () {
-								var formData = $('.mod-scc-modal form').serializeArray().reduce(function (data, cur) {
+								var errorEl = $('#create-modal-error');
+								var maxLength = 40;
+								if ($('#memo').val().trim().length > maxLength) {
+									errorEl.translateHtml('[[admin/scc-reward/topic-reward:alerts.memo.explanation,' + maxLength + ']]').removeClass('hide');
+									return false;
+								}
+								var formData = $('.ban-modal form').serializeArray().reduce(function (data, cur) {
 									data[cur.name] = cur.value;
 									return data;
 								}, {});
-								formData.Id = id;
-								// console.log(JSON.stringify(formData));
-
-								socket.emit('admin.sccReward.topicReward.modifySCCNum', formData, function (err, data) {
-									console.log(err, data);
+								socket.emit('admin.sccReward.topicReward.sendReward', {
+									publish_uid: app.user.uid,
+									topicRewards: topicRewards,
+									memo: formData.memo,
+								}, function (err) {
+									if (err) {
+										app.alertError(err.message);
+									} else {
+										app.alertSuccess('[[admin/scc-reward/topic-reward:alerts.send-reward-success]]');
+										removeSelected();
+										unselectAll();
+									}
 								});
 							},
 						},
@@ -84,145 +147,166 @@ define('admin/scc-reward/topic-reward', ['translator', 'benchpress'], function (
 				});
 			});
 		});
-	}
 
-	function rejectSCC(id) {
-		Benchpress.parse('admin/partials/scc-reward/topic_reject_modal', {}, function (html) {
-			translator.translate(html, function (htm) {
-				bootbox.dialog({
+		$('.remove-reward').on('click', function () {
+			var topicRewards = [];
+			getSelected().forEach(function (item) {
+				var topicReward = {
+					id: item.id,
+					status: item.status,
+				};
+				topicRewards.push(topicReward);
+			});
+
+			if (!topicRewards.length) {
+				app.alertError('[[admin/scc-reward/topic-reward:errors.no-reward-selected]]');
+				return false; // specifically to keep the menu open
+			}
+			Benchpress.parse('admin/partials/scc-reward/topic_remove_reward_modal', {}, function (html) {
+				var dialog = bootbox.dialog({
 					className: 'ban-modal',
-					title: '[[admin/scc-reward/topic-reward:modal/reject_title]]',
-					message: htm,
+					title: '[[admin/scc-reward/topic-reward:dialog.title.modify-reward]]',
+					message: html,
 					show: true,
 					buttons: {
 						close: {
-							label: '[[admin/scc-reward/topic-reward:modal/cancel]]',
+							label: '[[global:close]]',
 							className: 'btn-link',
 						},
 						submit: {
-							label: '[[admin/scc-reward/topic-reward:modal/confirm]]',
+							label: '[[admin/scc-reward/topic-reward:alerts.confirm-modify-reward-x, ' + topicRewards.length + ']]',
 							callback: function () {
-								var formData = {};
-								formData.Id = id;
-								formData.reason = rejectReason;
-
-								socket.emit('admin.sccReward.topicReward.rejectSCC', formData, function (err, data) {
-									console.log(err, data);
+								var errorEl = $('#create-modal-error');
+								var maxLength = 40;
+								if ($('#memo').val().trim().length > maxLength) {
+									errorEl.translateHtml('[[admin/scc-reward/topic-reward:alerts.memo.explanation,' + maxLength + ']]').removeClass('hide');
+									return false;
+								}
+								var formData = $('.ban-modal form').serializeArray().reduce(function (data, cur) {
+									data[cur.name] = cur.value;
+									return data;
+								}, {});
+								socket.emit('admin.sccReward.topicReward.removeReward', {
+									topicRewards: topicRewards,
+									memo: formData.memo,
+								}, function (err) {
+									if (err) {
+										app.alertError(err.message);
+									} else {
+										app.alertSuccess('[[admin/scc-reward/topic-reward:alerts.remove-reward-success]]');
+										removeSelected();
+										unselectAll();
+									}
 								});
+							},
+						},
+					},
+				});
+				dialog.init(function () {
+					var bindEvent = function (className) {
+						$(className).on('click', function () {
+							$('#memo').val($(className).text());
+							$('#reason button').each(function () {
+								$(this).removeClass('btn-primary');
+							});
+							$(this).addClass('btn-primary');
+						});
+					};
+					['#reason1', '#reason2', '#reason3', '#reason4'].forEach(function (className) {
+						bindEvent(className);
+					});
+				});
+			});
+		});
+
+		$('.restore-reward').on('click', function () {
+			var topicRewards = [];
+			getSelected().forEach(function (item) {
+				var topicReward = {
+					id: item.id,
+					status: item.status,
+					scc_autoed: item.scc_autoed,
+				};
+				topicRewards.push(topicReward);
+			});
+
+			if (!topicRewards.length) {
+				app.alertError('[[admin/scc-reward/topic-reward:errors.no-reward-selected]]');
+				return false; // specifically to keep the menu open
+			}
+			Benchpress.parse('admin/partials/scc-reward/topic_restore_reward_modal', {}, function (html) {
+				bootbox.dialog({
+					className: 'ban-modal',
+					title: '[[admin/scc-reward/topic-reward:dialog.title.restore-reward]]',
+					message: html,
+					show: true,
+					buttons: {
+						close: {
+							label: '[[global:close]]',
+							className: 'btn-link',
+						},
+						submit: {
+							label: '[[admin/scc-reward/topic-reward:alerts.confirm-restore-reward-x, ' + topicRewards.length + ']]',
+							callback: function () {
+								socket.emit('admin.sccReward.topicReward.restoreReward', {
+									topicRewards: topicRewards,
+								}, done('[[admin/scc-reward/topic-reward:alerts.restore-reward-success]]', '.modify', true));
 							},
 						},
 					},
 				});
 			});
 		});
-	}
 
-	// Restore SCC for ID
-	function restoreSCC(id) {
-		socket.emit('admin.sccReward.topicReward.restoreSCC', id, function (err, data) {
-			console.log(err, data);
-			if (data.code === 0) {
-				app.alertSuccess('Restore successfully.');
-				window.location.reload();
+		$('.modify-reward').on('click', function () {
+			var topicRewards = [];
+			getSelected().forEach(function (item) {
+				var topicReward = {
+					id: item.id,
+					status: item.status,
+				};
+				topicRewards.push(topicReward);
+			});
+
+			if (!topicRewards.length) {
+				app.alertError('[[admin/scc-reward/topic-reward:errors.no-reward-selected]]');
+				return false; // specifically to keep the menu open
 			}
-		});
-	}
-
-	function releaseSCC() {
-		// Show modal
-		$('#scc-mgr-ajax-datazone').on('click', '#scc-mgr-btn-submit', function () {
-			var _selectedTopicScc = getSelectedTopics();
-			if (_selectedTopicScc.records.length === 0) {
-				app.alertError('At least one checkbox should be checked!');
-				return;
-			}
-
-			bootbox.dialog({
-				message: '[[admin/scc-reward/topic-reward:modal/release_content, ' + _selectedTopicScc.totalSCC + ',' + _selectedTopicScc.users.length + ']]',
-				title: '[[admin/scc-reward/topic-reward:modal/release_title]]',
-				onEscape: true,
-				buttons: {
-					cancel: {
-						label: '[[admin/scc-reward/topic-reward:modal/cancel]]',
-						className: 'btn-link',
-					},
-					submit: {
-						label: '[[admin/scc-reward/topic-reward:modal/confirm]]',
-						className: 'btn-primary',
-						callback: function () {
-							socket.emit('admin.sccReward.topicReward.releaseSCC', _selectedTopicScc, function (err, data) {
-								console.log(err, data);
-								if (data.code === 0) {
-									window.location.reload();
-								} else {
-									app.alertError('Release SCC failed.');
+			Benchpress.parse('admin/partials/scc-reward/topic_modify_reward_modal', {}, function (html) {
+				bootbox.dialog({
+					className: 'ban-modal',
+					title: '[[admin/scc-reward/topic-reward:dialog.title.modify-reward]]',
+					message: html,
+					show: true,
+					buttons: {
+						close: {
+							label: '[[global:close]]',
+							className: 'btn-link',
+						},
+						submit: {
+							label: '[[admin/scc-reward/topic-reward:alerts.confirm-modify-reward-x, ' + topicRewards.length + ']]',
+							callback: function () {
+								var errorEl = $('#create-modal-error');
+								var maxLength = 40;
+								if ($('#memo').val().trim().length > maxLength) {
+									errorEl.translateHtml('[[admin/scc-reward/topic-reward:alerts.memo.explanation,' + maxLength + ']]').removeClass('hide');
+									return false;
 								}
-							});
-							return false;
+								var formData = $('.ban-modal form').serializeArray().reduce(function (data, cur) {
+									data[cur.name] = cur.value;
+									return data;
+								}, {});
+								socket.emit('admin.sccReward.topicReward.modifyReward', {
+									topicRewards: topicRewards,
+									memo: formData.memo,
+									scc: formData.scc,
+								}, done('[[admin/scc-reward/topic-reward:alerts.modify-reward-success]]', '.modify', true));
+							},
 						},
 					},
-				},
-			});
-		});
-	}
-
-		$('.delete-user-and-content').on('click', function () {
-			var uids = getSelectedUids();
-			if (!uids.length) {
-				return;
-			}
-			bootbox.confirm('[[admin/manage/users:alerts.confirm-purge]]', function (confirm) {
-				if (confirm) {
-					socket.emit('admin.user.deleteUsersAndContent', uids, function (err) {
-						if (err) {
-							return app.alertError(err.message);
-						}
-
-						app.alertSuccess('[[admin/manage/users:alerts.delete-success]]');
-						removeSelected();
-						unselectAll();
-					});
-				}
-			);
-
-			_info.totalSCC += parseInt(_scc, 10);
-
-			if (_info.users.indexOf(_uid) === -1) {
-				_info.users.push(_uid);
-			}
-		});
-
-		return _info;
-	}
-
-			socket.emit('admin.user.createUser', user, function (err) {
-				if (err) {
-					return errorEl.translateHtml('[[admin/manage/users:alerts.error-x, ' + err.message + ']]').removeClass('hide');
-				}
-
-				// Refresh page
-				Benchpress.parse("admin/partials/scc-reward/topic_reward_table", userData, function (html) {
-					translator.translate(html, function (html) {
-						$('#scc-mgr-ajax-datazone').html(html);
-					});
 				});
 			});
 		});
-	}
-
-	function refreshFilters() {
-		recordsFilter.topicType = $('#filter-topic-type').text();
-		recordsFilter.modType = $('#filter-topic-mod').text();
-		recordsFilter.sortType = $('#filter-topic-order').text();
-	}
-
-	function toggleCheckbox() {
-		$('#scc-mgr-ajax-datazone').on('click', '#scc-mgr-tbl-checkall', function (event) {
-			console.log(event);
-			var checkBoxes = $('input[name=RewardId]');
-			checkBoxes.prop('checked', $(this).prop('checked'));
-		});
-	}
-
+	};
 	return TopicReward;
 });

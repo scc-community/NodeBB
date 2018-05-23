@@ -157,7 +157,7 @@ module.exports = function (Topics) {
 						], tid, next);
 					},
 					function (next) {
-						db.deleteObjectField('topics:rewardcheck', tid, next);
+						db.deleteObjectField('topics:rewardscheck', tid, next);
 					},
 					function (next) {
 						deleteTopicFromCategoryAndUser(tid, next);

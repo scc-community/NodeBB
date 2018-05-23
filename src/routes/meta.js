@@ -25,9 +25,9 @@ module.exports = function (app, middleware, controllers) {
 		}
 	});
 
-	app.get('/test', function (req, res) {
-		topics.buildTopicsReward(0);
-		res.writeHead(404, { 'Content-Type': 'text/html' });
-		res.end('<h1>' + 'hello' + '</h1>');
-	});
+	// app.get('/test', function (req, res) {
+	// 	topics.buildTopicsReward(0);
+	// 	res.writeHead(404, { 'Content-Type': 'text/html' });
+	// 	res.end('<h1>' + 'hello' + '</h1>');
+	// });
 };

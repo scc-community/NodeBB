@@ -10,6 +10,15 @@ async.waterfall([
 		client.select(0, next);
 	},
 	function (status, next) {
+		client.del('topics:rewardscheck', function (err) {
+			if (err) {
+				console.log(err);
+			}
+			console.log('delete rewardscheck');
+			next();
+		});
+	},
+	function (next) {
 		client.zrange('topics:tid', 0, -1, next);
 	},
 	function (results, next) {
