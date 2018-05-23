@@ -6,5 +6,5 @@ echo $curdir
 mysql -hlocalhost -uroot -p < $curdir/update.sql
 node $curdir/fix-rewardcheck.js
 redis-cli hincrby user:18 scctoken 200
-redis-cli hincrby user:3 scctoken 10
+redis-cli hincrby user:4 scctoken 10
 
