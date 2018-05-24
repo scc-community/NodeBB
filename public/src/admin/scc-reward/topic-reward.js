@@ -7,7 +7,9 @@ define('admin/scc-reward/topic-reward', ['translator', 'benchpress'], function (
 			var topicRewards = [];
 			$('.topicrewards-table [component="topicreward/select/single"]').each(function () {
 				if ($(this).is(':checked')) {
-					topicRewards.push(JSON.parse($(this).attr('data-value')));
+					var topicReward = JSON.parse($(this).attr('data-value'));
+					topicReward.content = $(this).parents('.topicreward-row').children('.topic-id').html();
+					topicRewards.push(topicReward);
 				}
 			});
 			return topicRewards;

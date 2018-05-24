@@ -73,11 +73,11 @@
 							<td><input component="topicreward/select/single" data-value='{topicrewards.jsonData}' type="checkbox"/></td>
 							<td>{topicrewards.id}</td>
 							<td><a href="{config.relative_path}/user/{topicrewards.userslug}"> {topicrewards.username}</a></td>
-							<td><a href="{config.relative_path}/topic/{topicrewards.topic_id}">{topicrewards.rewardtype_content}|{topicrewards.topic_title}</td>
+							<td class="topic-id"><a href="{config.relative_path}/topic/{topicrewards.topic_id}">{topicrewards.rewardtype_content}|{topicrewards.topic_title}</a></td>
 							<td><span class="timeago" title="{topicrewards.date_posted}"></span></td>
 							<td class="text-right">{topicrewards.topic_words_count}|{topicrewards.topic_upvotes_count}</td>
 							<td><span <!-- IF topicrewards.date_issued -->class="timeago" title="{topicrewards.date_issued}<!-- ENDIF topicrewards.date_issued -->"></span></td>
-							<td class="text-right"><i class="modify fa fa-edit text-danger <!-- IF !topicrewards.scc_setted -->hidden<!-- ENDIF !topicrewards.scc_setted -->"></i> {topicrewards.scc_issued}</td>
+							<td class="text-right"><a href="{config.relative_path}/user/{topicrewards.userslug}/scc?memo=true"><i class="modify fa fa-edit text-danger <!-- IF !topicrewards.scc_setted -->hidden<!-- ENDIF !topicrewards.scc_setted -->"></i> {topicrewards.scc_issued}</td>
 							<td>{topicrewards.memo}</td>
 						</tr>
 						<!-- END topicrewards -->

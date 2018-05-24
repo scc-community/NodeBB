@@ -53,6 +53,24 @@ var getAvailableTopics = function (topicsRewards, callback) {
 	});
 };
 
+function calcTopicWordCount(content) {
+	var length = 0;
+	var start = false;
+	for (var index = 0; index < content.length; index++) {
+		var code = content.charCodeAt(index);
+		if (code <= 128 && code !== 32 && !start) {
+			start = true;
+		} else if (code === 32 && start) {
+			length += 1;
+			start = false;
+		} else if (code > 128) {
+			length += 1;
+			start = false;
+		}
+	}
+	return length;
+}
+
 var calcTopicReward = function (publishuid, topicsRewards, callback) {
 	var results = [];
 	async.each(topicsRewards, function (topicReward, next) {
@@ -99,7 +117,7 @@ var calcTopicReward = function (publishuid, topicsRewards, callback) {
 						topicReward.tid,
 						topicReward.cid,
 						receiveData.topicData.title,
-						receiveData.postData.content.length,
+						calcTopicWordCount(receiveData.postData.content),
 						upvotes,
 						postdate,
 						autoscc,
