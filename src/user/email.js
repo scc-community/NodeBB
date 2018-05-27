@@ -200,10 +200,10 @@ UserEmail.registerReward = function (uid, callback) {
 			tasks.push(logRecord);
 			if (data.inviteduid) {
 				var registerInvitedReward = function (next) {
-					user.registerReward('register_invited', data.uid, null, data, next);
+					user.registerReward('register_invited', data.uid, { invitedUID: data.inviteduid }, data, next);
 				};
 				var inviteFriendReward = function (next) {
-					user.registerReward('invite_friend', data.inviteduid, null, data, next);
+					user.registerReward('invite_friend', data.inviteduid, { inviteID: data.uid }, data, next);
 				};
 				var inviteExtraReward = function (next) {
 					async.waterfall([
@@ -212,7 +212,7 @@ UserEmail.registerReward = function (uid, callback) {
 						},
 						function (invitationcount, next) {
 							data.invitationcount = invitationcount;
-							user.registerReward('invite_extra', data.inviteduid, invitationcount, data, next);
+							user.registerReward('invite_extra', data.inviteduid, { inviteID: data.uid, invitationCount: invitationcount }, data, next);
 						},
 					], next);
 				};
@@ -299,11 +299,11 @@ UserEmail.confirm = function (code, callback) {
 							'email:confirmed': 1,
 							'email:confirmtime': new Date().getTime(),
 						}),
-						async.apply(db.delete, 'confirm:' + code),
-						async.apply(db.delete, 'uid:' + confirmObj.uid + ':confirm:email:sent'),
-						function (next) {
-							db.sortedSetRemove('users:notvalidated', confirmObj.uid, next);
-						},
+						// async.apply(db.delete, 'confirm:' + code),
+						// async.apply(db.delete, 'uid:' + confirmObj.uid + ':confirm:email:sent'),
+						// function (next) {
+						// 	db.sortedSetRemove('users:notvalidated', confirmObj.uid, next);
+						// },
 						function (next) {
 							plugins.fireHook('action:user.email.confirmed', { uid: confirmObj.uid, email: confirmObj.email }, next);
 						},

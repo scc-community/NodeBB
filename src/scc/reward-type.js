@@ -46,7 +46,8 @@ RewardType.getRewardType = function (category, item) {
 };
 
 RewardType.getScc = function (category, item, params) {
-	var invitedExtra = function (invitationcount) {
+	var invitedExtra = function (sccParams) {
+		var invitationcount = sccParams.invitationCount;
 		var factor = 90;
 		var percent = 1;
 		var scctoken = 0;
@@ -91,13 +92,13 @@ RewardType.getScc = function (category, item, params) {
 		result = invitedExtra;
 		break;
 	case 'topic:original':
-		result = function (wordCount) { return Math.ceil(wordCount / 500) * 60; };
+		result = function (sccParams) { return Math.ceil(sccParams.wordCount / 500) * 60; };
 		break;
 	case 'topic:reprint':
 		result = function () { return 30; };
 		break;
 	case 'topic:translation':
-		result = function (wordCount) { return Math.ceil(wordCount / 500) * 60; };
+		result = function (sccParams) { return Math.ceil(sccParams.wordCount / 500) * 60; };
 		break;
 	case 'other:other':
 		result = function () { return 0; };

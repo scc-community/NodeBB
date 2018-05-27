@@ -111,7 +111,7 @@ var calcTopicReward = function (publishuid, topicsRewards, callback) {
 					var upvotes = parseInt(receiveData.postData.upvotes, 10) || 0;
 					var postdate = new Date(parseInt(receiveData.postData.timestamp, 10)).toLocaleString();
 					var wordCount = calcTopicWordCount(receiveData.postData.content);
-					var autoscc = scc.rewardType.getScc('topic', receiveData.rewardtype.item, wordCount) + upvotes;
+					var autoscc = scc.rewardType.getScc('topic', receiveData.rewardtype.item, { wordCount: wordCount }) + upvotes;
 					var data = [
 						topicReward.uid,
 						receiveData.rewardtype.id,
