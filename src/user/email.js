@@ -299,11 +299,11 @@ UserEmail.confirm = function (code, callback) {
 							'email:confirmed': 1,
 							'email:confirmtime': new Date().getTime(),
 						}),
-						// async.apply(db.delete, 'confirm:' + code),
-						// async.apply(db.delete, 'uid:' + confirmObj.uid + ':confirm:email:sent'),
-						// function (next) {
-						// 	db.sortedSetRemove('users:notvalidated', confirmObj.uid, next);
-						// },
+						async.apply(db.delete, 'confirm:' + code),
+						async.apply(db.delete, 'uid:' + confirmObj.uid + ':confirm:email:sent'),
+						function (next) {
+							db.sortedSetRemove('users:notvalidated', confirmObj.uid, next);
+						},
 						function (next) {
 							plugins.fireHook('action:user.email.confirmed', { uid: confirmObj.uid, email: confirmObj.email }, next);
 						},
