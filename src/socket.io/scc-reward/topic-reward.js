@@ -7,8 +7,6 @@ var scc = require('../../scc');
 
 var TopicReward = module.exports;
 
-var standardMemberKey = ['转载', '原创', '翻译'];
-
 var checkAllowReward = function (cid, callback) {
 	async.waterfall([
 		function (next) {
@@ -33,13 +31,39 @@ var getAvailableTopics = function (topicsRewards, callback) {
 			isExistTag: async.apply(db.exists, key),
 		}, function (err, receiveData) {
 			if (receiveData.isAllowReward && receiveData.isExistTag) {
+				var standardMatchKey = {
+					match: ['reprint', '转载', 'original', '原创', 'translation', '翻译'],
+					order: ['reprint', 'original', 'translation'],
+					reprint: {
+						match: [0, 1],
+					},
+					original: {
+						match: [2, 3],
+					},
+					translation: {
+						match: [4, 5],
+					},
+				};
 				async.waterfall([
 					function (next) {
-						db.isSetMembers(key, standardMemberKey, next);
+						db.isSetMembers(key, standardMatchKey.match, next);
 					},
 					function (exists, next) {
-						if (exists[0] === true || exists[1] === true || exists[2] === true) {
-							results.push(data);
+						for (var i = 0; i < standardMatchKey.order.length; i++) {
+							var matchKey = standardMatchKey.order[i];
+							var matchItems = standardMatchKey[matchKey].match;
+							for (var j = 0; j < matchItems.length; j++) {
+								var matchIndex = matchItems[j];
+								if (exists[matchIndex]) {
+									var rewardTypeKey = 'topic:' + matchKey;
+									data.rewardType = {
+										id: scc.rewardType.rewardTypes[rewardTypeKey].id,
+										item: scc.rewardType.rewardTypes[rewardTypeKey].item,
+									};
+									results.push(data);
+									return next();
+								}
+							}
 						}
 						next();
 					},
@@ -77,44 +101,16 @@ var calcTopicReward = function (publishuid, topicsRewards, callback) {
 		async.waterfall([
 			function (next) {
 				async.parallel({
-					rewardtype: function (next) {
-						var key = 'topic:' + topicReward.tid + ':tags';
-						async.waterfall([
-							function (next) {
-								db.isSetMembers(key, standardMemberKey, next);
-							},
-							function (exists, next) {
-								var rewardTypeResult = {};
-								if (exists[0] === true) {
-									rewardTypeResult = {
-										id: scc.rewardType.rewardTypes['topic:reprint'].id,
-										item: scc.rewardType.rewardTypes['topic:reprint'].item,
-									};
-								} else if (exists[1] === true) {
-									rewardTypeResult = {
-										id: scc.rewardType.rewardTypes['topic:original'].id,
-										item: scc.rewardType.rewardTypes['topic:original'].item,
-									};
-								} else if (exists[2] === true) {
-									rewardTypeResult = {
-										id: scc.rewardType.rewardTypes['topic:translation'].id,
-										item: scc.rewardType.rewardTypes['topic:translation'].item,
-									};
-								}
-								next(null, rewardTypeResult);
-							},
-						], next);
-					},
 					postData: async.apply(db.getObjectFields, 'post:' + topicReward.pid, ['timestamp', 'upvotes', 'content']),
 					topicData: async.apply(db.getObjectFields, 'topic:' + topicReward.tid, ['title']),
 				}, function (err, receiveData) {
 					var upvotes = parseInt(receiveData.postData.upvotes, 10) || 0;
 					var postdate = new Date(parseInt(receiveData.postData.timestamp, 10)).toLocaleString();
 					var wordCount = calcTopicWordCount(receiveData.postData.content);
-					var autoscc = scc.rewardType.getScc('topic', receiveData.rewardtype.item, { wordCount: wordCount }) + upvotes;
+					var autoscc = scc.rewardType.getScc('topic', topicReward.rewardType.item, { wordCount: wordCount }) + upvotes;
 					var data = [
 						topicReward.uid,
-						receiveData.rewardtype.id,
+						topicReward.rewardType.id,
 						topicReward.tid,
 						topicReward.cid,
 						receiveData.topicData.title,
@@ -169,6 +165,7 @@ TopicReward.buildTopicsReward = function (socket, data, callback) {
 			},
 			function (topicsRewards, next) {
 				cleanTopicRewards(topicsRewards, next);
+				next();
 			},
 		], function (err) {
 			callback = callback || function () {};
