@@ -2,11 +2,11 @@
   "name": "nodebb",
   "license": "GPL-3.0",
   "description": "NodeBB Forum",
-  "version": "1.8.1",
-  "homepage": "http://www.nodebb.org",
+  "version": "1.8.0",
+  "homepage": "https://forum.sourcecc.io",
   "repository": {
     "type": "git",
-    "url": "https://github.com/NodeBB/NodeBB/"
+    "url": "https://github.com/scc-community/NodeBB/"
   },
   "main": "app.js",
   "scripts": {

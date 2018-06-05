@@ -76,6 +76,19 @@ function saveDatabaseConfig(config, databaseConfig, callback) {
 	for (var x = 0; x < allQuestions.length; x += 1) {
 		delete config[allQuestions[x].name];
 	}
-
+	config.mysql = {
+		host: '127.0.0.1',
+		port: '3306',
+		user: 'scc',
+		password: 'paic1234',
+		database: 'scc',
+		connectionLimit: 10,
+		useTransaction: {
+			connectionLimit: 1,
+		},
+		useCursor: {
+			connectionLimit: 1,
+		},
+	};
 	callback(null, config);
 }

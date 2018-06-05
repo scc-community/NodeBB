@@ -604,7 +604,7 @@ describe('Controllers', function () {
 	});
 
 	it('should load theme screenshot', function (done) {
-		request(nconf.get('url') + '/css/previews/nodebb-theme-persona', function (err, res, body) {
+		request(nconf.get('url') + '/css/previews/nodebb-theme-scc', function (err, res, body) {
 			assert.ifError(err);
 			assert.equal(res.statusCode, 200);
 			assert(body);

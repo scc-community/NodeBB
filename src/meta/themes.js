@@ -148,7 +148,7 @@ Themes.setupPaths = function (callback) {
 			}, next);
 		},
 		function (data, next) {
-			var themeId = data.currentThemeId || 'nodebb-theme-persona';
+			var themeId = data.currentThemeId || 'nodebb-theme-scc';
 
 			var themeObj = data.themesData.filter(function (themeObj) {
 				return themeObj.id === themeId;

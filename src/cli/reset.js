@@ -64,8 +64,8 @@ exports.reset = function (options, callback) {
 			'    -a\tall of the above',
 			'',
 			'Plugin and theme reset flags (-p & -t) can take a single argument',
-			'    e.g. ./nodebb reset -p nodebb-plugin-mentions, ./nodebb reset -t nodebb-theme-persona',
-			'         Prefix is optional, e.g. ./nodebb reset -p markdown, ./nodebb reset -t persona',
+			'    e.g. ./nodebb reset -p nodebb-plugin-mentions, ./nodebb reset -t nodebb-theme-scc',
+			'         Prefix is optional, e.g. ./nodebb reset -p markdown, ./nodebb reset -t scc',
 		].join('\n'));
 
 		process.exit(0);
@@ -114,9 +114,9 @@ function resetTheme(themeId, callback) {
 function resetThemes(callback) {
 	meta.themes.set({
 		type: 'local',
-		id: 'nodebb-theme-persona',
+		id: 'nodebb-theme-scc',
 	}, function (err) {
-		winston.info('[reset] Theme reset to Persona');
+		winston.info('[reset] Theme reset to Scc');
 		callback(err);
 	});
 }

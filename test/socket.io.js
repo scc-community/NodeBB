@@ -88,7 +88,7 @@ describe('socket.io', function () {
 	});
 
 	it('should get installed themes', function (done) {
-		var themes = ['nodebb-theme-lavender', 'nodebb-theme-persona', 'nodebb-theme-vanilla'];
+		var themes = ['nodebb-theme-lavender', 'nodebb-theme-scc', 'nodebb-theme-vanilla'];
 		io.emit('admin.themes.getInstalled', function (err, data) {
 			assert.ifError(err);
 			assert(data);
@@ -446,12 +446,12 @@ describe('socket.io', function () {
 		});
 	});
 
-	it('should set theme to local persona', function (done) {
-		socketAdmin.themes.set({ uid: adminUid }, { type: 'local', id: 'nodebb-theme-persona' }, function (err) {
+	it('should set theme to local scc', function (done) {
+		socketAdmin.themes.set({ uid: adminUid }, { type: 'local', id: 'nodebb-theme-scc' }, function (err) {
 			assert.ifError(err);
 			meta.configs.get('theme:id', function (err, id) {
 				assert.ifError(err);
-				assert.equal(id, 'nodebb-theme-persona');
+				assert.equal(id, 'nodebb-theme-scc');
 				done();
 			});
 		});
@@ -483,7 +483,7 @@ describe('socket.io', function () {
 
 	it('should order active plugins', function (done) {
 		var data = [
-			{ name: 'nodebb-theme-persona', order: 0 },
+			{ name: 'nodebb-theme-scc', order: 0 },
 			{ name: 'nodebb-plugin-dbsearch', order: 1 },
 			{ name: 'nodebb-plugin-soundpack-default', order: 2 },
 			{ ignoreme: 'wrong data' },

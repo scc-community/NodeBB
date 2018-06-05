@@ -115,9 +115,9 @@ before(function (done) {
 			nconf.set('upload_url', '/assets/uploads');
 
 			nconf.set('core_templates_path', path.join(__dirname, '../../src/views'));
-			nconf.set('base_templates_path', path.join(nconf.get('themes_path'), 'nodebb-theme-persona/templates'));
+			nconf.set('base_templates_path', path.join(nconf.get('themes_path'), 'nodebb-theme-scc/templates'));
 			nconf.set('theme_templates_path', meta.config['theme:templates'] ? path.join(nconf.get('themes_path'), meta.config['theme:id'], meta.config['theme:templates']) : nconf.get('base_templates_path'));
-			nconf.set('theme_config', path.join(nconf.get('themes_path'), 'nodebb-theme-persona', 'theme.json'));
+			nconf.set('theme_config', path.join(nconf.get('themes_path'), 'nodebb-theme-scc', 'theme.json'));
 			nconf.set('bcrypt_rounds', 1);
 
 			meta.dependencies.check(next);
@@ -170,7 +170,7 @@ function setupMockDefaults(callback) {
 		function (next) {
 			meta.themes.set({
 				type: 'local',
-				id: 'nodebb-theme-persona',
+				id: 'nodebb-theme-scc',
 			}, next);
 		},
 	], callback);

@@ -102,7 +102,7 @@ function getBundleMetadata(target, callback) {
 		},
 		function (themeData, next) {
 			if (target === 'client') {
-				var themeId = (themeData['theme:id'] || 'nodebb-theme-persona');
+				var themeId = (themeData['theme:id'] || 'nodebb-theme-scc');
 				var baseThemePath = path.join(nconf.get('themes_path'), (themeData['theme:type'] && themeData['theme:type'] === 'local' ? themeId : 'nodebb-theme-vanilla'));
 				paths.unshift(baseThemePath);
 			}

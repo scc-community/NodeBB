@@ -7,7 +7,7 @@ var prompt = require('prompt');
 var winston = require('winston');
 var nconf = require('nconf');
 var utils = require('./utils.js');
-
+var mysql = require('./database/mysql');
 var install = module.exports;
 var questions = {};
 
@@ -193,7 +193,7 @@ function enableDefaultTheme(next) {
 			console.log('Previous theme detected, skipping enabling default theme');
 			return next(err);
 		}
-		var defaultTheme = nconf.get('defaultTheme') || 'nodebb-theme-persona';
+		var defaultTheme = nconf.get('defaultTheme') || 'nodebb-theme-scc';
 		console.log('Enabling default theme: ' + defaultTheme);
 		meta.themes.set({
 			type: 'local',
@@ -269,6 +269,9 @@ function createAdmin(callback) {
 
 		var adminUid;
 		async.waterfall([
+			function (next) {
+				mysql.init(next);
+			},
 			function (next) {
 				User.create({ username: results.username, password: results.password, email: results.email }, next);
 			},
