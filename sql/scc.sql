@@ -178,7 +178,6 @@ CREATE TABLE `users` (
 -- Records of users
 -- ----------------------------
 BEGIN;
-INSERT INTO `users` VALUES (1, 0, '2018-01-01 00:00:00', '2018-01-01 00:00:00', '0');
 INSERT INTO `users` VALUES (2, 1, '2018-01-01 00:00:00', '2018-01-01 00:00:00', '0');
 COMMIT;
 
