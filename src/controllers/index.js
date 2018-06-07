@@ -36,6 +36,7 @@ Controllers.osd = require('./osd');
 Controllers['404'] = require('./404');
 Controllers.errors = require('./errors');
 Controllers.composer = require('./composer');
+Controllers.tasks = require('./tasks');
 
 var setUserdataInviter = function (userdata, invitationcode, callback) {
 	if (!invitationcode) {

@@ -18,6 +18,7 @@ var adminRoutes = require('./admin');
 var feedRoutes = require('./feeds');
 var authRoutes = require('./authentication');
 var helpers = require('./helpers');
+var taskRoutes = require('./tasks');
 
 var setupPageRoute = helpers.setupPageRoute;
 
@@ -142,6 +143,7 @@ module.exports = function (app, middleware, hotswapIds, callback) {
 	accountRoutes(router, middleware, controllers);
 	userRoutes(router, middleware, controllers);
 	groupRoutes(router, middleware, controllers);
+	taskRoutes(router, middleware, controllers);
 
 	for (x = 0; x < routers.length; x += 1) {
 		app.use(relativePath || '/', routers[x]);
