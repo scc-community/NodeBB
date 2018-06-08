@@ -16,12 +16,16 @@ module.exports = function (privileges) {
 		{ name: 'Chat' },
 		{ name: 'Upload Images' },
 		{ name: 'Upload Files' },
+		{ name: 'Project Manage' },
+		{ name: 'Module Manage' },
 	];
 
 	privileges.global.userPrivilegeList = [
 		'chat',
 		'upload:post:image',
 		'upload:post:file',
+		'task:project:manage',
+		'task:module:manage',
 	];
 
 	privileges.global.groupPrivilegeList = privileges.global.userPrivilegeList.map(function (privilege) {
