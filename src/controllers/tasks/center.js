@@ -10,23 +10,22 @@ var scc = require('../../scc');
 
 var CenterController = module.exports;
 
-CenterController.initWhere = function (req) {
-	var where = [];
-	if (req.isMyTask) {
-		where.push({
-			key: 'accept_uid',
-			value: req.uid,
-		});
-	}
-	where.push({
-		key: 'status',
-		value: 151, // 未发布
-		compaser: '!=',
-	});
-	return where;
-};
-
 CenterController.get = function (req, res, callback) {
+	var initWhere = function (req) {
+		var where = [];
+		if (req.isMyTask) {
+			where.push({
+				key: 'accept_uid',
+				value: req.uid,
+			});
+		}
+		where.push({
+			key: 'status',
+			value: 151, // 未发布
+			compaser: '!=',
+		});
+		return where;
+	};
 	var page = parseInt(req.query.page, 10) || 1;
 	var resultsPerPage = 50;
 	var start = Math.max(0, page - 1) * resultsPerPage;
@@ -48,7 +47,7 @@ CenterController.get = function (req, res, callback) {
 					var codeModules = [];
 					async.waterfall([
 						function (next) {
-							scc.codeModule.getRows(CenterController.initWhere(req), [{
+							scc.codeModule.getRows(initWhere(req), [{
 								date_published: 'DESC',
 							}], [start, resultsPerPage], next);
 						},
@@ -111,7 +110,44 @@ CenterController.getMyTask = function (req, res, callback) {
 };
 
 CenterController.getDetail = function (req, res, callback) {
-	var data;
-	res.render('task/center-detail', data);
-	callback();
+	if (parseInt(req.query.codeModuleId, 10) <= 0) {
+		return callback();
+	}
+	var initWhere = function (req) {
+		var where = [];
+		where.push({
+			key: 'id',
+			value: req.query.codeModuleId,
+		});
+		return where;
+	};
+	async.waterfall([
+		function (next) {
+			scc.codeModule.getRows(initWhere(req), null, null, next);
+		},
+		function (result, next) {
+			if (result.length !== 1) {
+				return callback();
+			}
+			var codeModule = result[0]._data;
+			async.waterfall([
+				function (next) {
+					db.getObjectFields('user:' + codeModule.publish_uid, ['username', 'userslug'], next);
+				},
+				function (userData, next) {
+					codeModule.username = userData.username;
+					codeModule.userslug = userData.userslug;
+					codeModule.status_text = scc.taskCategoryItem.find('id', codeModule.status).content;
+					next(null, codeModule);
+				},
+			], next);
+		},
+		function (codeModule) {
+			var data = {
+				codeModules: codeModule,
+				isMyTask: req.uid !== 0,
+			};
+			res.render('task/center-detail', data);
+		},
+	], callback);
 };
