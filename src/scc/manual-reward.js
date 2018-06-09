@@ -88,6 +88,6 @@ ManualReward.getCount = function (callback) {
 	mysql.query('SELECT COUNT(*) AS count FROM manual_rewards', null, callback);
 };
 
-ManualReward.createManualReward = function (data, callback) {
+ManualReward.newRow = function (data, callback) {
 	mysql.newRow('manual_rewards', data, callback);
 };

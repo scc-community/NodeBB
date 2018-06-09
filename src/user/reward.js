@@ -50,8 +50,9 @@ module.exports = function (User) {
 	User.initTxRow = function (rewardItem, uid, params, data) {
 		var category = 'register';
 		data.uid = uid;
-		data.reward_type = scc.rewardType.getTypeId(category, rewardItem);
-		data.content = scc.rewardType.getContent(category, rewardItem);
+		var rewardType = scc.rewardType.get(category, rewardItem);
+		data.reward_type = rewardType.id;
+		data.content = rewardType.content;
 		data.scc = scc.rewardType.getScc(category, rewardItem, params);
 		return data;
 	};

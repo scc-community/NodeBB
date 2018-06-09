@@ -57,7 +57,7 @@ sccController.get = function (req, res, callback) {
 			});
 			async.each(results, function (item, next) {
 				item.transactionTypeText = scc.tx.getTransactionTypeText(item.transaction_type);
-				item.rewardtypeText = scc.rewardType.getText(item.reward_type);
+				item.rewardtypeText = scc.rewardType.find('id', item.reward_type).content;
 				async.waterfall([
 					function (next) {
 						db.getObjectField('user:' + item.transaction_uid, 'username', next);

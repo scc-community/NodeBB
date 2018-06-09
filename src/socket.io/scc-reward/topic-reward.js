@@ -55,10 +55,10 @@ var getAvailableTopics = function (topicsRewards, callback) {
 							for (var j = 0; j < matchItems.length; j++) {
 								var matchIndex = matchItems[j];
 								if (exists[matchIndex]) {
-									var rewardTypeKey = 'topic:' + matchKey;
+									var rewardType = scc.rewardType.get('topic', matchKey);
 									data.rewardType = {
-										id: scc.rewardType.rewardTypes[rewardTypeKey].id,
-										item: scc.rewardType.rewardTypes[rewardTypeKey].item,
+										id: rewardType.id,
+										item: rewardType.item,
 									};
 									results.push(data);
 									return next();

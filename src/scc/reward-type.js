@@ -3,54 +3,58 @@
 var mysql = require('../database/mysql');
 
 var RewardType = module.exports;
-RewardType.rewardTypes = {};
-RewardType.rewardTypeList = [];
+
+RewardType.getRows = function (sqlCondition, variable_binding, callback) {
+	mysql.baseQuery('reward_types', sqlCondition, variable_binding, callback);
+};
 
 RewardType.init = function (callback) {
 	RewardType.load(callback);
 };
 
+RewardType.get = function (category, item) {
+	var key = this.getKey(category, item);
+	return this.cache[key];
+};
+
 RewardType.load = function (callback) {
-	RewardType.rewardTypes = {};
-	RewardType.rewardTypeList = [];
+	this.cache = {};
 	callback = callback || function () {};
-	var me = this;
-	me.getRows(null, null, function (err, result) {
+	this.getRows(null, null, function (err, result) {
 		if (err) {
 			return callback(err);
 		}
 		result.forEach(function (element) {
-			me.rewardTypes[element._data.category + ':' + element._data.item] = element._data;
-			me.rewardTypeList.push(element._data);
+			RewardType.cache[element._data.category + ':' + element._data.item] = element._data;
 		});
 		callback(err, result);
 	});
-};
-
-RewardType.getText = function (rewardTypeId) {
-	for (var index = 0; index < RewardType.rewardTypeList.length; index++) {
-		var rewardType = RewardType.rewardTypeList[index];
-		if (rewardType.id === rewardTypeId) {
-			return rewardType.content;
-		}
-	}
 };
 
 RewardType.getKey = function (category, item) {
 	return category + ':' + item;
 };
 
-RewardType.getTypeId = function (category, item) {
-	var key = this.getKey(category, item);
-	return this.rewardTypes[key].id;
+RewardType.find = function (findKey, findValue) {
+	for (var key in this.cache) {
+		if (this.cache.hasOwnProperty(key)) {
+			var element = this.cache[key];
+			if (element[findKey] === findValue) {
+				return element;
+			}
+		}
+	}
 };
 
-RewardType.getOptions = function (category, withAll) {
+RewardType.getOptions = function (category, withAll, selectedItem) {
 	function recursive(rewardtype, datas) {
 		var data = {};
-		if (rewardtype.category === category) {
+		if ((category && rewardtype.category === category) || (!category)) {
 			data.value = rewardtype.id;
 			data.text = rewardtype.content;
+			if (selectedItem && selectedItem.category === rewardtype.category && selectedItem.item === rewardtype.item) {
+				data.selected = true;
+			}
 			datas.push(data);
 		}
 	}
@@ -63,9 +67,12 @@ RewardType.getOptions = function (category, withAll) {
 		});
 	}
 
-	this.rewardTypeList.forEach(function (rewardtype) {
-		recursive(rewardtype, options);
-	});
+	for (var key in this.cache) {
+		if (this.cache.hasOwnProperty(key)) {
+			var rewardType = this.cache[key];
+			recursive(rewardType, options);
+		}
+	}
 	return options;
 };
 
@@ -100,9 +107,8 @@ RewardType.getScc = function (category, item, params) {
 		return scctoken;
 	};
 
-	var rewardTypeKey = RewardType.getKey(category, item);
 	var result = function () { return 0; };
-	switch (rewardTypeKey) {
+	switch (this.getKey(category, item)) {
 	case 'register:register':
 		result = function () { return 300; };
 		break;
@@ -129,27 +135,5 @@ RewardType.getScc = function (category, item, params) {
 		break;
 	}
 	return result(params);
-};
-
-RewardType.getContent = function (category, item) {
-	var rewardTypeKey = this.getKey(category, item);
-	var result;
-	var rewardTypeItem = RewardType.rewardTypes[rewardTypeKey];
-	if (item) {
-		result = rewardTypeItem.content;
-	}
-	return result;
-};
-
-RewardType.getRows = function (sqlCondition, variable_binding, callback) {
-	mysql.baseQuery('reward_types', sqlCondition, variable_binding, callback);
-};
-
-RewardType.newRow = function (data, callback) {
-	mysql.newRow('reward_types', data, callback);
-};
-
-RewardType.updateRow = function (row, data, callback) {
-	mysql.updateRow(row, data, callback);
 };
 

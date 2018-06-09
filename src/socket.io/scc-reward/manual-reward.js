@@ -33,20 +33,13 @@ ManualReward.createManualRewardWithTxs = function (socket, manualRewardData, cal
 };
 
 ManualReward.getAllRewardTypes = function (socket, callback) {
-	function recursive(rewardtype, categoriesData) {
-		var data = {};
-		data.value = rewardtype.id;
-		data.text = rewardtype.content;
-		if (rewardtype.category === 'other' && rewardtype.item === 'other') {
-			data.selected = true;
-		}
-		categoriesData.push(data);
-	}
-
-	var rewardtypesData = [];
-	scc.rewardType.rewardTypeList.forEach(function (rewardtype) {
-		recursive(rewardtype, rewardtypesData);
-	});
+	var category = null;
+	var withAll = false;
+	var selectedItem = {
+		category: 'other',
+		item: 'other',
+	};
+	var rewardtypesData = scc.rewardType.getOptions(category, withAll, selectedItem);
 	var data = {
 		allrewardtypes: rewardtypesData,
 	};

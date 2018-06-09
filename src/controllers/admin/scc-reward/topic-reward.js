@@ -39,7 +39,7 @@ TopicRewardController.initOrderby = function (req) {
 	return orderCondition;
 };
 
-TopicRewardController.getModifyStatuses = function () {
+TopicRewardController.getModifyStatusesOptions = function () {
 	var data = [{
 		value: null,
 		text: '[[admin/scc-reward/topic-reward:option-all]]',
@@ -53,7 +53,7 @@ TopicRewardController.getModifyStatuses = function () {
 	return data;
 };
 
-TopicRewardController.getStatuses = function () {
+TopicRewardController.getStatusOptions = function () {
 	var data = [{
 		value: 1,
 		text: '[[admin/scc-reward/topic-reward:option-noissue]]',
@@ -67,7 +67,7 @@ TopicRewardController.getStatuses = function () {
 	return data;
 };
 
-TopicRewardController.getRewardOrderItems = function () {
+TopicRewardController.getRewardOrderOptions = function () {
 	var data = [{
 		value: null,
 		text: '[[admin/scc-reward/topic-reward:option-all]]',
@@ -120,13 +120,7 @@ TopicRewardController.get = function (req, res, next) {
 									function (userData, next) {
 										topicReward.username = userData.username;
 										topicReward.userslug = userData.userslug;
-										for (var index = 0; index < scc.rewardType.rewardTypeList.length; index++) {
-											var rewardType = scc.rewardType.rewardTypeList[index];
-											if (rewardType.id === topicReward.reward_type) {
-												topicReward.rewardtype_content = rewardType.content;
-												break;
-											}
-										}
+										topicReward.rewardtype_content = scc.rewardType.find('id', topicReward.reward_type).content;
 										topicReward.jsonData = JSON.stringify(topicReward);
 										next();
 									},
@@ -140,17 +134,17 @@ TopicRewardController.get = function (req, res, next) {
 			}, next);
 		},
 		function (receiveData) {
-			var rewardTypes = scc.topicReward.getOptions('topic', true);
-			var statuses = TopicRewardController.getStatuses();
-			var modifyStatuses = TopicRewardController.getModifyStatuses();
-			var rewardOrderItems = TopicRewardController.getRewardOrderItems();
+			var rewardTypeOptions = scc.topicReward.getOptions('topic', true);
+			var statusOptions = TopicRewardController.getStatusOptions();
+			var modifyStatusOptions = TopicRewardController.getModifyStatusesOptions();
+			var rewardOrderOptions = TopicRewardController.getRewardOrderOptions();
 			var data = {
 				topicrewards: receiveData.topicrewards,
 				pagination: pagination.create(page, Math.max(1, Math.ceil(receiveData.count / resultsPerPage)), req.query),
-				rewardtypes: rewardTypes,
-				statuses: statuses,
-				modifystatuses: modifyStatuses,
-				rewardorderitems: rewardOrderItems,
+				rewardtypes: rewardTypeOptions,
+				statuses: statusOptions,
+				modifystatuses: modifyStatusOptions,
+				rewardorderitems: rewardOrderOptions,
 				filterbyNoissueStatus: !req.query.filterByStatus ? true : req.query.filterByStatus === '1',
 				condition: {
 					filterByStatus: !req.query.filterByStatus ? '1' : req.query.filterByStatus,
@@ -159,10 +153,10 @@ TopicRewardController.get = function (req, res, next) {
 					orderByIssueScc: req.query.orderByIssueScc,
 				},
 				conditionTitle: {
-					filterByStatus: getOptionText(statuses, req.query.filterByStatus),
-					filterByRewardType: getOptionText(rewardTypes, req.query.filterByRewardType, '[[admin/scc-reward/topic-reward:topic-type]]'),
-					filterByModifyStatus: getOptionText(modifyStatuses, req.query.filterByModifyStatus, '[[admin/scc-reward/topic-reward:modify-status]]'),
-					orderByIssueScc: getOptionText(rewardOrderItems, req.query.orderByIssueScc, '[[admin/scc-reward/topic-reward:reward-order]]'),
+					filterByStatus: getOptionText(statusOptions, req.query.filterByStatus),
+					filterByRewardType: getOptionText(rewardTypeOptions, req.query.filterByRewardType, '[[admin/scc-reward/topic-reward:topic-type]]'),
+					filterByModifyStatus: getOptionText(modifyStatusOptions, req.query.filterByModifyStatus, '[[admin/scc-reward/topic-reward:modify-status]]'),
+					orderByIssueScc: getOptionText(rewardOrderOptions, req.query.orderByIssueScc, '[[admin/scc-reward/topic-reward:reward-order]]'),
 				},
 			};
 			res.render('admin/scc-reward/topic-reward', data);

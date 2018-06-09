@@ -90,5 +90,8 @@ function saveDatabaseConfig(config, databaseConfig, callback) {
 			connectionLimit: 1,
 		},
 	};
+	config.task = {
+		centerCid: 2,
+	};
 	callback(null, config);
 }

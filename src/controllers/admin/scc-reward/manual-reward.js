@@ -43,7 +43,7 @@ RewardManualController.get = function (req, res, next) {
 									function (userData, next) {
 										manualReward.username = userData.username;
 										manualReward.userslug = userData.userslug;
-										manualReward.rewardtype_content = scc.rewardType.getText(manualReward.reward_type);
+										manualReward.rewardtype_content = scc.rewardType.find('id', manualReward.reward_type).content;
 										next();
 									},
 								], next);

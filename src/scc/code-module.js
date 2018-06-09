@@ -11,3 +11,7 @@ CodeModule.getRows = function (sqlCondition, variable_binding, callback) {
 CodeModule.newRow = function (data, callback) {
 	mysql.newRow('code_modules', data, callback);
 };
+
+CodeModule.getCount = function (callback) {
+	mysql.query('SELECT COUNT(*) AS count FROM code_modules', null, callback);
+};
