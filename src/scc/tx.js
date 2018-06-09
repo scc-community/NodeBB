@@ -5,15 +5,15 @@ var utils = require('../utils');
 
 var Tx = module.exports;
 
-Tx.getTxs = function (sqlCondition, variable_binding, callback) {
+Tx.getRows = function (sqlCondition, variable_binding, callback) {
 	mysql.baseQuery('txs', sqlCondition, variable_binding, callback);
 };
 
-Tx.createTx = function (data, callback) {
+Tx.newRow = function (data, callback) {
 	mysql.newRow('txs', data, callback);
 };
 
-Tx.initDefaultRow = function () {
+Tx.initRow = function () {
 	var data = {
 		transaction_uid: 0,
 		date_issued: new Date().toLocaleString(),

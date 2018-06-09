@@ -8,27 +8,27 @@ var user = require('../user');
 
 var TopicReward = module.exports;
 
-TopicReward.getTopicRewards = function (where, orderby, limit, callback) {
+TopicReward.getRows = function (where, orderby, limit, callback) {
 	mysql.pageQuery('topic_rewards', where, orderby, limit, callback);
 };
 
-TopicReward.createTopicReward = function (data, callback) {
+TopicReward.newRow = function (data, callback) {
 	mysql.newRow('topic_rewards', data, callback);
 };
 
-TopicReward.bcreateTopicReward = function (data, callback) {
+TopicReward.newRows = function (datas, callback) {
 	var fieldNames = ['uid', 'reward_type', 'topic_id', 'topic_category', 'topic_title',
 		'topic_words_count', 'topic_upvotes_count', 'date_posted', 'scc_autoed', 'scc_setted', 'scc_issued', 'publish_uid',
 	];
-	mysql.batchInsert('topic_rewards', fieldNames, data, null, callback);
+	mysql.batchInsert('topic_rewards', fieldNames, datas, null, callback);
 };
 
-TopicReward.updateTopicRewardsWithTxs = function (topicRewardData, txData, callback) {
+TopicReward.updateWithTxs = function (topicRewardData, txData, callback) {
 	if (!txData.uid) {
 		return callback(new Error('txs.uid is null'));
 	}
 	var data = {
-		event: 'TopicReward.updateTopicRewardsWithTxs',
+		event: 'TopicReward.updateWithTxs',
 		group_id: utils.generateUUID(),
 		parameters: {
 			topicReward: topicRewardData,
@@ -99,7 +99,7 @@ TopicReward.updateTopicRewardsWithTxs = function (topicRewardData, txData, callb
 	});
 };
 
-TopicReward.updateTopicRewards = function (topicRewardData, callback) {
+TopicReward.updateRow = function (topicRewardData, callback) {
 	mysql.connect(function (conn, next) {
 		async.waterfall([
 			function (next) {

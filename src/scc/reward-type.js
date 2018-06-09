@@ -7,15 +7,15 @@ RewardType.rewardTypes = {};
 RewardType.rewardTypeList = [];
 
 RewardType.init = function (callback) {
-	RewardType.loadRewardTypes(callback);
+	RewardType.load(callback);
 };
 
-RewardType.loadRewardTypes = function (callback) {
+RewardType.load = function (callback) {
 	RewardType.rewardTypes = {};
 	RewardType.rewardTypeList = [];
 	callback = callback || function () {};
 	var me = this;
-	me.getRewardTypes(null, null, function (err, result) {
+	me.getRows(null, null, function (err, result) {
 		if (err) {
 			return callback(err);
 		}
@@ -27,7 +27,7 @@ RewardType.loadRewardTypes = function (callback) {
 	});
 };
 
-RewardType.getRewardTypeText = function (rewardTypeId) {
+RewardType.getText = function (rewardTypeId) {
 	for (var index = 0; index < RewardType.rewardTypeList.length; index++) {
 		var rewardType = RewardType.rewardTypeList[index];
 		if (rewardType.id === rewardTypeId) {
@@ -36,13 +36,37 @@ RewardType.getRewardTypeText = function (rewardTypeId) {
 	}
 };
 
-RewardType.getRewardTypeKey = function (category, item) {
+RewardType.getKey = function (category, item) {
 	return category + ':' + item;
 };
 
-RewardType.getRewardType = function (category, item) {
-	var key = this.getRewardTypeKey(category, item);
+RewardType.getTypeId = function (category, item) {
+	var key = this.getKey(category, item);
 	return this.rewardTypes[key].id;
+};
+
+RewardType.getOptions = function (category, withAll) {
+	function recursive(rewardtype, datas) {
+		var data = {};
+		if (rewardtype.category === category) {
+			data.value = rewardtype.id;
+			data.text = rewardtype.content;
+			datas.push(data);
+		}
+	}
+
+	var options = [];
+	if (withAll) {
+		options.push({
+			value: null,
+			text: '[[admin/scc-reward/topic-reward:option-all]]',
+		});
+	}
+
+	this.rewardTypeList.forEach(function (rewardtype) {
+		recursive(rewardtype, options);
+	});
+	return options;
 };
 
 RewardType.getScc = function (category, item, params) {
@@ -76,7 +100,7 @@ RewardType.getScc = function (category, item, params) {
 		return scctoken;
 	};
 
-	var rewardTypeKey = RewardType.getRewardTypeKey(category, item);
+	var rewardTypeKey = RewardType.getKey(category, item);
 	var result = function () { return 0; };
 	switch (rewardTypeKey) {
 	case 'register:register':
@@ -107,8 +131,8 @@ RewardType.getScc = function (category, item, params) {
 	return result(params);
 };
 
-RewardType.getContentTemplate = function (category, item) {
-	var rewardTypeKey = this.getRewardTypeKey(category, item);
+RewardType.getContent = function (category, item) {
+	var rewardTypeKey = this.getKey(category, item);
 	var result;
 	var rewardTypeItem = RewardType.rewardTypes[rewardTypeKey];
 	if (item) {
@@ -117,15 +141,15 @@ RewardType.getContentTemplate = function (category, item) {
 	return result;
 };
 
-RewardType.getRewardTypes = function (sqlCondition, variable_binding, callback) {
+RewardType.getRows = function (sqlCondition, variable_binding, callback) {
 	mysql.baseQuery('reward_types', sqlCondition, variable_binding, callback);
 };
 
-RewardType.createRewardType = function (data, callback) {
+RewardType.newRow = function (data, callback) {
 	mysql.newRow('reward_types', data, callback);
 };
 
-RewardType.updateRewardType = function (row, data, callback) {
+RewardType.updateRow = function (row, data, callback) {
 	mysql.updateRow(row, data, callback);
 };
 

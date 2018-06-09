@@ -8,16 +8,16 @@ var scc = require('../scc');
 var utils = require('../utils');
 var ManualReward = module.exports;
 
-ManualReward.getManualRewards = function (where, orderby, limit, callback) {
+ManualReward.getRows = function (where, orderby, limit, callback) {
 	mysql.pageQuery('manual_rewards', where, orderby, limit, callback);
 };
 
-ManualReward.createManualRewardWithTxs = function (manualRewardData, txData, callback) {
+ManualReward.newRowWithTxs = function (manualRewardData, txData, callback) {
 	if (!manualRewardData.uid || !txData.uid || manualRewardData.uid !== txData.uid) {
 		return callback(new Error('manual-rewards.uid !== txs.uid'));
 	}
 	var data = {
-		event: 'ManualReward.createManualRewardWithTxs',
+		event: 'ManualReward.newRowWithTxs',
 		group_id: utils.generateUUID(),
 		parameters: {
 			manualReward: manualRewardData,

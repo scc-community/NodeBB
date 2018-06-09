@@ -27,7 +27,7 @@ ManualReward.createManualRewardWithTxs = function (socket, manualRewardData, cal
 	if (manualRewardData.memo) {
 		txsData.memo = manualRewardData.memo.trim();
 	}
-	scc.manualReward.createManualRewardWithTxs(manualRewardData, txsData, function (err) {
+	scc.manualReward.newRowWithTxs(manualRewardData, txsData, function (err) {
 		callback(err);
 	});
 };

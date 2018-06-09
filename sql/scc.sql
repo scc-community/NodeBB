@@ -323,4 +323,45 @@ CREATE TABLE `projects_code_modules` (
   CONSTRAINT `fk_cm_id_pcm_cmid` FOREIGN KEY (`cm_id`) REFERENCES `code_modules` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='项目-代码模块关联表';
 
+-- ----------------------------
+-- View structure for v_pcm
+-- ----------------------------
+DROP VIEW IF EXISTS `v_pcm`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY INVOKER VIEW 
+`v_pcm` AS 
+SELECT
+	`projects_code_modules`.`id` AS `id`,
+	`projects_code_modules`.`p_id` AS `p_id`,
+	`projects_code_modules`.`cm_id` AS `cm_id`,
+	`projects`.`publish_uid` AS `p_publish_uid`,
+	`projects`.`date_published` AS `p_date_published`,
+	`projects`.`delivery_deadline` AS `p_delivery_deadline`,
+	`projects`.`date_ended` AS `p_date_ended`,
+	`projects`.`title` AS `p_title`,
+	`projects`.`codemodule_count` AS `p_codemodule_count`,
+	`projects`.`architect_count` AS `p_architect_count`,
+	`projects`.`status` AS `p_status`,
+	`projects`.`date_created` AS `p_date_created`,
+	`code_modules`.`publish_uid` AS `cm_publish_uid`,
+	`code_modules`.`accept_uid` AS `cm_accept_uid`,
+	`code_modules`.`scc` AS `cm_scc`,
+	`code_modules`.`requirement_desc` AS `cm_requirement_desc`,
+	`code_modules`.`date_published` AS `cm_date_published`,
+	`code_modules`.`delivery_deadline` AS `cm_delivery_deadline`,
+	`code_modules`.`date_cutoff` AS `cm_date_cutoff`,
+	`code_modules`.`date_upload` AS `cm_date_upload`,
+	`code_modules`.`date_download` AS `cm_date_download`,
+	`code_modules`.`date_close` AS `cm_date_close`,
+	`code_modules`.`url` AS `cm_url`,
+	`code_modules`.`dev_language` AS `cm_dev_language`,
+	`code_modules`.`app` AS `cm_app`,
+	`code_modules`.`status` AS `cm_status`,
+	`code_modules`.`memo` AS `cm_memo`,
+	`code_modules`.`date_created` AS `cm_date_created` 
+FROM
+	(
+		( `projects_code_modules` JOIN `projects` ON ( ( `projects_code_modules`.`p_id` = `projects`.`id` ) ) )
+	JOIN `code_modules` ON ( ( `projects_code_modules`.`cm_id` = `code_modules`.`id` ) ) 
+	) WITH CASCADED CHECK OPTION;
+  
 SET FOREIGN_KEY_CHECKS = 1;

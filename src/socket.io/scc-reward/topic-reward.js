@@ -159,7 +159,7 @@ TopicReward.buildTopicsReward = function (socket, data, callback) {
 				if (topicsRewards.length === 0) {
 					return next(new Error('[[admin/scc-reward/topic-reward:errors.empty-topic-reward]]'));
 				}
-				scc.topicReward.bcreateTopicReward(topicsRewards, function (err) {
+				scc.topicReward.newRows(topicsRewards, function (err) {
 					next(err, topicsRewards);
 				});
 			},
@@ -218,7 +218,7 @@ TopicReward.sendReward = function (socket, data, callback) {
 			content: item.content,
 			memo: topicRewardData.memo,
 		};
-		scc.topicReward.updateTopicRewardsWithTxs(topicRewardData, txData, next);
+		scc.topicReward.updateWithTxs(topicRewardData, txData, next);
 	}, function (err) {
 		if (err) {
 			return callback(err);
@@ -254,7 +254,7 @@ TopicReward.removeReward = function (socket, data, callback) {
 			memo: data.memo,
 		};
 
-		scc.topicReward.updateTopicRewards(topicRewardData, next);
+		scc.topicReward.updateRow(topicRewardData, next);
 	}, function (err) {
 		if (err) {
 			return callback(err);
@@ -282,7 +282,7 @@ TopicReward.restoreReward = function (socket, data, callback) {
 			scc_setted: null,
 			scc_issued: item.scc_autoed,
 		};
-		scc.topicReward.updateTopicRewards(topicRewardData, next);
+		scc.topicReward.updateRow(topicRewardData, next);
 	}, function (err) {
 		if (err) {
 			return callback(err);
@@ -323,7 +323,7 @@ TopicReward.modifyReward = function (socket, data, callback) {
 			memo: data.memo,
 		};
 
-		scc.topicReward.updateTopicRewards(topicRewardData, next);
+		scc.topicReward.updateRow(topicRewardData, next);
 	}, function (err) {
 		if (err) {
 			return callback(err);

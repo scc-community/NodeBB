@@ -1,19 +1,12 @@
 'use strict';
 
 var async = require('async');
-
 var db = require('../../database');
 var user = require('../../user');
-var meta = require('../../meta');
-var plugins = require('../../plugins');
 var helpers = require('../helpers');
-var groups = require('../../groups');
 var accountHelpers = require('./helpers');
-var privileges = require('../../privileges');
 var pagination = require('../../pagination');
-var file = require('../../file');
 var scc = require('../../scc');
-var winston = require('winston');
 
 var sccController = module.exports;
 
@@ -38,7 +31,7 @@ sccController.get = function (req, res, callback) {
 		},
 		function (data, next) {
 			txsData = data;
-			scc.tx.getTxs('where uid = ?', [txsData.uid], next);
+			scc.tx.getRows('where uid = ?', [txsData.uid], next);
 		},
 		function (totalResult, next) {
 			if (undefined !== totalResult) {
@@ -56,7 +49,7 @@ sccController.get = function (req, res, callback) {
 			next();
 		},
 		function (next) {
-			scc.tx.getTxs('where uid = ?' + ' limit ' + start + ',' + resultsPerPage, [txsData.uid], next);
+			scc.tx.getRows('where uid = ?' + ' limit ' + start + ',' + resultsPerPage, [txsData.uid], next);
 		},
 		function (datas, next) {
 			datas.forEach(function (item) {
@@ -64,7 +57,7 @@ sccController.get = function (req, res, callback) {
 			});
 			async.each(results, function (item, next) {
 				item.transactionTypeText = scc.tx.getTransactionTypeText(item.transaction_type);
-				item.rewardtypeText = scc.rewardType.getRewardTypeText(item.reward_type);
+				item.rewardtypeText = scc.rewardType.getText(item.reward_type);
 				async.waterfall([
 					function (next) {
 						db.getObjectField('user:' + item.transaction_uid, 'username', next);

@@ -7,7 +7,7 @@ var mysql = require('../database/mysql');
 
 var TxLog = module.exports;
 
-TxLog.createTxLog = function (data, callback) {
+TxLog.newRow = function (data, callback) {
 	async.waterfall([
 		function (next) {
 			mysql.newRow('tx_log', {
@@ -20,10 +20,10 @@ TxLog.createTxLog = function (data, callback) {
 		},
 	], function (err) {
 		if (data.err) {
-			winston.error('TxLog.createTxLog data.err:', data);
+			winston.error('TxLog.newRow data.err:', data);
 		}
 		if (err) {
-			winston.error('TxLog.createTxLog err:', data);
+			winston.error('TxLog.newRow err:', data);
 		}
 		if (data.err) {
 			return callback(data.err);
@@ -34,15 +34,15 @@ TxLog.createTxLog = function (data, callback) {
 
 TxLog.record = function (data, callback) {
 	data.method = '2';
-	TxLog.createTxLog(data, callback);
+	TxLog.newRow(data, callback);
 };
 
 TxLog.begin = function (data, callback) {
 	data.method = '1';
-	TxLog.createTxLog(data, callback);
+	TxLog.newRow(data, callback);
 };
 
 TxLog.end = function (data, callback) {
 	data.method = '3';
-	TxLog.createTxLog(data, callback);
+	TxLog.newRow(data, callback);
 };

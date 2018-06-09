@@ -81,23 +81,6 @@ TopicRewardController.getRewardOrderItems = function () {
 	return data;
 };
 
-TopicRewardController.getRewardTypes = function () {
-	function recursive(rewardtype, datas) {
-		var data = {};
-		if (rewardtype.category === 'topic') {
-			data.value = rewardtype.id;
-			data.text = rewardtype.content;
-			datas.push(data);
-		}
-	}
-
-	var rewardtypesData = [{ value: null, text: '[[admin/scc-reward/topic-reward:option-all]]' }];
-	scc.rewardType.rewardTypeList.forEach(function (rewardtype) {
-		recursive(rewardtype, rewardtypesData);
-	});
-	return rewardtypesData;
-};
-
 TopicRewardController.get = function (req, res, next) {
 	var page = parseInt(req.query.page, 10) || 1;
 	var resultsPerPage = 50;
@@ -120,7 +103,7 @@ TopicRewardController.get = function (req, res, next) {
 					var topicRewards = [];
 					async.waterfall([
 						function (next) {
-							scc.topicReward.getTopicRewards(
+							scc.topicReward.getRows(
 								TopicRewardController.initWhere(req),
 								TopicRewardController.initOrderby(req),
 								[start, resultsPerPage], next);
@@ -157,7 +140,7 @@ TopicRewardController.get = function (req, res, next) {
 			}, next);
 		},
 		function (receiveData) {
-			var rewardTypes = TopicRewardController.getRewardTypes();
+			var rewardTypes = scc.topicReward.getOptions('topic', true);
 			var statuses = TopicRewardController.getStatuses();
 			var modifyStatuses = TopicRewardController.getModifyStatuses();
 			var rewardOrderItems = TopicRewardController.getRewardOrderItems();

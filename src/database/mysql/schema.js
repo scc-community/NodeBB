@@ -25,6 +25,30 @@ var tableModels = [
 		name: 'tx_log',
 		idFieldName: 'id',
 	},
+	{
+		name: 'projects',
+		idFieldName: 'id',
+	},
+	{
+		name: 'project_architects',
+		idFieldName: 'id',
+	},
+	{
+		name: 'projects_code_modules',
+		idFieldName: 'id',
+	},
+	{
+		name: 'code_modules',
+		idFieldName: 'id',
+	},
+	{
+		name: 'task_category_items',
+		idFieldName: 'id',
+	},
+	{
+		name: 'v_pcm',
+		idFieldName: 'id',
+	},
 ];
 var schema = module.exports;
 

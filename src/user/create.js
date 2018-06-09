@@ -71,7 +71,7 @@ module.exports = function (User) {
 				db.setObject('user:' + uid, userData, next);
 			},
 			function (next) {
-				scc.user.createUser(userData, next);
+				scc.user.newRow(userData, next);
 			},
 			function (_, next) {
 				async.parallel([

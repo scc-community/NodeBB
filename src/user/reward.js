@@ -15,7 +15,7 @@ module.exports = function (User) {
 			createTxData: null,
 			newSccToken: null,
 		};
-		var initTxData = User.buildTxRow(rewardItem, uid, params, scc.tx.initDefaultRow());
+		var initTxData = User.initTxRow(rewardItem, uid, params, scc.tx.initRow());
 		data.registerReward.initTxData = initTxData;
 		if (initTxData.scc > 0) {
 			async.waterfall([
@@ -24,11 +24,11 @@ module.exports = function (User) {
 				},
 				function (oldSccToken, next) {
 					data.registerReward.oldSccToken = oldSccToken;
-					User.buildTxContent(rewardItem, params, next);
+					User.initTxContent(rewardItem, params, next);
 				},
 				function (content, next) {
 					initTxData.content += content;
-					scc.tx.createTx(initTxData, next);
+					scc.tx.nowRow(initTxData, next);
 				},
 				function (row, next) {
 					data.registerReward.createTxData = row._data;
@@ -47,16 +47,16 @@ module.exports = function (User) {
 		}
 	};
 
-	User.buildTxRow = function (rewardItem, uid, params, data) {
+	User.initTxRow = function (rewardItem, uid, params, data) {
 		var category = 'register';
 		data.uid = uid;
-		data.reward_type = scc.rewardType.getRewardType(category, rewardItem);
-		data.content = scc.rewardType.getContentTemplate(category, rewardItem);
+		data.reward_type = scc.rewardType.getTypeId(category, rewardItem);
+		data.content = scc.rewardType.getContent(category, rewardItem);
 		data.scc = scc.rewardType.getScc(category, rewardItem, params);
 		return data;
 	};
 
-	User.buildTxContent = function (rewardItem, params, callback) {
+	User.initTxContent = function (rewardItem, params, callback) {
 		var result = '';
 		var uid = '';
 		switch (rewardItem) {

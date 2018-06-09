@@ -29,7 +29,7 @@ RewardManualController.get = function (req, res, next) {
 					var manualrewards = [];
 					async.waterfall([
 						function (next) {
-							scc.manualReward.getManualRewards(null, [{ date_issued: 'DESC' }], [start, resultsPerPage], next);
+							scc.manualReward.getRows(null, [{ date_issued: 'DESC' }], [start, resultsPerPage], next);
 						},
 						function (result, next) {
 							result.forEach(function (item) {
@@ -43,7 +43,7 @@ RewardManualController.get = function (req, res, next) {
 									function (userData, next) {
 										manualReward.username = userData.username;
 										manualReward.userslug = userData.userslug;
-										manualReward.rewardtype_content = scc.rewardType.getRewardTypeText(manualReward.reward_type);
+										manualReward.rewardtype_content = scc.rewardType.getText(manualReward.reward_type);
 										next();
 									},
 								], next);
