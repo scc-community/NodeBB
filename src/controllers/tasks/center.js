@@ -3,13 +3,30 @@
 var nconf = require('nconf');
 var async = require('async');
 var db = require('../../database');
+var helpers = require('../helpers');
 var pagination = require('../../pagination');
 var privileges = require('../../privileges');
 var scc = require('../../scc');
 
-var centerController = module.exports;
+var CenterController = module.exports;
 
-centerController.get = function (req, res, callback) {
+CenterController.initWhere = function (req) {
+	var where = [];
+	if (req.isMyTask) {
+		where.push({
+			key: 'accept_uid',
+			value: req.uid,
+		});
+	}
+	where.push({
+		key: 'status',
+		value: 151, // 未发布
+		compaser: '!=',
+	});
+	return where;
+};
+
+CenterController.get = function (req, res, callback) {
 	var page = parseInt(req.query.page, 10) || 1;
 	var resultsPerPage = 50;
 	var start = Math.max(0, page - 1) * resultsPerPage;
@@ -31,7 +48,7 @@ centerController.get = function (req, res, callback) {
 					var codeModules = [];
 					async.waterfall([
 						function (next) {
-							scc.codeModule.getRows(null, [{
+							scc.codeModule.getRows(CenterController.initWhere(req), [{
 								date_published: 'DESC',
 							}], [start, resultsPerPage], next);
 						},
@@ -47,7 +64,7 @@ centerController.get = function (req, res, callback) {
 									function (userData, next) {
 										row.username = userData.username;
 										row.userslug = userData.userslug;
-										row.rewardtype_content = scc.taskCategoryItem.getText(row.reward_type);
+										row.status_text = scc.taskCategoryItem.find('id', row.status).content;
 										next();
 									},
 								], next);
@@ -68,16 +85,32 @@ centerController.get = function (req, res, callback) {
 		function (results) {
 			var data = {
 				centerCid: nconf.get('task').centerCid,
-				isMyTask: req.uid !== 0,
 				codeModules: results.codeModules,
+				isMyTask: req.isMyTask,
+				canManageModule: results.canManageModule,
+				canManageProject: results.canManageProject,
 				pagination: pagination.create(page, Math.max(1, Math.ceil(results.count / resultsPerPage)), req.query),
+			};
+			data.taskLink = {
+				localTool: '',
+				myTask: '/task/mytask',
+				projectManage: '/task/project',
+				codeModuleManage: '/task/module',
 			};
 			res.render('task/center', data);
 		},
 	], callback);
 };
 
-centerController.getDetail = function (req, res, callback) {
+CenterController.getMyTask = function (req, res, callback) {
+	if (req.uid === 0) {
+		return helpers.notAllowed(req, res);
+	}
+	req.isMyTask = true;
+	this.get(req, res, callback);
+};
+
+CenterController.getDetail = function (req, res, callback) {
 	var data;
 	res.render('task/center-detail', data);
 	callback();
