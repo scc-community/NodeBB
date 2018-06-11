@@ -21,7 +21,12 @@ Scc.vpcm = require('./scc/v-pcm');
 Scc.init = function (callback) {
 	var me = this;
 	async.parallel([
-		async.apply(me.rewardType.init),
+		function (next) {
+			me.rewardType.init(next);
+		},
+		function (next) {
+			me.taskCategoryItem.init(next);
+		},
 	], function (err) {
 		callback(err);
 	});

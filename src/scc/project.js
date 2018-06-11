@@ -1,17 +1,13 @@
 'use strict';
 
-var mysql = require('../database/mysql');
+var Base = require('./base');
+var util = require('util');
 
-var Project = module.exports;
-
-Project.getRows = function (sqlCondition, variable_binding, callback) {
-	mysql.baseQuery('projects', sqlCondition, variable_binding, callback);
+var Project = function () {
+	this.tableName = 'projects';
 };
+util.inherits(Project, Base);
+var project = new Project();
 
-Project.newRow = function (data, callback) {
-	mysql.newRow('projects', data, callback);
-};
+module.exports = project;
 
-Project.getCount = function (callback) {
-	mysql.query('SELECT COUNT(*) AS count FROM projects', null, callback);
-};

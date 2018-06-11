@@ -1,13 +1,13 @@
 'use strict';
 
-var mysql = require('../database/mysql');
+var Base = require('./base');
+var util = require('util');
 
-var Vpcm = module.exports;
-
-Vpcm.getRows = function (sqlCondition, variable_binding, callback) {
-	mysql.baseQuery('v_pcm', sqlCondition, variable_binding, callback);
+var Vpcm = function () {
+	this.tableName = 'v_pcm';
 };
+util.inherits(Vpcm, Base);
+var vpcm = new Vpcm();
 
-Vpcm.getCount = function (callback) {
-	mysql.query('SELECT COUNT(*) AS count FROM v_pcm', null, callback);
-};
+module.exports = vpcm;
+

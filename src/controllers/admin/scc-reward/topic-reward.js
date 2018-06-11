@@ -39,7 +39,7 @@ TopicRewardController.initOrderby = function (req) {
 	return orderCondition;
 };
 
-TopicRewardController.getModifyStatusesOptions = function () {
+TopicRewardController.getModifyStatusOptions = function () {
 	var data = [{
 		value: null,
 		text: '[[admin/scc-reward/topic-reward:option-all]]',
@@ -134,9 +134,9 @@ TopicRewardController.get = function (req, res, next) {
 			}, next);
 		},
 		function (receiveData) {
-			var rewardTypeOptions = scc.topicReward.getOptions('topic', true);
+			var rewardTypeOptions = scc.rewardType.getOptions('topic', true);
 			var statusOptions = TopicRewardController.getStatusOptions();
-			var modifyStatusOptions = TopicRewardController.getModifyStatusesOptions();
+			var modifyStatusOptions = TopicRewardController.getModifyStatusOptions();
 			var rewardOrderOptions = TopicRewardController.getRewardOrderOptions();
 			var data = {
 				topicrewards: receiveData.topicrewards,

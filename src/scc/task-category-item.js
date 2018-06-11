@@ -1,10 +1,16 @@
 'use strict';
 
-var mysql = require('../database/mysql');
+var CacheItem = require('./cache-item');
+var util = require('util');
 
-var TaskCategoryItem = module.exports;
+var cache = {};
 
-TaskCategoryItem.getRows = function (sqlCondition, variable_binding, callback) {
-	mysql.baseQuery('task_category_items', sqlCondition, variable_binding, callback);
-};
+function TaskCategoryItem() {
+	this.tableName = 'task_category_items';
+	this.cache = cache;
+}
 
+util.inherits(TaskCategoryItem, CacheItem);
+var taskCategoryItem = new TaskCategoryItem();
+
+module.exports = taskCategoryItem;

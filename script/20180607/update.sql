@@ -19,35 +19,37 @@ CREATE TABLE `task_category_items` (
   `id` smallint(5) unsigned NOT NULL,
   `category` varchar(20) NOT NULL COMMENT '分类',
   `item` varchar(20) NOT NULL COMMENT '项目',
-  `content` varchar(40) NOT NULL COMMENT '内容',
+  `content` varchar(128) NOT NULL COMMENT '内容',
   `comment` varchar(512) COMMENT '内容注释',
   `date_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'node-mysql扩展(必须)，主要用于迁移数据库',
   `last_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'node-mysql扩展(必须)，主要用于迁移数据库',
   `version` mediumint(9) NOT NULL DEFAULT '0' COMMENT 'node-mysql扩展(必须)，主要用于迁移数据库',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `index_categoryitem` (`category`,`item`,`content`) USING HASH
+  UNIQUE KEY `index_categoryitem` (`category`,`item`) USING HASH
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='任务类型表';
 
 BEGIN;
-INSERT INTO `task_category_items` VALUES (1, 'types', 'app', 'ios', 'ios', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
-INSERT INTO `task_category_items` VALUES (2, 'types', 'app', 'android', 'android', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
-INSERT INTO `task_category_items` VALUES (3, 'types', 'app', 'web', 'web', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
+INSERT INTO `task_category_items` VALUES (1, 'app', 'ios', 'ios', 'ios', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
+INSERT INTO `task_category_items` VALUES (2, 'app', 'android', 'android', 'android', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
+INSERT INTO `task_category_items` VALUES (3, 'app', 'web', 'web', 'web', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
 
-INSERT INTO `task_category_items` VALUES (51, 'types', 'dev_language', 'h5', 'h5', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
-INSERT INTO `task_category_items` VALUES (52, 'types', 'dev_language', 'java', 'java', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
-INSERT INTO `task_category_items` VALUES (53, 'types', 'dev_language', 'c', 'c', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
-INSERT INTO `task_category_items` VALUES (54, 'types', 'dev_language', 'c++', 'c++', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
+INSERT INTO `task_category_items` VALUES (51, 'dev_language', 'h5', 'h5', 'h5', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
+INSERT INTO `task_category_items` VALUES (52, 'dev_language', 'java', 'java', 'java', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
+INSERT INTO `task_category_items` VALUES (53, 'dev_language', 'c', 'c', 'c', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
+INSERT INTO `task_category_items` VALUES (54, 'dev_language', 'c++', 'c++', 'c++', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
 
-INSERT INTO `task_category_items` VALUES (101, 'statuses', 'project_status', '[[scc-taskdist:project-beginning]]', '开始', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
-INSERT INTO `task_category_items` VALUES (102, 'statuses', 'project_status', '[[scc-taskdist:project-ended]]', '完成', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
-INSERT INTO `task_category_items` VALUES (103, 'statuses', 'project_status', '[[scc-taskdist:project-balanced]]', '结算', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
+INSERT INTO `task_category_items` VALUES (100, 'project_status', 'all', '[[scc-task/category-item:option.project-status.all]]', '所有', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
+INSERT INTO `task_category_items` VALUES (101, 'project_status', 'beginning', '[[scc-task/category-item:option.project-status.beginning]]', '开始', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
+INSERT INTO `task_category_items` VALUES (102, 'project_status', 'ended', '[[scc-task/category-item:option.project-status.ended]]', '完成', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
+INSERT INTO `task_category_items` VALUES (103, 'project_status', 'balanced', '[[scc-task/category-item:option.project-status.balanced]]', '结算', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
 
-INSERT INTO `task_category_items` VALUES (151, 'statuses', 'code_module_status', '[[scc-taskdist:module-draft]]', '未发布', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
-INSERT INTO `task_category_items` VALUES (152, 'statuses', 'code_module_status', '[[scc-taskdist:module-published]]', '发布', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
-INSERT INTO `task_category_items` VALUES (153, 'statuses', 'code_module_status', '[[scc-taskdist:module-developing]]', '开发', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
-INSERT INTO `task_category_items` VALUES (154, 'statuses', 'code_module_status', '[[scc-taskdist:module-submited]]', '提交', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
-INSERT INTO `task_category_items` VALUES (155, 'statuses', 'code_module_status', '[[scc-taskdist:module-balanced]]', '结算', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
-INSERT INTO `task_category_items` VALUES (156, 'statuses', 'code_module_status', '[[scc-taskdist:module-closed]]', '异常关闭', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
+INSERT INTO `task_category_items` VALUES (150, 'code_module_status', 'all', '[[scc-task/category-item:option.code-module.all]]', '所有', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
+INSERT INTO `task_category_items` VALUES (151, 'code_module_status', 'draft', '[[scc-task/category-item:option.code-module.draft]]', '未发布', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
+INSERT INTO `task_category_items` VALUES (152, 'code_module_status', 'published', '[[scc-task/category-item:option.code-module.published]]', '发布', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
+INSERT INTO `task_category_items` VALUES (153, 'code_module_status', 'developing', '[[scc-task/category-item:option.code-module.developing]]', '开发', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
+INSERT INTO `task_category_items` VALUES (154, 'code_module_status', 'submited', '[[scc-task/category-item:option.code-module.submited]]', '提交', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
+INSERT INTO `task_category_items` VALUES (155, 'code_module_status', 'balanced', '[[scc-task/category-item:option.code-module.balanced]]', '结算', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
+INSERT INTO `task_category_items` VALUES (156, 'code_module_status', 'closed', '[[scc-task/category-item:option.code-module.closed]]', '异常关闭', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
 COMMIT;
 
 -- ----------------------------
@@ -89,7 +91,7 @@ CREATE TABLE `project_architects` (
   `last_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'node-mysql扩展(必须)，主要用于迁移数据库',
   `version` mediumint(9) NOT NULL DEFAULT '0' COMMENT 'node-mysql扩展(必须)，主要用于迁移数据库',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uindex_pid_architectuid` (`p_id`,`architect_uid`) USING HASH,
+  UNIQUE KEY `index_pid_architectuid` (`p_id`,`architect_uid`) USING HASH,
   KEY `fk_projects_id_pa_pid` (`p_id`),
   KEY `fk_cm_id_pa_auid` (`architect_uid`),
   CONSTRAINT `fk_projects_id_pa_pid` FOREIGN KEY (`p_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -104,6 +106,7 @@ CREATE TABLE `code_modules` (
   `id` mediumint(9) unsigned NOT NULL AUTO_INCREMENT,
   `publish_uid` mediumint(9) unsigned NOT NULL COMMENT '发布者ID',
   `accept_uid` mediumint(9) unsigned NOT NULL COMMENT '接任务者ID',
+  `title` varchar(80) NOT NULL COMMENT '标题',
   `scc` mediumint(9) NOT NULL COMMENT '交易SCC',
   `requirement_desc` varchar(256) COMMENT '模块需求描述',
   `date_published` datetime COMMENT '发布日期',

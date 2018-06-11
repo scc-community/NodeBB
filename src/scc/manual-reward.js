@@ -6,11 +6,15 @@ var mysql = require('../database/mysql');
 var user = require('../user');
 var scc = require('../scc');
 var utils = require('../utils');
-var ManualReward = module.exports;
 
-ManualReward.getRows = function (where, orderby, limit, callback) {
-	mysql.pageQuery('manual_rewards', where, orderby, limit, callback);
+var Base = require('./base');
+var util = require('util');
+
+var ManualReward = function () {
+	this.tableName = 'manual_rewards';
 };
+util.inherits(ManualReward, Base);
+var manualReward = new ManualReward();
 
 ManualReward.newRowWithTxs = function (manualRewardData, txData, callback) {
 	if (!manualRewardData.uid || !txData.uid || manualRewardData.uid !== txData.uid) {
@@ -84,10 +88,4 @@ ManualReward.newRowWithTxs = function (manualRewardData, txData, callback) {
 	});
 };
 
-ManualReward.getCount = function (callback) {
-	mysql.query('SELECT COUNT(*) AS count FROM manual_rewards', null, callback);
-};
-
-ManualReward.newRow = function (data, callback) {
-	mysql.newRow('manual_rewards', data, callback);
-};
+module.exports = manualReward;

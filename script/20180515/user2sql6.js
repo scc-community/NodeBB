@@ -2,7 +2,7 @@
 
 var redis = require('redis');
 var async = require('async');
-var mysql = require('../src/database/mysql');
+var mysql = require('../../src/database/mysql');
 
 var client = redis.createClient('6379', '127.0.0.1');
 
@@ -65,7 +65,7 @@ async.waterfall([
 function startMysql(cb) {
 	var path = require('path');
 	var nconf = require('nconf');
-	var configFile = path.resolve('', '../config.json');
+	var configFile = path.resolve('', 'config.json');
 	nconf.file({
 		file: configFile,
 	});

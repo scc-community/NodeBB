@@ -2,7 +2,6 @@
 
 var redis = require('redis');
 var async = require('async');
-var utils = require('../src/utils');
 
 var client = redis.createClient('6379', '127.0.0.1');
 

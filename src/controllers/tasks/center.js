@@ -144,7 +144,7 @@ CenterController.getDetail = function (req, res, callback) {
 		},
 		function (codeModule) {
 			var data = {
-				codeModules: codeModule,
+				codeModule: codeModule,
 				isMyTask: req.uid !== 0,
 			};
 			res.render('task/center-detail', data);

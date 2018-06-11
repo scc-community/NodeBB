@@ -2,21 +2,17 @@
 
 var mysql = require('../database/mysql');
 
-var User = module.exports;
+var Base = require('./base');
+var util = require('util');
 
-User.getRows = function (sqlCondition, variable_binding, callback) {
-	mysql.baseQuery('users', sqlCondition, variable_binding, callback);
+var User = function () {
+	this.tableName = 'users';
+};
+util.inherits(User, Base);
+var user = new User();
+
+User.prototype.deleteRowByUid = function (uid, callback) {
+	mysql.deleteRows(User.tableName, 'WHERE uid = ', uid, callback);
 };
 
-User.newRow = function (data, callback) {
-	var user = { uid: data.uid };
-	mysql.newRow('users', user, callback);
-};
-
-User.deleteRow = function (uid, callback) {
-	mysql.deleteRows('users', 'WHERE uid = ' + uid, callback);
-};
-
-User.getCount = function (callback) {
-	mysql.query('SELECT COUNT(*) AS count FROM users', null, callback);
-};
+module.exports = user;

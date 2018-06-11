@@ -1,17 +1,12 @@
 'use strict';
 
-var mysql = require('../database/mysql');
+var Base = require('./base');
+var util = require('util');
 
-var CodeModule = module.exports;
-
-CodeModule.getRows = function (sqlCondition, variable_binding, callback) {
-	mysql.baseQuery('code_modules', sqlCondition, variable_binding, callback);
+var CodeModule = function () {
+	this.tableName = 'code_modules';
 };
+util.inherits(CodeModule, Base);
+var codeModule = new CodeModule();
 
-CodeModule.newRow = function (data, callback) {
-	mysql.newRow('code_modules', data, callback);
-};
-
-CodeModule.getCount = function (callback) {
-	mysql.query('SELECT COUNT(*) AS count FROM code_modules', null, callback);
-};
+module.exports = codeModule;

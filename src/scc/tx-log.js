@@ -4,8 +4,14 @@ var async = require('async');
 var winston = require('winston');
 
 var mysql = require('../database/mysql');
+var Base = require('./base');
+var util = require('util');
 
-var TxLog = module.exports;
+var TxLog = function () {
+	this.tableName = 'tx_log';
+};
+util.inherits(TxLog, Base);
+var txlog = new TxLog();
 
 TxLog.newRow = function (data, callback) {
 	async.waterfall([
@@ -46,3 +52,5 @@ TxLog.end = function (data, callback) {
 	data.method = '3';
 	TxLog.newRow(data, callback);
 };
+
+module.exports = txlog;

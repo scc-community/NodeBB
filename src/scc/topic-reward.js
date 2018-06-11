@@ -6,21 +6,20 @@ var utils = require('../utils');
 var scc = require('../scc');
 var user = require('../user');
 
-var TopicReward = module.exports;
+var Base = require('./base');
+var util = require('util');
 
-TopicReward.getRows = function (where, orderby, limit, callback) {
-	mysql.pageQuery('topic_rewards', where, orderby, limit, callback);
+var TopicReward = function () {
+	this.tableName = 'topic_rewards';
 };
-
-TopicReward.newRow = function (data, callback) {
-	mysql.newRow('topic_rewards', data, callback);
-};
+util.inherits(TopicReward, Base);
+var topicReward = new TopicReward();
 
 TopicReward.newRows = function (datas, callback) {
 	var fieldNames = ['uid', 'reward_type', 'topic_id', 'topic_category', 'topic_title',
 		'topic_words_count', 'topic_upvotes_count', 'date_posted', 'scc_autoed', 'scc_setted', 'scc_issued', 'publish_uid',
 	];
-	mysql.batchInsert('topic_rewards', fieldNames, datas, null, callback);
+	mysql.batchInsert(this.tableName, fieldNames, datas, null, callback);
 };
 
 TopicReward.updateWithTxs = function (topicRewardData, txData, callback) {
@@ -49,7 +48,7 @@ TopicReward.updateWithTxs = function (topicRewardData, txData, callback) {
 			mysql.transaction(function (conn, next) {
 				async.waterfall([
 					function (next) {
-						mysql.nfindById('topic_rewards', conn, topicRewardData.id, next);
+						mysql.nfindById(this.tableName, conn, topicRewardData.id, next);
 					},
 					function (row, next) {
 						mysql.nupdateRow(row, conn, topicRewardData, next);
@@ -99,23 +98,4 @@ TopicReward.updateWithTxs = function (topicRewardData, txData, callback) {
 	});
 };
 
-TopicReward.updateRow = function (topicRewardData, callback) {
-	mysql.connect(function (conn, next) {
-		async.waterfall([
-			function (next) {
-				mysql.nfindById('topic_rewards', conn, topicRewardData.id, next);
-			},
-			function (row, next) {
-				mysql.nupdateRow(row, conn, topicRewardData, next);
-			},
-		], function (err) {
-			conn.release();
-			next(err);
-		}, next);
-	}, callback);
-};
-
-TopicReward.getCount = function (callback) {
-	mysql.query('SELECT COUNT(*) AS count FROM topic_rewards', null, callback);
-};
-
+module.exports = topicReward;

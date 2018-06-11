@@ -1,19 +1,16 @@
 'use strict';
 
-var mysql = require('../database/mysql');
 var utils = require('../utils');
+var Base = require('./base');
+var util = require('util');
 
-var Tx = module.exports;
-
-Tx.getRows = function (sqlCondition, variable_binding, callback) {
-	mysql.baseQuery('txs', sqlCondition, variable_binding, callback);
+var Tx = function () {
+	this.tableName = 'txs';
 };
+util.inherits(Tx, Base);
+var tx = new Tx();
 
-Tx.newRow = function (data, callback) {
-	mysql.newRow('txs', data, callback);
-};
-
-Tx.initRow = function () {
+Tx.prototype.initRow = function () {
 	var data = {
 		transaction_uid: 0,
 		date_issued: new Date().toLocaleString(),
@@ -24,11 +21,7 @@ Tx.initRow = function () {
 	return data;
 };
 
-Tx.getCount = function (callback) {
-	mysql.query('SELECT COUNT(*) AS count FROM txs', null, callback);
-};
-
-Tx.getTransactionTypeText = function (transactionType) {
+Tx.prototype.getTransactionTypeText = function (transactionType) {
 	switch (transactionType) {
 	case '2':
 		return '[[admin/scc-reward/index:outgoings]]';
@@ -38,3 +31,5 @@ Tx.getTransactionTypeText = function (transactionType) {
 		return '[[admin/scc-reward/index:income]]';
 	}
 };
+
+module.exports = tx;

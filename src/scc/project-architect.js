@@ -1,13 +1,12 @@
 'use strict';
 
-var mysql = require('../database/mysql');
+var Base = require('./base');
+var util = require('util');
 
-var ProjectArchitect = module.exports;
-
-ProjectArchitect.getRows = function (sqlCondition, variable_binding, callback) {
-	mysql.baseQuery('project_architects', sqlCondition, variable_binding, callback);
+var ProjectArchitect = function () {
+	this.tableName = 'project_architects';
 };
+util.inherits(ProjectArchitect, Base);
+var projectArchitect = new ProjectArchitect();
 
-ProjectArchitect.newRow = function (data, callback) {
-	mysql.newRow('project_architects', data, callback);
-};
+module.exports = projectArchitect;
