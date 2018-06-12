@@ -254,7 +254,7 @@ TopicReward.removeReward = function (socket, data, callback) {
 			memo: data.memo,
 		};
 
-		scc.topicReward.updateRow(topicRewardData, next);
+		scc.topicReward.updateRow(null, topicRewardData, next);
 	}, function (err) {
 		if (err) {
 			return callback(err);
@@ -282,7 +282,7 @@ TopicReward.restoreReward = function (socket, data, callback) {
 			scc_setted: null,
 			scc_issued: item.scc_autoed,
 		};
-		scc.topicReward.updateRow(topicRewardData, next);
+		scc.topicReward.updateRow(null, topicRewardData, next);
 	}, function (err) {
 		if (err) {
 			return callback(err);
@@ -323,7 +323,7 @@ TopicReward.modifyReward = function (socket, data, callback) {
 			memo: data.memo,
 		};
 
-		scc.topicReward.updateRow(topicRewardData, next);
+		scc.topicReward.updateRow(null, topicRewardData, next);
 	}, function (err) {
 		if (err) {
 			return callback(err);

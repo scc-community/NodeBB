@@ -66,39 +66,6 @@ module.exports = function (mysqlClient, module) {
 		return model.baseQuery(sqlCondition, variable_binding);
 	};
 
-	module.pageQuery = function (model, where, orderby, limit, callback) {
-		var sqlCondition = '';
-		var lastLogicLength = 0;
-		if (where && where.length > 0) {
-			sqlCondition += ' WHERE ';
-			for (var whereIndex = 0; whereIndex < where.length; whereIndex++) {
-				var logic = where[whereIndex].logic || 'AND';
-				lastLogicLength = logic.length;
-				var compaser = where[whereIndex].compaser || '=';
-				switch (compaser) {
-				case 'IS NULL':
-				case 'IS NOT NULL':
-					sqlCondition += (' ' + where[whereIndex].key + ' ' + compaser + ' ' + logic);
-					break;
-				default:
-					sqlCondition += (' ' + where[whereIndex].key + compaser + where[whereIndex].value + ' ' + logic);
-					break;
-				}
-			}
-			sqlCondition = sqlCondition.substring(0, sqlCondition.length - lastLogicLength);
-		}
-		if (orderby && orderby.length > 0) {
-			for (var orderByIndex = 0; orderByIndex < orderby.length; orderByIndex++) {
-				sqlCondition += (' ORDER BY ' + orderby[orderByIndex].key + ' ' + orderby[orderByIndex].value + ',');
-			}
-			sqlCondition = sqlCondition.substring(0, sqlCondition.length - 1);
-		}
-		if (limit) {
-			sqlCondition += ' LIMIT ' + limit[0] + ',' + limit[1];
-		}
-		module.baseQuery(model, sqlCondition, null, callback);
-	};
-
 	module.baseQuery = function (model, sqlCondition, variable_binding, callback) {
 		module.connect(function (conn, next) {
 			var selectSql = module.nbaseQuery(model, sqlCondition, variable_binding);

@@ -13,7 +13,8 @@ function RewardType() {
 util.inherits(RewardType, CacheItem);
 var rewardType = new RewardType();
 
-RewardType.getScc = function (category, item, params) {
+RewardType.prototype.getScc = function (category, item, params) {
+	var me = this;
 	var invitedExtra = function (sccParams) {
 		var invitationcount = sccParams.invitationCount;
 		var factor = 90;
@@ -45,7 +46,7 @@ RewardType.getScc = function (category, item, params) {
 	};
 
 	var result = function () { return 0; };
-	switch (RewardType.prototype.getKey(category, item)) {
+	switch (me.getKey(category, item)) {
 	case 'register:register':
 		result = function () { return 300; };
 		break;

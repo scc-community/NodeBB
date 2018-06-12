@@ -69,7 +69,7 @@ module.exports = function (User) {
 				deleteChats(uid, next);
 			},
 			// function (next) {
-			// 	scc.user.deleteRow(uid, next);
+			// 	scc.user.deleteRowById(null, uid, next);
 			// },
 			function (next) {
 				deleteInvitationcodeUid(uid, next);

@@ -11,8 +11,8 @@ var User = function () {
 util.inherits(User, Base);
 var user = new User();
 
-User.prototype.deleteRowByUid = function (uid, callback) {
-	mysql.deleteRows(User.tableName, 'WHERE uid = ', uid, callback);
+User.prototype.deleteRowById = function (conn, uid, callback) {
+	this.deleteRows(conn, 'WHERE uid = ?', uid, callback);
 };
 
 module.exports = user;

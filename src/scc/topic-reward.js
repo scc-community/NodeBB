@@ -15,14 +15,14 @@ var TopicReward = function () {
 util.inherits(TopicReward, Base);
 var topicReward = new TopicReward();
 
-TopicReward.newRows = function (datas, callback) {
+TopicReward.prototype.newRows = function (datas, callback) {
 	var fieldNames = ['uid', 'reward_type', 'topic_id', 'topic_category', 'topic_title',
 		'topic_words_count', 'topic_upvotes_count', 'date_posted', 'scc_autoed', 'scc_setted', 'scc_issued', 'publish_uid',
 	];
 	mysql.batchInsert(this.tableName, fieldNames, datas, null, callback);
 };
 
-TopicReward.updateWithTxs = function (topicRewardData, txData, callback) {
+TopicReward.prototype.updateWithTxs = function (topicRewardData, txData, callback) {
 	if (!txData.uid) {
 		return callback(new Error('txs.uid is null'));
 	}
@@ -39,7 +39,7 @@ TopicReward.updateWithTxs = function (topicRewardData, txData, callback) {
 		},
 		result: {},
 	};
-
+	var me = this;
 	async.waterfall([
 		function (next) {
 			scc.txLog.begin(data, next);
@@ -48,14 +48,11 @@ TopicReward.updateWithTxs = function (topicRewardData, txData, callback) {
 			mysql.transaction(function (conn, next) {
 				async.waterfall([
 					function (next) {
-						mysql.nfindById(this.tableName, conn, topicRewardData.id, next);
-					},
-					function (row, next) {
-						mysql.nupdateRow(row, conn, topicRewardData, next);
+						me.updateRow(conn, topicRewardData, next);
 					},
 					function (result, next) {
 						data.result.topicReward = result;
-						mysql.nnewRow('txs', conn, txData, next);
+						scc.tx.newRow(conn, txData, next);
 					},
 					function (row, next) {
 						data.result.tx = row._data;

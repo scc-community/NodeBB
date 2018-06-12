@@ -1,14 +1,12 @@
 'use strict';
 
 var async = require('async');
+var util = require('util');
 var mysql = require('../database/mysql');
-
 var user = require('../user');
 var scc = require('../scc');
 var utils = require('../utils');
-
 var Base = require('./base');
-var util = require('util');
 
 var ManualReward = function () {
 	this.tableName = 'manual_rewards';
@@ -16,7 +14,7 @@ var ManualReward = function () {
 util.inherits(ManualReward, Base);
 var manualReward = new ManualReward();
 
-ManualReward.newRowWithTxs = function (manualRewardData, txData, callback) {
+ManualReward.prototype.newRowWithTxs = function (manualRewardData, txData, callback) {
 	if (!manualRewardData.uid || !txData.uid || manualRewardData.uid !== txData.uid) {
 		return callback(new Error('manual-rewards.uid !== txs.uid'));
 	}
@@ -41,11 +39,11 @@ ManualReward.newRowWithTxs = function (manualRewardData, txData, callback) {
 			mysql.transaction(function (conn, next) {
 				async.waterfall([
 					function (next) {
-						mysql.nnewRow('manual_rewards', conn, manualRewardData, next);
+						scc.manualReward.newRow(conn, manualRewardData, next);
 					},
 					function (row, next) {
 						data.result.manualReward = row._data;
-						mysql.nnewRow('txs', conn, txData, next);
+						scc.tx.newRow(conn, txData, next);
 					},
 					function (row, next) {
 						data.result.tx = row._data;

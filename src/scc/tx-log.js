@@ -2,8 +2,6 @@
 
 var async = require('async');
 var winston = require('winston');
-
-var mysql = require('../database/mysql');
 var Base = require('./base');
 var util = require('util');
 
@@ -13,16 +11,18 @@ var TxLog = function () {
 util.inherits(TxLog, Base);
 var txlog = new TxLog();
 
-TxLog.newRow = function (data, callback) {
+TxLog.prototype.log = function (conn, data, callback) {
+	var me = this;
 	async.waterfall([
 		function (next) {
-			mysql.newRow('tx_log', {
+			var rowData = {
 				event: data.event,
 				group_id: data.group_id,
 				method: data.method,
 				txs_id: data.txs_id,
 				data: JSON.stringify(data),
-			}, next);
+			};
+			me.newRow(conn, rowData, next);
 		},
 	], function (err) {
 		if (data.err) {
@@ -38,19 +38,19 @@ TxLog.newRow = function (data, callback) {
 	});
 };
 
-TxLog.record = function (data, callback) {
+TxLog.prototype.record = function (data, callback) {
 	data.method = '2';
-	TxLog.newRow(data, callback);
+	this.log(null, data, callback);
 };
 
-TxLog.begin = function (data, callback) {
+TxLog.prototype.begin = function (data, callback) {
 	data.method = '1';
-	TxLog.newRow(data, callback);
+	this.log(null, data, callback);
 };
 
-TxLog.end = function (data, callback) {
+TxLog.prototype.end = function (data, callback) {
 	data.method = '3';
-	TxLog.newRow(data, callback);
+	this.log(null, data, callback);
 };
 
 module.exports = txlog;

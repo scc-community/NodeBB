@@ -7,7 +7,7 @@ BEGIN;
 UPDATE reward_types SET id = 51 WHERE id = 5;
 UPDATE reward_types SET id = 52 WHERE id = 6;
 UPDATE reward_types SET id = 53 WHERE id = 7;
-INSERT INTO `reward_types` VALUES (101, 'task', 'code_modules', '[[rewardType:code_modules]]', '代码模块奖励', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
+INSERT INTO `reward_types` VALUES (101, 'task', 'code_module', '[[rewardType:code_module]]', '代码模块奖励', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
 INSERT INTO `reward_types` VALUES (102, 'task', 'project', '[[rewardType:project]]', '项目奖励', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
 COMMIT;
 
@@ -61,7 +61,8 @@ CREATE TABLE `projects` (
   `publish_uid` mediumint(9) unsigned NOT NULL COMMENT '发布者ID',
   `date_published` datetime NOT NULL COMMENT '发布日期',
   `delivery_deadline` datetime NOT NULL COMMENT '交付截止日期',
-  `date_ended` datetime COMMENT '异常关闭日期',
+  `date_closed` datetime COMMENT '异常关闭日期',
+  `date_cutoff` datetime COMMENT '结算日期',
   `title` varchar(80) NOT NULL COMMENT '标题',
   `codemodule_count` smallint(5) unsigned NOT NULL DEFAULT 0 COMMENT '代码模块数',
   `architect_count` smallint(5) unsigned NOT NULL DEFAULT 0 COMMENT '架构师数',
@@ -114,7 +115,7 @@ CREATE TABLE `code_modules` (
   `date_cutoff` datetime NOT NULL COMMENT '结算日期',
   `date_upload` datetime COMMENT '模块上传日期',
   `date_download` datetime COMMENT '模块下载日期',
-  `date_close` datetime COMMENT '任务异常关闭日期',
+  `date_closed` datetime COMMENT '异常关闭日期',
   `url` varchar(128) COMMENT '模块下载URL',
   `dev_language` varchar(256) NOT NULL COMMENT '开发语言(多选)',
   `app` varchar(256) NOT NULL COMMENT '客户端对象(多选)',
@@ -166,7 +167,8 @@ SELECT
 	`projects`.`publish_uid` AS `p_publish_uid`,
 	`projects`.`date_published` AS `p_date_published`,
 	`projects`.`delivery_deadline` AS `p_delivery_deadline`,
-	`projects`.`date_ended` AS `p_date_ended`,
+	`projects`.`date_closed` AS `p_date_closed`,
+  `projects`.`date_cutoff` AS `p_date_cutoff`,
 	`projects`.`title` AS `p_title`,
 	`projects`.`codemodule_count` AS `p_codemodule_count`,
 	`projects`.`architect_count` AS `p_architect_count`,
@@ -174,6 +176,7 @@ SELECT
 	`projects`.`date_created` AS `p_date_created`,
 	`code_modules`.`publish_uid` AS `cm_publish_uid`,
 	`code_modules`.`accept_uid` AS `cm_accept_uid`,
+  `code_modules`.`title` AS `cm_title`,
 	`code_modules`.`scc` AS `cm_scc`,
 	`code_modules`.`requirement_desc` AS `cm_requirement_desc`,
 	`code_modules`.`date_published` AS `cm_date_published`,
@@ -181,7 +184,7 @@ SELECT
 	`code_modules`.`date_cutoff` AS `cm_date_cutoff`,
 	`code_modules`.`date_upload` AS `cm_date_upload`,
 	`code_modules`.`date_download` AS `cm_date_download`,
-	`code_modules`.`date_close` AS `cm_date_close`,
+	`code_modules`.`date_closed` AS `cm_date_closed`,
 	`code_modules`.`url` AS `cm_url`,
 	`code_modules`.`dev_language` AS `cm_dev_language`,
 	`code_modules`.`app` AS `cm_app`,
