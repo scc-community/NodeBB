@@ -140,6 +140,7 @@ Project.prototype.cutoffTask = function (id, callback) {
 		},
 		function (next) {
 			mysql.transaction(function (conn, next) {
+				var rewardType = scc.rewardType.get('task', 'project');
 				async.waterfall([
 					function (next) {
 						var projectData = {
@@ -156,7 +157,6 @@ Project.prototype.cutoffTask = function (id, callback) {
 					function (projectArchitects, next) {
 						data.parameters.projectArchitects = projectArchitects;
 						async.eachSeries(projectArchitects, function (projectArchitect, next) {
-							var rewardType = scc.rewardType.get('task', 'project');
 							var txData = {
 								uid: projectArchitect.architect_uid,
 								transaction_uid: 0,
@@ -166,7 +166,7 @@ Project.prototype.cutoffTask = function (id, callback) {
 								reward_type: rewardType.id,
 								date_issued: new Date().toLocaleString(),
 								scc: projectArchitect.scc,
-								content: rewardType.content + ':' + project.id,
+								content: project.title + '(' + project.id + ')',
 							};
 							data.result.paTxDatas.push(txData);
 							scc.tx.newRow(conn, txData, next);
@@ -178,7 +178,6 @@ Project.prototype.cutoffTask = function (id, callback) {
 					function (vpcms, next) {
 						data.parameters.vpcms = vpcms;
 						async.eachSeries(vpcms, function (vpcm, next) {
-							var rewardType = scc.rewardType.get('task', 'code_module');
 							var txData = {
 								uid: vpcm.accept_uid,
 								transaction_uid: 0,
@@ -188,7 +187,7 @@ Project.prototype.cutoffTask = function (id, callback) {
 								reward_type: rewardType.id,
 								date_issued: new Date().toLocaleString(),
 								scc: vpcm.cm_scc,
-								content: rewardType.content + ':' + vpcm.cm_id,
+								content: vpcm.p_title + '(' + project.id + '):' + vpcm.cm_title + '(' + vpcm.cm_id + ')',
 							};
 							data.result.vpcmTxDatas.push(txData);
 							scc.tx.newRow(conn, txData, next);

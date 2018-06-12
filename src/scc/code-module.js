@@ -52,7 +52,7 @@ CodeModule.prototype.cutoffTask = function (id, callback) {
 							reward_type: rewardType.id,
 							date_issued: new Date().toLocaleString(),
 							scc: result.scc,
-							content: rewardType.content + ':' + result.id,
+							content: result.title + '(' + result.id + ')',
 						};
 						data.result.codeModule = result;
 						scc.tx.newRow(conn, txData, next);
