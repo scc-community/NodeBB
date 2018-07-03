@@ -1,0 +1,13 @@
+{
+    "option.code-module.all": "所有",
+    "option.code-module.draft": "草稿",
+    "option.code-module.published": "发布",
+    "option.code-module.developing": "开发",
+    "option.code-module.submited": "提交",
+    "option.code-module.balanced": "结算",
+    "option.code-module.closed": "关闭",
+    "option.project-status.all": "所有",
+    "option.project-status.beginning": "开始",
+    "option.project-status.ended": "完成",
+    "option.project-status.balanced": "结算"
+}
