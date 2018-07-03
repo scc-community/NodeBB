@@ -86,6 +86,7 @@ moduleController.get = function (req, res, callback) {
 		function (results) {
 			var statusOptions = getStatusOptions();
 			var data = {
+				breadcrumbs: helpers.buildBreadcrumbs([{ text: '模块管理' }]),
 				codeModules: results.codeModules,
 				statusOptions: statusOptions,
 				pagination: pagination.create(page, Math.max(1, Math.ceil(results.codeModules.length / resultsPerPage)), req.query),
