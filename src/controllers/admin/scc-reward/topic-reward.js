@@ -89,16 +89,6 @@ TopicRewardController.get = function (req, res, next) {
 	async.waterfall([
 		function (next) {
 			async.parallel({
-				count: function (next) {
-					async.waterfall([
-						function (next) {
-							scc.topicReward.getCount(next);
-						},
-						function (result, _, next) {
-							next(null, result[0].count);
-						},
-					], next);
-				},
 				topicrewards: function (next) {
 					var topicRewards = [];
 					async.waterfall([
@@ -140,7 +130,7 @@ TopicRewardController.get = function (req, res, next) {
 			var rewardOrderOptions = TopicRewardController.getRewardOrderOptions();
 			var data = {
 				topicrewards: receiveData.topicrewards,
-				pagination: pagination.create(page, Math.max(1, Math.ceil(receiveData.count / resultsPerPage)), req.query),
+				pagination: pagination.create(page, Math.max(1, Math.ceil(receiveData.topicrewards.length / resultsPerPage)), req.query),
 				rewardtypes: rewardTypeOptions,
 				statuses: statusOptions,
 				modifystatuses: modifyStatusOptions,

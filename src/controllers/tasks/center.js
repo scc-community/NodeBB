@@ -26,6 +26,17 @@ CenterController.get = function (req, res, callback) {
 		});
 		return where;
 	};
+	var initOrderBy = function () {
+		var orderCondition = [
+			{
+				status: 'ASC',
+			},
+			{
+				date_published: 'DESC',
+			},
+		];
+		return orderCondition;
+	};
 	var page = parseInt(req.query.page, 10) || 1;
 	var resultsPerPage = 50;
 	var start = Math.max(0, page - 1) * resultsPerPage;
@@ -33,23 +44,11 @@ CenterController.get = function (req, res, callback) {
 	async.waterfall([
 		function (next) {
 			async.parallel({
-				count: function (next) {
-					async.waterfall([
-						function (next) {
-							scc.codeModule.getCount(next);
-						},
-						function (result, _, next) {
-							next(null, result[0].count);
-						},
-					], next);
-				},
 				codeModules: function (next) {
 					var codeModules = [];
 					async.waterfall([
 						function (next) {
-							scc.codeModule.getRows(initWhere(req), [{
-								date_published: 'DESC',
-							}], [start, resultsPerPage], next);
+							scc.codeModule.getRows(initWhere(req), initOrderBy(), [start, resultsPerPage], next);
 						},
 						function (result, next) {
 							result.forEach(function (item) {
@@ -64,6 +63,9 @@ CenterController.get = function (req, res, callback) {
 										row.username = userData.username;
 										row.userslug = userData.userslug;
 										row.status_text = scc.taskCategoryItem.find('id', row.status).content;
+										row.delivery_deadline_text = row.delivery_deadline ? row.delivery_deadline.toLocaleDateString() : null;
+										row.date_cutoff_text = row.date_cutoff ? row.date_cutoff.toLocaleDateString() : null;
+										row.languages = row.dev_language ? row.dev_language.split(',') : [];
 										next();
 									},
 								], next);
@@ -88,14 +90,18 @@ CenterController.get = function (req, res, callback) {
 				isMyTask: req.isMyTask,
 				canManageModule: results.canManageModule,
 				canManageProject: results.canManageProject,
-				pagination: pagination.create(page, Math.max(1, Math.ceil(results.count / resultsPerPage)), req.query),
+				breadcrumbs: helpers.buildBreadcrumbs([{ text: '[[global:task.center]]' }]),
+				pagination: pagination.create(page, Math.max(1, Math.ceil(results.codeModules.length / resultsPerPage)), req.query),
 			};
-			data.taskLink = {
-				localTool: '',
-				myTask: '/task/mytask',
-				projectManage: '/task/project',
-				codeModuleManage: '/task/module',
-			};
+
+			var breadCrumbParams;
+			if (req.isMyTask) {
+				breadCrumbParams = [{ text: '[[global:task.center]]', url: '/task/center' }, { text: '我的任务' }];
+			} else {
+				breadCrumbParams = [{ text: '[[global:task.center]]' }];
+			}
+			data.breadcrumbs = helpers.buildBreadcrumbs(breadCrumbParams);
+			data.taskLink = { localTool: '', myTask: '/task/mytask', projectManage: '/task/project', codeModuleManage: '/task/module' };
 			res.render('task/center', data);
 		},
 	], callback);
@@ -106,7 +112,7 @@ CenterController.getMyTask = function (req, res, callback) {
 		return helpers.notAllowed(req, res);
 	}
 	req.isMyTask = true;
-	this.get(req, res, callback);
+	CenterController.get(req, res, callback);
 };
 
 CenterController.getDetail = function (req, res, callback) {
@@ -135,19 +141,26 @@ CenterController.getDetail = function (req, res, callback) {
 					db.getObjectFields('user:' + codeModule.publish_uid, ['username', 'userslug'], next);
 				},
 				function (userData, next) {
+					var taskCategoryItem = scc.taskCategoryItem.find('id', codeModule.status);
 					codeModule.username = userData.username;
 					codeModule.userslug = userData.userslug;
-					codeModule.status_text = scc.taskCategoryItem.find('id', codeModule.status).content;
+					codeModule.status_text = taskCategoryItem.content;
+					codeModule.delivery_deadline_text = codeModule.delivery_deadline ? codeModule.delivery_deadline.toLocaleDateString() : null;
+					codeModule.date_cutoff_text = codeModule.date_cutoff ? codeModule.date_cutoff.toLocaleDateString() : null;
+					codeModule.date_upload_text = codeModule.date_upload ? codeModule.date_upload.toLocaleString() : null;
+					codeModule.languages = codeModule.dev_language ? codeModule.dev_language.split(',') : [];
 					next(null, codeModule);
 				},
 			], next);
 		},
 		function (codeModule) {
 			var data = {
+				breadcrumbs: helpers.buildBreadcrumbs([{ text: '[[global:task.center]]', url: '/task/center' }, { text: '[[global:task.center.detail]]' }]),
+				status: scc.taskCategoryItem.getCodeModuleStatuses(codeModule.status),
 				codeModule: codeModule,
-				isMyTask: req.uid !== 0,
+				isMyTask: req.uid === codeModule.accept_uid,
 			};
-			res.render('task/center-detail', data);
+			res.render('task/centerdetail', data);
 		},
 	], callback);
 };

@@ -13,4 +13,16 @@ function TaskCategoryItem() {
 util.inherits(TaskCategoryItem, CacheItem);
 var taskCategoryItem = new TaskCategoryItem();
 
+TaskCategoryItem.prototype.getCodeModuleStatuses = function (status) {
+	var item = this.find('id', status).item;
+	var result = {};
+	result.draft = item === 'draft';
+	result.published = item === 'published';
+	result.developing = item === 'developing';
+	result.submited = item === 'submited';
+	result.balanced = item === 'balanced';
+	result.closed = item === 'closed';
+	return result;
+};
+
 module.exports = taskCategoryItem;

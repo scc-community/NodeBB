@@ -86,9 +86,6 @@ function saveDatabaseConfig(config, databaseConfig, callback) {
 		useTransaction: {
 			connectionLimit: 1,
 		},
-		useCursor: {
-			connectionLimit: 1,
-		},
 	};
 	config.task = {
 		centerCid: 2,

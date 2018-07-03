@@ -90,7 +90,7 @@ define('uploader', ['translator', 'benchpress'], function (translator, Benchpres
 					return showAlert('error', response.error);
 				}
 
-				callback(response[0].url);
+				callback(response[0].url, response[0].filename);
 
 				showAlert('success', '[[uploads:upload-success]]');
 				setTimeout(function () {

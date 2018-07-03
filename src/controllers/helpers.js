@@ -14,6 +14,11 @@ var middleware = require('../middleware');
 
 var helpers = module.exports;
 
+helpers.checkId = function (id) {
+	id = parseInt(id, 10);
+	return !(isNaN(id) || id <= 0);
+};
+
 helpers.noScriptErrors = function (req, res, error, httpStatus) {
 	if (req.body.noscript !== 'true') {
 		return res.status(httpStatus).send(error);

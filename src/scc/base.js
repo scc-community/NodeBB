@@ -18,7 +18,7 @@ Base.prototype.newRow = function (conn, data, callback) {
 };
 
 Base.prototype.deleteRowById = function (conn, id, callback) {
-	this.prototype.deleteRows(conn, this.tableName, 'WHERE id = ?', id, callback);
+	this.deleteRows(conn, 'WHERE id = ?', id, callback);
 };
 
 Base.prototype.findRowById = function (conn, id, callback) {
@@ -42,10 +42,11 @@ Base.prototype.getCount = function (callback) {
 };
 
 Base.prototype.updateRow = function (conn, data, callback) {
+	var me = this;
 	var submit = function (conn, next) {
 		async.waterfall([
 			function (next) {
-				mysql.nfindById(this.tableName, conn, data.id, next);
+				mysql.nfindById(me.tableName, conn, data.id, next);
 			},
 			function (row, next) {
 				mysql.nupdateRow(row, conn, data, next);
@@ -56,10 +57,7 @@ Base.prototype.updateRow = function (conn, data, callback) {
 		submit(conn, callback);
 	} else {
 		mysql.connect(function (conn, next) {
-			submit(conn, function (err) {
-				conn.release();
-				next(err);
-			}, next);
+			submit(conn, next);
 		}, callback);
 	}
 };

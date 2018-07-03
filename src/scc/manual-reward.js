@@ -50,15 +50,7 @@ ManualReward.prototype.newRowWithTxs = function (manualRewardData, txData, callb
 						data.txs_id = row._data.id;
 						next();
 					},
-				], function (err) {
-					if (err) {
-						conn.rollback();
-					} else {
-						conn.commit();
-					}
-					conn.release();
-					next(err);
-				}, next);
+				], next);
 			}, next);
 		},
 		function (next) {

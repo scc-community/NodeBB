@@ -13,29 +13,33 @@ var CodeModule = function () {
 util.inherits(CodeModule, Base);
 var codeModule = new CodeModule();
 
-CodeModule.prototype.cutoffTask = function (id, callback) {
-	if (!id) {
+CodeModule.prototype.getCountByAcceptUId = function (acceptUId, callback) {
+	mysql.query('SELECT COUNT(*) AS count FROM ' + this.tableName + 'WHERE accept_uid = ?', [acceptUId], callback);
+};
+
+CodeModule.prototype.cutoffTask = function (data, callback) {
+	if (!data) {
 		return callback(new Error('error:invalid-Id'));
 	}
-	var data = {
+	var logData = {
 		event: 'CodeModule.cutoffTask',
 		group_id: utils.generateUUID(),
 		parameters: {
-			id: id,
+			id: data.codemoduleId,
 		},
 		result: {},
 	};
 	var me = this;
 	async.waterfall([
 		function (next) {
-			scc.txLog.begin(data, next);
+			scc.txLog.begin(logData, next);
 		},
 		function (next) {
 			mysql.transaction(function (conn, next) {
 				async.waterfall([
 					function (next) {
 						var codeModuleData = {
-							id: id,
+							id: data.codemoduleId,
 							date_cutoff: new Date().toLocaleString(),
 							status: scc.taskCategoryItem.get('code_module_status', 'balanced').id,
 						};
@@ -44,45 +48,37 @@ CodeModule.prototype.cutoffTask = function (id, callback) {
 					function (result, next) {
 						var rewardType = scc.rewardType.get('task', 'code_module');
 						var txData = {
-							uid: result.accept_uid,
+							uid: data.accept_uid,
 							transaction_uid: 0,
-							publish_uid: result.publish_uid,
+							publish_uid: data.publish_uid,
 							transaction_type: '1',
 							tx_no: utils.generateUUID(),
 							reward_type: rewardType.id,
 							date_issued: new Date().toLocaleString(),
-							scc: result.scc,
-							content: result.title + '(' + result.id + ')',
+							scc: data.scc,
+							content: '创建模块(' + data.codemoduleId + ':' + data.title + ')',
 						};
-						data.result.codeModule = result;
+						logData.result.codeModule = result;
 						scc.tx.newRow(conn, txData, next);
 					},
 					function (row, next) {
-						data.result.tx = row._data;
+						logData.result.tx = row._data;
 						next();
 					},
-				], function (err) {
-					if (err) {
-						conn.rollback();
-					} else {
-						conn.commit();
-					}
-					conn.release();
-					next(err);
-				}, next);
+				], next);
 			}, next);
 		},
 		function (next) {
-			scc.txLog.record(data, next);
+			scc.txLog.record(logData, next);
 		},
 	], function (err) {
 		if (err) {
-			data.err = {
+			logData.err = {
 				message: err.message,
 				stack: err.stack,
 			};
 		}
-		scc.txLog.end(data, callback);
+		scc.txLog.end(logData, callback);
 	});
 };
 

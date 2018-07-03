@@ -1,5 +1,7 @@
 {
     "home": "Home",
+    "task.center": "Task Center",
+    "task.center.detail": "Task Center Detail",
     "search": "Search",
     "buttons.close": "Close",
     "403.title": "Access Denied",

@@ -59,15 +59,7 @@ TopicReward.prototype.updateWithTxs = function (topicRewardData, txData, callbac
 						data.txs_id = row._data.id;
 						next();
 					},
-				], function (err) {
-					if (err) {
-						conn.rollback();
-					} else {
-						conn.commit();
-					}
-					conn.release();
-					next(err);
-				}, next);
+				], next);
 			}, next);
 		},
 		function (next) {

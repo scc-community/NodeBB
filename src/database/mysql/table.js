@@ -1,12 +1,11 @@
 'use strict';
 
-var mysql = require('node-mysql');
+var mysql = require('./lib/node-mysql');
 
 module.exports = function (mysqlClient, module) {
 	module.newRow = function (model, data, callback) {
 		module.connect(function (conn, next) {
 			module.nnewRow(model, conn, data, next);
-			conn.release();
 		}, callback);
 	};
 
@@ -20,7 +19,6 @@ module.exports = function (mysqlClient, module) {
 	module.find = function (model, data, callback) {
 		module.connect(function (conn, next) {
 			module.nfind(model, conn, data, next);
-			conn.release();
 		}, callback);
 	};
 
@@ -34,7 +32,6 @@ module.exports = function (mysqlClient, module) {
 	module.findById = function (model, row_id, callback) {
 		module.connect(function (conn, next) {
 			module.nfindById(model, conn, row_id, next);
-			conn.release();
 		}, callback);
 	};
 
@@ -48,7 +45,6 @@ module.exports = function (mysqlClient, module) {
 	module.findAll = function (model, row_id, callback) {
 		module.connect(function (conn, next) {
 			module.nfindAll(model, conn, next);
-			conn.release();
 		}, callback);
 	};
 
@@ -70,7 +66,6 @@ module.exports = function (mysqlClient, module) {
 		module.connect(function (conn, next) {
 			var selectSql = module.nbaseQuery(model, sqlCondition, variable_binding);
 			module.nfind(model, conn, selectSql, next);
-			conn.release();
 		}, callback);
 	};
 
@@ -91,7 +86,7 @@ module.exports = function (mysqlClient, module) {
 				}
 				where[whereIndex].compaser = where[whereIndex].compaser || '=';
 				if (where[whereIndex].key && where[whereIndex].value) {
-					sqlCondition += (' ' + where[whereIndex].key + ' ' + where[whereIndex].compaser + ' ' + where[whereIndex].value);
+					sqlCondition += (' ' + where[whereIndex].key + ' ' + where[whereIndex].compaser + ' "' + where[whereIndex].value + '"');
 					sqlCondition += (' ' + lastLogic);
 				}
 			}
@@ -129,7 +124,6 @@ module.exports = function (mysqlClient, module) {
 	module.query = function (querySql, variable_binding, callback) {
 		module.connect(function (conn, next) {
 			module.nquery(conn, querySql, variable_binding, next);
-			conn.release();
 		}, callback);
 	};
 
@@ -150,7 +144,6 @@ module.exports = function (mysqlClient, module) {
 		}
 		module.connect(function (conn, next) {
 			conn.query(sql, [values], next);
-			conn.release();
 		}, callback);
 	};
 
@@ -172,7 +165,6 @@ module.exports = function (mysqlClient, module) {
 	module.updateRows = function (tableName, data, conditionSql, variable_binding, callback) {
 		module.connect(function (conn, next) {
 			module.nupdateRows(conn, tableName, data, conditionSql, variable_binding, next);
-			conn.release();
 		}, callback);
 	};
 
@@ -190,7 +182,6 @@ module.exports = function (mysqlClient, module) {
 	module.deleteRows = function (tableName, conditionSql, variable_binding, callback) {
 		module.connect(function (conn, next) {
 			module.ndeleteRows(conn, tableName, conditionSql, variable_binding, next);
-			conn.release();
 		}, callback);
 	};
 };

@@ -15,121 +15,106 @@ var project = new Project();
 
 Project.prototype.newCodeModule = function (rowData, codeModuleRowData, callback) {
 	var me = this;
-	mysql.transaction(function (conn, next) {
-		async.waterfall([
-			function (next) {
-				me.findRowById(conn, rowData.id, next);
-			},
-			function (row, next) {
-				rowData.codemodule_count = row._data[0].row.codemodule_count + 1;
-				mysql.nupdateRow(row, conn, rowData, next);
-			},
-			function (result, next) {
-				var data = {
-					p_id: rowData.id,
-					cm_id: codeModuleRowData.id,
-				};
-				scc.codeModule.newRow(conn, data, next);
-			},
-		], function (err) {
-			if (err) {
-				conn.rollback();
-			} else {
-				conn.commit();
-			}
-			conn.release();
-			next(err);
-		}, next);
-	}, callback);
+	async.waterfall([
+		function (next) {
+			me.findRowById(null, rowData.id, next);
+		},
+		function (row, next) {
+			mysql.transaction(function (conn, next) {
+				async.waterfall([
+					function (next) {
+						rowData.codemodule_count = row._data.codemodule_count + 1;
+						rowData.codemodule_url = null;
+						mysql.nupdateRow(row, conn, rowData, next);
+					},
+					function (result, next) {
+						var data = {
+							p_id: rowData.id,
+							cm_id: codeModuleRowData.id,
+						};
+						scc.projectCodeModule.newRow(conn, data, next);
+					},
+				], next);
+			}, next);
+		},
+	], callback);
 };
 
 Project.prototype.deleteCodeModule = function (rowData, codeModuleRowData, callback) {
 	var me = this;
-	mysql.transaction(function (conn, next) {
-		async.waterfall([
-			function (next) {
-				me.findRowById(conn, rowData.id, next);
-			},
-			function (row, next) {
-				rowData.codemodule_count = row._data[0].row.codemodule_count - 1;
-				mysql.nupdateRow(row, conn, rowData, next);
-			},
-			function (result, next) {
-				scc.codeModule.deleteRowById(conn, codeModuleRowData.id, next);
-			},
-		], function (err) {
-			if (err) {
-				conn.rollback();
-			} else {
-				conn.commit();
-			}
-			conn.release();
-			next(err);
-		}, next);
-	}, callback);
+	async.waterfall([
+		function (next) {
+			me.findRowById(null, rowData.id, next);
+		},
+		function (row, next) {
+			mysql.transaction(function (conn, next) {
+				async.waterfall([
+					function (next) {
+						rowData.codemodule_count = row._data.codemodule_count - 1;
+						mysql.nupdateRow(row, conn, rowData, next);
+					},
+					function (result, next) {
+						scc.projectCodeModule.deleteRows(conn, 'WHERE p_id = ? AND cm_id = ?', [rowData.id, codeModuleRowData.id], next);
+					},
+				], next);
+			}, next);
+		},
+	], callback);
 };
 
 Project.prototype.newArchitect = function (rowData, architectRowData, callback) {
 	var me = this;
-	mysql.transaction(function (conn, next) {
-		async.waterfall([
-			function (next) {
-				me.findRowById(conn, rowData.id, next);
-			},
-			function (row, next) {
-				rowData.codemodule_count = row._data[0].row.codemodule_count + 1;
-				mysql.nupdateRow(row, conn, rowData, next);
-			},
-			function (result, next) {
-				scc.projectArchitect.newRow(conn, architectRowData, next);
-			},
-		], function (err) {
-			if (err) {
-				conn.rollback();
-			} else {
-				conn.commit();
-			}
-			conn.release();
-			next(err);
-		}, next);
-	}, callback);
+	async.waterfall([
+		function (next) {
+			me.findRowById(null, rowData.id, next);
+		},
+		function (row, next) {
+			mysql.transaction(function (conn, next) {
+				async.waterfall([
+					function (next) {
+						rowData.architect_count = row._data.architect_count + 1;
+						mysql.nupdateRow(row, conn, rowData, next);
+					},
+					function (result, next) {
+						scc.projectArchitect.newRow(conn, architectRowData, next);
+					},
+				], next);
+			}, next);
+		},
+	], callback);
 };
 
 Project.prototype.deleteArchitect = function (rowData, architectRowData, callback) {
 	var me = this;
-	mysql.transaction(function (conn, next) {
-		async.waterfall([
-			function (next) {
-				me.findRowById(conn, rowData.id, next);
-			},
-			function (row, next) {
-				rowData.architect_count = row._data[0].row.architect_count - 1;
-				mysql.nupdateRow(row, conn, rowData, next);
-			},
-			function (result, next) {
-				scc.projectArchitect.deleteRowById(conn, architectRowData.id, next);
-			},
-		], function (err) {
-			if (err) {
-				conn.rollback();
-			} else {
-				conn.commit();
-			}
-			conn.release();
-			next(err);
-		}, next);
-	}, callback);
+	async.waterfall([
+		function (next) {
+			me.findRowById(null, rowData.id, next);
+		},
+		function (row, next) {
+			mysql.transaction(function (conn, next) {
+				async.waterfall([
+					function (next) {
+						rowData.architect_count = row._data.architect_count - 1;
+						mysql.nupdateRow(row, conn, rowData, next);
+					},
+					function (result, next) {
+						scc.projectArchitect.deleteRowById(conn, [architectRowData.id], next);
+					},
+				], next);
+			}, next);
+		},
+	], callback);
 };
 
-Project.prototype.cutoffTask = function (id, callback) {
-	if (!id) {
-		return callback(new Error('error:invalid-Id'));
+Project.prototype.cutoffTask = function (rowData, callback) {
+	if (!rowData) {
+		return callback(new Error('error:invalid-data'));
 	}
 	var data = {
 		event: 'Project.cutoffTask',
 		group_id: utils.generateUUID(),
 		parameters: {
-			id: id,
+			rowData: rowData,
 		},
 		result: {},
 	};
@@ -141,67 +126,71 @@ Project.prototype.cutoffTask = function (id, callback) {
 		function (next) {
 			mysql.transaction(function (conn, next) {
 				var rewardType = scc.rewardType.get('task', 'project');
+				var projectData;
 				async.waterfall([
 					function (next) {
-						var projectData = {
-							id: id,
+						projectData = {
+							id: rowData.projectId,
 							date_cutoff: new Date().toLocaleString(),
 							status: scc.taskCategoryItem.get('project_status', 'balanced').id,
+							scc_sum: rowData.sccSum,
 						};
 						me.updateRow(conn, projectData, next);
 					},
 					function (result, next) {
-						data.result.project = result;
-						scc.projectArchitect.getRows([{	key: 'p_id',	value: id }], null, null, next);
+						data.result.project = projectData;
+						scc.projectArchitect.getRows([{	key: 'p_id', value: rowData.projectId }], null, null, next);
 					},
-					function (projectArchitects, next) {
+					function (result, next) {
+						var projectArchitects = [];
+						result.forEach(function (item) {
+							projectArchitects.push(item._data);
+						});
 						data.parameters.projectArchitects = projectArchitects;
 						async.eachSeries(projectArchitects, function (projectArchitect, next) {
 							var txData = {
 								uid: projectArchitect.architect_uid,
 								transaction_uid: 0,
-								publish_uid: data.result.project.publish_uid,
+								publish_uid: rowData.publishUId,
 								transaction_type: '1',
 								tx_no: utils.generateUUID(),
 								reward_type: rewardType.id,
 								date_issued: new Date().toLocaleString(),
 								scc: projectArchitect.scc,
-								content: project.title + '(' + project.id + ')',
+								content: '项目架构工作(' + rowData.projectId + ':' + rowData.projectTitle + ')',
 							};
+							data.result.paTxDatas = [];
 							data.result.paTxDatas.push(txData);
 							scc.tx.newRow(conn, txData, next);
 						}, next);
 					},
 					function (next) {
-						scc.vpcm.getRows([{ key: 'p_id', value: id }], null, null, next);
+						scc.vpcm.getRows([{ key: 'p_id', value: rowData.projectId }], null, null, next);
 					},
-					function (vpcms, next) {
+					function (result, next) {
+						var vpcms = [];
+						result.forEach(function (item) {
+							vpcms.push(item._data);
+						});
 						data.parameters.vpcms = vpcms;
 						async.eachSeries(vpcms, function (vpcm, next) {
 							var txData = {
-								uid: vpcm.accept_uid,
+								uid: vpcm.cm_accept_uid,
 								transaction_uid: 0,
-								publish_uid: data.result.project.publish_uid,
+								publish_uid: rowData.publishUId,
 								transaction_type: '1',
 								tx_no: utils.generateUUID(),
 								reward_type: rewardType.id,
 								date_issued: new Date().toLocaleString(),
 								scc: vpcm.cm_scc,
-								content: vpcm.p_title + '(' + project.id + '):' + vpcm.cm_title + '(' + vpcm.cm_id + ')',
+								content: '模块(' + vpcm.cm_id + ':' + vpcm.cm_title + ')被项目(' + rowData.projectId + ':' + rowData.projectTitle + ')采用',
 							};
+							data.result.vpcmTxDatas = [];
 							data.result.vpcmTxDatas.push(txData);
 							scc.tx.newRow(conn, txData, next);
 						}, next);
 					},
-				], function (err) {
-					if (err) {
-						conn.rollback();
-					} else {
-						conn.commit();
-					}
-					conn.release();
-					next(err);
-				}, next);
+				], next);
 			}, next);
 		},
 		function (next) {

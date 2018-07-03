@@ -1,5 +1,7 @@
 {
     "home": "主页",
+    "task.center": "Tasks Center 任务大厅",
+    "task.center.detail": "任务详情",
     "search": "搜索",
     "buttons.close": "关闭",
     "403.title": "禁止访问",

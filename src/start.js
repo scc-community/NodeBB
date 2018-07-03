@@ -22,7 +22,6 @@ start.start = function () {
 		function (next) {
 			var meta = require('./meta');
 			async.parallel([
-				async.apply(db.checkCompatibility),
 				async.apply(meta.configs.init),
 				function (next) {
 					if (nconf.get('dep-check') === undefined || nconf.get('dep-check') !== false) {
@@ -43,7 +42,7 @@ start.start = function () {
 			db.initSessionStore(next);
 		},
 		function (next) {
-			startMysql(next);
+			require('./database/mysql').init(next);
 		},
 		function (next) {
 			require('./scc').init(next);
@@ -89,18 +88,6 @@ start.start = function () {
 		}
 	});
 };
-
-function startMysql(cb) {
-	var mysql = require('./database/mysql');
-	async.waterfall([
-		function (next) {
-			mysql.init(next);
-		},
-		function (next) {
-			mysql.checkCompatibility(next);
-		},
-	], cb);
-}
 
 function setupConfigs() {
 	// nconf defaults, if not set in config

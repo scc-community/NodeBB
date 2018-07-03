@@ -15,16 +15,6 @@ RewardManualController.get = function (req, res, next) {
 	async.waterfall([
 		function (next) {
 			async.parallel({
-				count: function (next) {
-					async.waterfall([
-						function (next) {
-							scc.manualReward.getCount(next);
-						},
-						function (result, _, next) {
-							next(null, result[0].count);
-						},
-					], next);
-				},
 				manualrewards: function (next) {
 					var manualrewards = [];
 					async.waterfall([
@@ -58,7 +48,7 @@ RewardManualController.get = function (req, res, next) {
 		function (receiveData) {
 			var data = {
 				manualrewards: receiveData.manualrewards,
-				pagination: pagination.create(page, Math.max(1, Math.ceil(receiveData.count / resultsPerPage)), req.query),
+				pagination: pagination.create(page, Math.max(1, Math.ceil(receiveData.manualrewards.length / resultsPerPage)), req.query),
 			};
 			res.render('admin/scc-reward/manual-reward', data);
 		},

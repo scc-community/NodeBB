@@ -11,31 +11,15 @@ var moduleController = module.exports;
 
 moduleController.get = function (req, res, callback) {
 	var getStatusOptions = function () {
-		var category = 'code_module_status';
-		var statusItems = ['draft', 'published', 'developing', 'submited', 'balanced', 'closed'];
-		var data = [];
-		data.push([
-			{
-				value: null,
-				text: scc.taskCategoryItem.get(category, 'all').content,
-			},
-		]);
-		statusItems.forEach(function (statusItem) {
-			data.push({
-				value: scc.taskCategoryItem.get(category, statusItem).id,
-				text: scc.taskCategoryItem.get(category, statusItem).content,
-			});
-		});
-		return data;
+		var includeItems = [
+			{ item: 'draft' }, { item: 'published' }, { item: 'developing' },
+			{ item: 'submited' }, { item: 'balanced' }, { item: 'closed' },
+		];
+		var result = scc.taskCategoryItem.getOptions('code_module_status', true, null, includeItems);
+		return result;
 	};
 	var initWhere = function (req) {
-		var where =
-		[
-			// {
-			// 	key: 'publish_uid',
-			// 	value: req.uid,
-			// },
-		];
+		var where = [];
 		if (req.query.filterByStatus) {
 			where.push({
 				key: 'status',
@@ -59,16 +43,6 @@ moduleController.get = function (req, res, callback) {
 		},
 		function (next) {
 			async.parallel({
-				count: function (next) {
-					async.waterfall([
-						function (next) {
-							scc.codeModule.getCount(next);
-						},
-						function (result, _, next) {
-							next(null, result[0].count);
-						},
-					], next);
-				},
 				codeModules: function (next) {
 					var codeModules = [];
 					async.waterfall([
@@ -95,9 +69,8 @@ moduleController.get = function (req, res, callback) {
 									function (userData, next) {
 										row.accept_username = userData.username;
 										row.accept_userslug = userData.userslug;
-										next();
-									},
-									function (next) {
+										row.date_published = row.date_published.toLocaleDateString();
+										row.delivery_deadline = row.delivery_deadline.toLocaleDateString();
 										row.status_text = scc.taskCategoryItem.find('id', row.status).content;
 										next();
 									},
@@ -115,7 +88,7 @@ moduleController.get = function (req, res, callback) {
 			var data = {
 				codeModules: results.codeModules,
 				statusOptions: statusOptions,
-				pagination: pagination.create(page, Math.max(1, Math.ceil(results.count / resultsPerPage)), req.query),
+				pagination: pagination.create(page, Math.max(1, Math.ceil(results.codeModules.length / resultsPerPage)), req.query),
 			};
 			res.render('task/module', data);
 		},
@@ -123,44 +96,64 @@ moduleController.get = function (req, res, callback) {
 };
 
 moduleController.getDetail = function (req, res, callback) {
-	if (parseInt(req.query.moduleId, 10) <= 0) {
-		return callback();
+	var data = {
+		languageOptions: scc.taskCategoryItem.getOptions('dev_language', { text: '请选择' }),
+		appOptions: scc.taskCategoryItem.getOptions('app', { text: '请选择' }),
+	};
+	if (!helpers.checkId(req.query.cmid)) {
+		data.breadcrumbs = helpers.buildBreadcrumbs([{ text: '模块管理', url: '/task/module' }, { text: '新建模块' }]);
+		data.statusOptions = scc.taskCategoryItem.getOptions('code_module_status', false, { item: 'draft' });
+		res.render('task/moduledetail', data);
+		return;
 	}
+	var codeModule;
 	async.waterfall([
 		function (next) {
 			privileges.global.can('task:module:manage', req.uid, next);
 		},
 		function (canManage, next) {
-			if (!canManage) {
-				return helpers.notAllowed(req, res);
-			}
+			if (!canManage) { return helpers.notAllowed(req, res); }
 			next();
 		},
 		function (next) {
-			scc.codeModule.getRows([{ key: 'id', value: req.query.moduleId }], null, null, next);
+			scc.codeModule.getRows([{ key: 'id', value: req.query.cmid }], null, null, next);
 		},
 		function (result, next) {
-			if (result.length !== 1) {
-				return callback();
-			}
-			var codeModule = result[0]._data;
-			async.waterfall([
-				function (next) {
-					db.getObjectFields('user:' + codeModule.publish_uid, ['username', 'userslug'], next);
-				},
-				function (userData, next) {
-					codeModule.username = userData.username;
-					codeModule.userslug = userData.userslug;
-					codeModule.status_text = scc.taskCategoryItem.find('id', codeModule.status).content;
-					next(null, codeModule);
-				},
-			], next);
+			if (result.length !== 1) { return callback(); }
+			codeModule = result[0]._data;
+			codeModule.status_text = scc.taskCategoryItem.find('id', codeModule.status).content;
+			codeModule.delivery_deadline = codeModule.delivery_deadline.toLocaleDateString();
+			codeModule.dev_language = codeModule.dev_language.split(',').map(function (item) {
+				return { text: item };
+			});
+			codeModule.app = codeModule.app.split(',').map(function (item) {
+				return { text: item };
+			});
+			db.getObjectFields('user:' + codeModule.publish_uid, ['username', 'userslug'], next);
 		},
-		function (codeModule) {
-			var data = {
-				codeModule: codeModule,
-			};
-			res.render('task/module-detail', data);
+		function (userData, next) {
+			codeModule.publish_username = userData.username;
+			codeModule.publish_userslug = userData.userslug;
+			next();
+		},
+		function (next) {
+			db.getObjectFields('user:' + codeModule.accept_uid, ['username', 'userslug'], next);
+		},
+		function (userData, next) {
+			codeModule.accept_username = userData.username;
+			codeModule.accept_userslug = userData.userslug;
+			next();
+		},
+		function () {
+			var status = scc.taskCategoryItem.find('id', codeModule.status);
+			data.breadcrumbs = helpers.buildBreadcrumbs([{ text: '模块管理', url: '/task/module' }, { text: '模块详情' }]);
+			data.codemodule = codeModule;
+			data.statuses = scc.taskCategoryItem.getCodeModuleStatuses(codeModule.status);
+			data.statusOptions = scc.taskCategoryItem.getOptions('code_module_status', false, {
+				category: status.category,
+				item: status.item,
+			});
+			res.render('task/moduledetail', data);
 		},
 	], callback);
 };

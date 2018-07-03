@@ -1,10 +1,12 @@
 'use strict';
 
 var scc = require('../../scc');
+var file = require('../../file');
+var path = require('path');
 
 module.exports = function (SocketTasks) {
 	SocketTasks.module = {};
-	SocketTasks.module.newTask = function (socket, data, callback) {
+	SocketTasks.module.newModuleTask = function (socket, data, callback) {
 		if (!data) {
 			return callback(new Error('[[error:invalid-data]]'));
 		}
@@ -14,12 +16,12 @@ module.exports = function (SocketTasks) {
 			title: data.title,
 			scc: data.scc,
 			requirement_desc: data.requirement_desc,
-			delivery_deadlin: data.delivery_deadlin,
+			delivery_deadline: data.delivery_deadline,
 			dev_language: data.dev_language,
 			app: data.app,
 			memo: data.memo,
 		};
-		if (data.withPublish) {
+		if (data.publish) {
 			rowData.date_published = new Date().toLocaleString();
 			rowData.status = scc.taskCategoryItem.get('code_module_status', 'published').id;
 		} else {
@@ -30,7 +32,7 @@ module.exports = function (SocketTasks) {
 		});
 	};
 
-	SocketTasks.module.saveTask = function (socket, data, callback) {
+	SocketTasks.module.saveModuleTask = function (socket, data, callback) {
 		if (!data) {
 			return callback(new Error('[[error:invalid-data]]'));
 		}
@@ -41,13 +43,13 @@ module.exports = function (SocketTasks) {
 			return callback(new Error('[[error:balanced-project]]'));
 		}
 		var rowData = {
-			id: data.id,
+			id: data.codemoduleId,
 			publish_uid: data.publish_uid,
 			accept_uid: data.accept_uid,
 			title: data.title,
 			scc: data.scc,
 			requirement_desc: data.requirement_desc,
-			delivery_deadlin: data.delivery_deadlin,
+			delivery_deadline: data.delivery_deadline,
 			dev_language: data.dev_language,
 			app: data.app,
 			memo: data.memo,
@@ -57,21 +59,15 @@ module.exports = function (SocketTasks) {
 		});
 	};
 
-	SocketTasks.module.publishTask = function (socket, data, callback) {
+	SocketTasks.module.publishModuleTask = function (socket, data, callback) {
 		if (!data) {
 			return callback(new Error('[[error:invalid-data]]'));
 		}
 		if (data.status !== scc.taskCategoryItem.get('code_module_status', 'draft').id) {
 			return callback(new Error('[[error:balanced-project]]'));
 		}
-		if (data.status === scc.taskCategoryItem.get('code_module_status', 'closed').id) {
-			return callback(new Error('[[error:closed-project]]'));
-		}
-		if (data.status === scc.taskCategoryItem.get('code_module_status', 'published').id) {
-			return callback(new Error('[[error:published-project]]'));
-		}
 		var rowData = {
-			id: data.id,
+			id: data.codemoduleId,
 			date_published: new Date().toLocaleString(),
 			status: scc.taskCategoryItem.get('code_module_status', 'published').id,
 		};
@@ -80,7 +76,7 @@ module.exports = function (SocketTasks) {
 		});
 	};
 
-	SocketTasks.module.deleteTask = function (socket, data, callback) {
+	SocketTasks.module.deleteModuleTask = function (socket, data, callback) {
 		if (!data) {
 			return callback(new Error('[[error:invalid-data]]'));
 		}
@@ -90,12 +86,16 @@ module.exports = function (SocketTasks) {
 		if (data.status === scc.taskCategoryItem.get('code_module_status', 'closed').id) {
 			return callback(new Error('[[error:closed-project]]'));
 		}
-		scc.codeModule.deleteRowById(null, data.id, function (err) {
+		if (data.url && data.url.trim() !== '') {
+			var codemodulePath = path.resolve(__dirname, '../../..') + data.url.replace('/assets', '/public');
+			file.delete(codemodulePath);
+		}
+		scc.codeModule.deleteRowById(null, data.codemoduleId, function (err) {
 			callback(err);
 		});
 	};
 
-	SocketTasks.module.endTask = function (socket, data, callback) {
+	SocketTasks.module.endModuleTask = function (socket, data, callback) {
 		if (!data) {
 			return callback(new Error('[[error:invalid-data]]'));
 		}
@@ -109,7 +109,7 @@ module.exports = function (SocketTasks) {
 			return callback(new Error('[[error:draft-project]]'));
 		}
 		var rowData = {
-			id: data.id,
+			id: data.codemoduleId,
 			date_closed: new Date().toLocaleString(),
 			status: scc.taskCategoryItem.get('code_module_status', 'closed').id,
 		};
@@ -118,41 +118,52 @@ module.exports = function (SocketTasks) {
 		});
 	};
 
-	SocketTasks.module.developingTask = function (socket, data, callback) {
+	SocketTasks.module.developingModuleTask = function (socket, data, callback) {
 		if (!data) {
 			return callback(new Error('[[error:invalid-data]]'));
 		}
 		var publishedStatus = scc.taskCategoryItem.get('code_module_status', 'published').id;
 		var developingStatus = scc.taskCategoryItem.get('code_module_status', 'developing').id;
-		if (data.status !== publishedStatus || data.status !== developingStatus) {
+		if (!(data.status === publishedStatus || data.status === developingStatus)) {
 			return callback(new Error('[[error:published-project]]'));
 		}
 		var rowData = {
-			id: data.id,
-			status: scc.taskCategoryItem.get('code_module_status', 'developing').id,
+			id: data.codemoduleId,
+			status: data.status,
 		};
 		scc.codeModule.updateRow(null, rowData, function (err) {
 			callback(err);
 		});
 	};
 
-	SocketTasks.module.submitTask = function (socket, data, callback) {
+	SocketTasks.module.submitModuleTask = function (socket, data, callback) {
 		if (!data) {
 			return callback(new Error('[[error:invalid-data]]'));
 		}
-		if (data.status !== scc.taskCategoryItem.get('code_module_status', 'developing').id) {
+
+		var developingStatus = scc.taskCategoryItem.get('code_module_status', 'developing').id;
+		var submitStatus = scc.taskCategoryItem.get('code_module_status', 'submited').id;
+		if (!(data.status === developingStatus || data.status === submitStatus)) {
 			return callback(new Error('[[error:developing-project]]'));
 		}
 		var rowData = {
-			id: data.id,
-			status: scc.taskCategoryItem.get('code_module_status', 'submited').id,
+			id: data.codemoduleId,
+			status: data.status,
 		};
+		if (data.oldUrl && data.oldUrl.trim() !== '') {
+			var codemodulePath = path.resolve(__dirname, '../../..') + data.oldUrl.replace('/assets', '/public');
+			file.delete(codemodulePath);
+		}
+		if (data.newUrl) {
+			rowData.url = data.newUrl;
+			rowData.date_upload = new Date().toLocaleString();
+		}
 		scc.codeModule.updateRow(null, rowData, function (err) {
 			callback(err);
 		});
 	};
 
-	SocketTasks.module.unSubmitTask = function (socket, data, callback) {
+	SocketTasks.module.unSubmitModuleTask = function (socket, data, callback) {
 		if (!data) {
 			return callback(new Error('[[error:invalid-data]]'));
 		}
@@ -160,7 +171,7 @@ module.exports = function (SocketTasks) {
 			return callback(new Error('[[error:submited-project]]'));
 		}
 		var rowData = {
-			id: data.id,
+			id: data.codemoduleId,
 			status: scc.taskCategoryItem.get('code_module_status', 'developing').id,
 		};
 		scc.codeModule.updateRow(null, rowData, function (err) {
@@ -168,15 +179,29 @@ module.exports = function (SocketTasks) {
 		});
 	};
 
-	SocketTasks.module.cutoffTask = function (socket, data, callback) {
+	SocketTasks.module.cutoffModuleTask = function (socket, data, callback) {
 		if (!data) {
 			return callback(new Error('[[error:invalid-data]]'));
 		}
 		if (data.status !== scc.taskCategoryItem.get('code_module_status', 'submited').id) {
 			return callback(new Error('[[error:submited-project]]'));
 		}
-		scc.codeModule.cutoffTask(data.id, function (err) {
+		scc.codeModule.cutoffTask(data, function (err) {
 			callback(err);
 		});
+	};
+
+	SocketTasks.module.getDevLanguages = function (socket, data, callback) {
+		var searchResult = {
+			devLanguages: scc.taskCategoryItem.getOptions('dev_language'),
+		};
+		callback(null, searchResult);
+	};
+
+	SocketTasks.module.getApps = function (socket, data, callback) {
+		var searchResult = {
+			apps: scc.taskCategoryItem.getOptions('app'),
+		};
+		callback(null, searchResult);
 	};
 };

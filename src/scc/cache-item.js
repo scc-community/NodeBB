@@ -47,24 +47,35 @@ CacheItem.prototype.find = function (findKey, findValue) {
 	}
 };
 
-CacheItem.prototype.getOptions = function (category, withAll, selectedItem) {
+CacheItem.prototype.getOptions = function (category, firstOption, selectedItem, includeItems) {
 	function recursive(cacheData, items) {
 		var item = {};
-		if ((category && cacheData.category === category) || (!category)) {
+		if (!category || category === cacheData.category) {
 			item.value = cacheData.id;
 			item.text = cacheData.content;
-			if (selectedItem && selectedItem.category === cacheData.category && selectedItem.item === cacheData.item) {
-				item.selected = true;
+			if (selectedItem) {
+				if ((!selectedItem.category || selectedItem.category === cacheData.category) && selectedItem.item === cacheData.item) {
+					item.selected = true;
+				}
+			}
+			if (includeItems && includeItems.length > 0) {
+				for (var index = 0; index < includeItems.length; index++) {
+					var element = includeItems[index];
+					if ((!element.category || element.category === cacheData.category) && element.item === cacheData.item) {
+						items.push(item);
+						return;
+					}
+				}
 			}
 			items.push(item);
 		}
 	}
 
 	var options = [];
-	if (withAll) {
+	if (firstOption) {
 		options.push({
-			value: null,
-			text: '[[admin/scc-reward/topic-reward:option-all]]',
+			value: firstOption.value ? firstOption.value : null,
+			text: firstOption.text ? firstOption.text : '[[admin/scc-reward/topic-reward:option-all]]',
 		});
 	}
 
