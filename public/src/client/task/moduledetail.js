@@ -170,6 +170,20 @@ define('forum/task/moduledetail', ['benchpress', 'autocomplete'], function (Benc
 					});
 				});
 				break;
+			case 'developModuleTask':
+				bootbox.confirm('开始开发该模块?', function (confirm) {
+					if (!confirm) {
+						return;
+					}
+					socket.emit(eventPreName + action, data, function (err) {
+						if (err) {
+							return app.alertError(err.message);
+						}
+						ajaxify.refresh();
+						app.alertSuccess('已开始开发该模块');
+					});
+				});
+				break;
 			case 'saveModuleTask':
 				err = checkCodemoduleData(data);
 				if (err) {

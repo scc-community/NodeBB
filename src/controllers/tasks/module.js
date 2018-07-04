@@ -124,6 +124,7 @@ moduleController.getDetail = function (req, res, callback) {
 			codeModule = result[0]._data;
 			codeModule.status_text = scc.taskCategoryItem.find('id', codeModule.status).content;
 			codeModule.delivery_deadline = codeModule.delivery_deadline.toLocaleDateString();
+			codeModule.date_upload = codeModule.date_upload.toLocaleDateString();
 			codeModule.dev_language = codeModule.dev_language.split(',').map(function (item) {
 				return { text: item };
 			});

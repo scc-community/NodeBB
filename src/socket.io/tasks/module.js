@@ -118,18 +118,18 @@ module.exports = function (SocketTasks) {
 		});
 	};
 
-	SocketTasks.module.developingModuleTask = function (socket, data, callback) {
+	SocketTasks.module.developModuleTask = function (socket, data, callback) {
 		if (!data) {
 			return callback(new Error('[[error:invalid-data]]'));
 		}
 		var publishedStatus = scc.taskCategoryItem.get('code_module_status', 'published').id;
 		var developingStatus = scc.taskCategoryItem.get('code_module_status', 'developing').id;
-		if (!(data.status === publishedStatus || data.status === developingStatus)) {
+		if (data.status !== publishedStatus) {
 			return callback(new Error('[[error:published-project]]'));
 		}
 		var rowData = {
 			id: data.codemoduleId,
-			status: data.status,
+			status: developingStatus,
 		};
 		scc.codeModule.updateRow(null, rowData, function (err) {
 			callback(err);
@@ -148,7 +148,7 @@ module.exports = function (SocketTasks) {
 		}
 		var rowData = {
 			id: data.codemoduleId,
-			status: data.status,
+			status: developingStatus,
 		};
 		if (data.oldUrl && data.oldUrl.trim() !== '') {
 			var codemodulePath = path.resolve(__dirname, '../../..') + data.oldUrl.replace('/assets', '/public');

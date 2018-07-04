@@ -29,7 +29,7 @@ define('forum/task/centerdetail', ['uploader'], function (uploader) {
 					accept: uploadBtn.attr('data-accept'),
 				}, function (newUrl) {
 					var data = {
-						id: uploadBtn.attr('data-id'),
+						codemoduleId: uploadBtn.attr('data-id'),
 						status: parseInt(uploadBtn.attr('data-status'), 10),
 						newUrl: newUrl,
 						oldUrl: uploadBtn.attr('data-url'),
