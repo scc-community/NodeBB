@@ -148,7 +148,7 @@ module.exports = function (SocketTasks) {
 		}
 		var rowData = {
 			id: data.codemoduleId,
-			status: developingStatus,
+			status: submitStatus,
 		};
 		if (data.oldUrl && data.oldUrl.trim() !== '') {
 			var codemodulePath = path.resolve(__dirname, '../../..') + data.oldUrl.replace('/assets', '/public');

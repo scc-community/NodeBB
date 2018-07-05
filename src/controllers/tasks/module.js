@@ -69,8 +69,8 @@ moduleController.get = function (req, res, callback) {
 									function (userData, next) {
 										row.accept_username = userData.username;
 										row.accept_userslug = userData.userslug;
-										row.date_published = row.date_published.toLocaleDateString();
-										row.delivery_deadline = row.delivery_deadline.toLocaleDateString();
+										row.date_published = row.date_published ? row.date_published.toLocaleDateString() : null;
+										row.delivery_deadline = row.delivery_deadline ? row.delivery_deadline.toLocaleDateString() : null;
 										row.status_text = scc.taskCategoryItem.find('id', row.status).content;
 										next();
 									},
@@ -123,14 +123,14 @@ moduleController.getDetail = function (req, res, callback) {
 			if (result.length !== 1) { return callback(); }
 			codeModule = result[0]._data;
 			codeModule.status_text = scc.taskCategoryItem.find('id', codeModule.status).content;
-			codeModule.delivery_deadline = codeModule.delivery_deadline.toLocaleDateString();
-			codeModule.date_upload = codeModule.date_upload.toLocaleDateString();
-			codeModule.dev_language = codeModule.dev_language.split(',').map(function (item) {
+			codeModule.delivery_deadline = codeModule.delivery_deadline ? codeModule.delivery_deadline.toLocaleDateString() : null;
+			codeModule.date_upload = codeModule.date_upload ? codeModule.date_upload.toLocaleDateString() : null;
+			codeModule.dev_language = codeModule.dev_language ? codeModule.dev_language.split(',').map(function (item) {
 				return { text: item };
-			});
-			codeModule.app = codeModule.app.split(',').map(function (item) {
+			}) : null;
+			codeModule.app = codeModule.app ? codeModule.app.split(',').map(function (item) {
 				return { text: item };
-			});
+			}) : null;
 			db.getObjectFields('user:' + codeModule.publish_uid, ['username', 'userslug'], next);
 		},
 		function (userData, next) {

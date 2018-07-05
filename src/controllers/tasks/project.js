@@ -3,6 +3,7 @@
 var async = require('async');
 var fs = require('fs');
 var validator = require('validator');
+var crypto = require('crypto');
 var zip = require('node-native-zip');
 var path = require('path');
 var file = require('../../file');
@@ -127,7 +128,7 @@ projectController.getDetail = function (req, res, callback) {
 					project.publish_username = userData.username;
 					project.publish_userslug = userData.userslug;
 					project.status_text = scc.taskCategoryItem.find('id', project.status).content;
-					project.delivery_deadline = project.delivery_deadline.toLocaleDateString();
+					project.delivery_deadline = project.delivery_deadline ? project.delivery_deadline.toLocaleDateString() : null;
 					next(null, project);
 				},
 			], next);
@@ -229,6 +230,7 @@ projectController.downloadCodeModulePackage = function (req, res, callback) {
 	if (!helpers.checkId(req.query.pid)) {
 		return callback();
 	}
+	var projectFirstRowData;
 	async.waterfall([
 		function (next) {
 			privileges.global.can('task:project:manage', req.uid, next);
@@ -246,15 +248,30 @@ projectController.downloadCodeModulePackage = function (req, res, callback) {
 			if (result.length === 0) {
 				return callback();
 			}
+			projectFirstRowData = result[0]._data;
 			makeCodeMoudleZip(result, next);
 		},
-		function (zipPath, next) {
-			var filename = path.basename(zipPath);
+		function (zipPath, zipFile, next) {
+			var data = { id: projectFirstRowData.p_id };
+			if (!file.existsSync(zipPath)) {
+				data.codemodule_url = null;
+			} else {
+				projectFirstRowData.zipPath = zipPath;
+				projectFirstRowData.zipFile = zipFile;
+				data.codemodule_url = zipFile;
+			}
+			scc.project.updateRow(null, data, next);
+		},
+		function (_, next) {
+			if (!projectFirstRowData.zipPath) {
+				return callback();
+			}
+			var filename = path.basename(projectFirstRowData.zipPath);
 			res.writeHead(200, {
 				'content-type': 'application/force-download',
 				'content-disposition': 'attachment; filename=' + filename,
 			});
-			var f = fs.createReadStream(zipPath);
+			var f = fs.createReadStream(projectFirstRowData.zipPath);
 			f.pipe(res).on('close', next);
 		},
 	], callback);
@@ -264,31 +281,32 @@ function makeCodeMoudleZip(vpcmResult, callback) {
 	var archive;
 	var zipFile;
 	var zipPath;
-	var row0;
+	var row0 = vpcmResult[0]._data;
 	var codemoduleFiles = [];
+	vpcmResult.forEach(function (item) {
+		var url = item._data.cm_url;
+		if (url) {
+			var codemoduleFilePath = path.resolve(__dirname, '../../..') + url.replace('/assets', '/public');
+			if (file.existsSync(codemoduleFilePath)) {
+				var name = path.basename(codemoduleFilePath);
+				codemoduleFiles.push({
+					name: name,
+					path: codemoduleFilePath,
+				});
+				zipFile += name;
+			}
+		}
+	});
+	var title = row0.p_title;
+	zipFile = title + '-' + validator.escape(crypto.createHash('md5').update(zipFile).digest('hex')) + '.zip';
 	async.waterfall([
 		function (next) {
-			row0 = vpcmResult[0]._data;
-			if (!row0.p_codemodule_url) {
-				vpcmResult.forEach(function (item) {
-					var url = item._data.cm_url;
-					if (url) {
-						var codemoduleFilePath = path.resolve(__dirname, '../../..') + url.replace('/assets', '/public');
-						if (file.existsSync(codemoduleFilePath)) {
-							codemoduleFiles.push({
-								name: path.basename(codemoduleFilePath),
-								path: codemoduleFilePath,
-							});
-						}
-					}
-				});
-				var title = row0.p_title;
-				zipFile = Date.now() + '-' + validator.escape(title.substr(0, title.length - 4)).substr(0, 255) + '.zip';
+			if (row0.p_codemodule_url !== zipFile) {
 				next();
 			} else {
 				zipFile = row0.p_codemodule_url;
-				var zipPath = path.resolve(__dirname, '../../..') + '/public/uploads/files/' + zipFile;
-				return callback(null, zipPath);
+				zipPath = path.resolve(__dirname, '../../..') + '/public/uploads/files/' + zipFile;
+				return callback(null, zipPath, zipFile);
 			}
 		},
 		function (next) {
@@ -297,18 +315,11 @@ function makeCodeMoudleZip(vpcmResult, callback) {
 		},
 		function (next) {
 			var buff = archive.toBuffer();
-			var zipPath = path.resolve(__dirname, '../../..') + '/public/uploads/files/' + zipFile;
+			zipPath = path.resolve(__dirname, '../../..') + '/public/uploads/files/' + zipFile;
 			fs.writeFile(zipPath, buff, next);
 		},
 		function (next) {
-			var data = {
-				id: row0.p_id,
-				codemodule_url: zipFile,
-			};
-			scc.project.updateRow(null, data, next);
-		},
-		function (_, next) {
-			next(null, zipPath);
+			next(null, zipPath, zipFile);
 		},
 	], callback);
 }

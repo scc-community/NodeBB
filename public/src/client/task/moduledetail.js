@@ -151,7 +151,7 @@ define('forum/task/moduledetail', ['benchpress', 'autocomplete'], function (Benc
 							app.alertError(err.message);
 							return false;
 						}
-						ajaxify.go('task/module/detail?cmid=' + data.codemoduleId);
+						ajaxify.refresh();
 						app.alertSuccess('保存成功');
 					});
 				});
