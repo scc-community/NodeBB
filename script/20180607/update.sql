@@ -63,7 +63,7 @@ CREATE TABLE `projects` (
   `date_cutoff` datetime COMMENT '结算日期',
   `title` varchar(80) NOT NULL COMMENT '标题',
   `description` varchar(80) NOT NULL COMMENT '描述',
-  'codemodule_url' varchar(256) COMMENT '代码一键打包下载URL',
+  `codemodule_url` varchar(256) COMMENT '代码一键打包下载URL',
   `codemodule_count` smallint(5) unsigned NOT NULL DEFAULT 0 COMMENT '代码模块数',
   `architect_count` smallint(5) unsigned NOT NULL DEFAULT 0 COMMENT '架构师数',
   `status` smallint(5) unsigned NOT NULL COMMENT '状态,外键关联',
