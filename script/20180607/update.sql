@@ -9,6 +9,12 @@ UPDATE reward_types SET id = 52 WHERE id = 6;
 UPDATE reward_types SET id = 53 WHERE id = 7;
 INSERT INTO `reward_types` VALUES (101, 'task', 'code_module', '[[rewardType:code_module]]', '代码模块奖励', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
 INSERT INTO `reward_types` VALUES (102, 'task', 'project', '[[rewardType:project]]', '项目奖励', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
+UPDATE manual_rewards SET reward_type = 51 WHERE reward_type = 5;
+UPDATE manual_rewards SET reward_type = 52 WHERE reward_type = 6;
+UPDATE manual_rewards SET reward_type = 53 WHERE reward_type = 7;
+UPDATE topic_rewards SET reward_type = 51 WHERE reward_type = 5;
+UPDATE topic_rewards SET reward_type = 52 WHERE reward_type = 6;
+UPDATE topic_rewards SET reward_type = 53 WHERE reward_type = 7;
 COMMIT;
 
 -- ----------------------------
