@@ -18,6 +18,7 @@ var meta = require('./meta');
 var translator = require('./translator');
 var pubsub = require('./pubsub');
 var file = require('./file');
+var languages = require('./languages')
 
 var Emailer = module.exports;
 
@@ -329,15 +330,23 @@ function buildCustomTemplates(config) {
 }
 
 Emailer.renderAndTranslate = function (template, params, lang, callback) {
-	app.render('emails/' + template, params, function (err, html) {
-		if (err) {
-			return callback(err);
-		}
-		translator.translate(html, lang, function (translated) {
-			callback(null, translated);
-		});
-	});
+        languages.get(lang, "email", function(err, data) {
+              if (err !== null) {
+                   lang = "en-US";
+              }
+
+             app.render('emails/' + template, params, function (err, html) {
+                if (err) {
+                        return callback(err);
+                }
+                translator.translate(html, lang, function (translated) {
+                        callback(null, translated);
+                });
+            });
+
+        });
 };
+
 
 function getHostname() {
 	var configUrl = nconf.get('url');
