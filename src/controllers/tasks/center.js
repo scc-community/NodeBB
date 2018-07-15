@@ -32,7 +32,7 @@ CenterController.get = function (req, res, callback) {
 				status: 'ASC',
 			},
 			{
-				date_published: 'DESC',
+				date_published: 'ASC',
 			},
 		];
 		return orderCondition;

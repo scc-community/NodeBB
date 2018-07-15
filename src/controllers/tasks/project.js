@@ -83,7 +83,7 @@ projectController.get = function (req, res, callback) {
 			var data = {
 				projects: results.projects,
 				statusOptions: statusOptions,
-				breadcrumbs: helpers.buildBreadcrumbs([{ text: '项目管理' }]),
+				breadcrumbs: helpers.buildBreadcrumbs([{ text: '[[global:task.center]]', url: '/task/center' }, { text: '项目管理' }]),
 				pagination: pagination.create(page, Math.max(1, Math.ceil(results.projects.length / resultsPerPage)), req.query),
 			};
 			res.render('task/project', data);

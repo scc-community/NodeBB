@@ -18,6 +18,7 @@ module.exports = function (SocketTasks) {
 			description: data.description,
 			codemodule_count: 0,
 			architect_count: 0,
+			scc_sum: 0,
 			status: data.status,
 		};
 		scc.project.newRow(null, rowData, function (err) {
