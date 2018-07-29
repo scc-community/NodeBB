@@ -71,7 +71,7 @@ moduleController.get = function (req, res, callback) {
 										row.accept_userslug = userData.userslug;
 										row.date_published = row.date_published ? row.date_published.toLocaleDateString() : null;
 										row.delivery_deadline = row.delivery_deadline ? row.delivery_deadline.toLocaleDateString() : null;
-										row.status_text = scc.taskCategoryItem.find('id', row.status).content;
+										row.status_text = scc.taskCategoryItem.getCodeModuleStatusText('client', row.status);
 										next();
 									},
 								], next);
@@ -122,7 +122,7 @@ moduleController.getDetail = function (req, res, callback) {
 		function (result, next) {
 			if (result.length !== 1) { return callback(); }
 			codeModule = result[0]._data;
-			codeModule.status_text = scc.taskCategoryItem.find('id', codeModule.status).content;
+			codeModule.status_text = scc.taskCategoryItem.getCodeModuleStatusText('client', codeModule.status);
 			codeModule.delivery_deadline = codeModule.delivery_deadline ? codeModule.delivery_deadline.toLocaleDateString() : null;
 			codeModule.date_upload = codeModule.date_upload ? codeModule.date_upload.toLocaleDateString() : null;
 			codeModule.dev_language = codeModule.dev_language ? codeModule.dev_language.split(',').map(function (item) {

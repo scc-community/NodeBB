@@ -15,6 +15,9 @@ UPDATE manual_rewards SET reward_type = 53 WHERE reward_type = 7;
 UPDATE topic_rewards SET reward_type = 51 WHERE reward_type = 5;
 UPDATE topic_rewards SET reward_type = 52 WHERE reward_type = 6;
 UPDATE topic_rewards SET reward_type = 53 WHERE reward_type = 7;
+UPDATE txs SET reward_type = 51 WHERE reward_type = 5;
+UPDATE txs SET reward_type = 52 WHERE reward_type = 6;
+UPDATE txs SET reward_type = 53 WHERE reward_type = 7;
 COMMIT;
 
 -- ----------------------------
@@ -48,12 +51,12 @@ INSERT INTO `task_category_items` VALUES (101, 'project_status', 'beginning', '[
 INSERT INTO `task_category_items` VALUES (102, 'project_status', 'ended', '[[scc-task/category-item:option.project-status.ended]]', '完成', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
 INSERT INTO `task_category_items` VALUES (103, 'project_status', 'balanced', '[[scc-task/category-item:option.project-status.balanced]]', '结算', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
 
-INSERT INTO `task_category_items` VALUES (151, 'code_module_status', 'draft', '[[scc-task/category-item:option.code-module.draft]]', '未发布', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
-INSERT INTO `task_category_items` VALUES (152, 'code_module_status', 'published', '[[scc-task/category-item:option.code-module.published]]', '发布', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
-INSERT INTO `task_category_items` VALUES (153, 'code_module_status', 'developing', '[[scc-task/category-item:option.code-module.developing]]', '开发', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
-INSERT INTO `task_category_items` VALUES (154, 'code_module_status', 'submited', '[[scc-task/category-item:option.code-module.submited]]', '提交', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
-INSERT INTO `task_category_items` VALUES (155, 'code_module_status', 'balanced', '[[scc-task/category-item:option.code-module.balanced]]', '结算', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
-INSERT INTO `task_category_items` VALUES (156, 'code_module_status', 'closed', '[[scc-task/category-item:option.code-module.closed]]', '异常关闭', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
+INSERT INTO `task_category_items` VALUES (151, 'code_module_status', 'draft', '[[scc-task/category-item:option.code-module.draft]]', '未发布:未发布', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
+INSERT INTO `task_category_items` VALUES (152, 'code_module_status', 'published', '[[scc-task/category-item:option.code-module.published]]', '待领取:已发布', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
+INSERT INTO `task_category_items` VALUES (153, 'code_module_status', 'developing', '[[scc-task/category-item:option.code-module.developing]]', '开发中:已领取', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
+INSERT INTO `task_category_items` VALUES (154, 'code_module_status', 'submited', '[[scc-task/category-item:option.code-module.submited]]', '已提交:已提交', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
+INSERT INTO `task_category_items` VALUES (155, 'code_module_status', 'balanced', '[[scc-task/category-item:option.code-module.balanced]]', '已结算:已结算', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
+INSERT INTO `task_category_items` VALUES (156, 'code_module_status', 'closed', '[[scc-task/category-item:option.code-module.closed]]', '已完成:已完成', '2018-05-16 11:12:27', '2018-05-16 11:12:27', '0');
 COMMIT;
 
 -- ----------------------------

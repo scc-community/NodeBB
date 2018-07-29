@@ -6,6 +6,7 @@ var Base = require('./base');
 var util = require('util');
 var utils = require('../utils');
 var scc = require('../scc');
+var user = require('../user');
 
 var Project = function () {
 	this.tableName = 'projects';
@@ -119,6 +120,7 @@ Project.prototype.cutoffTask = function (rowData, callback) {
 		result: {},
 	};
 	var me = this;
+	var txData = {};
 	async.waterfall([
 		function (next) {
 			scc.txLog.begin(data, next);
@@ -174,7 +176,7 @@ Project.prototype.cutoffTask = function (rowData, callback) {
 						});
 						data.parameters.vpcms = vpcms;
 						async.eachSeries(vpcms, function (vpcm, next) {
-							var txData = {
+							txData = {
 								uid: vpcm.cm_accept_uid,
 								transaction_uid: 0,
 								publish_uid: rowData.publishUId,
@@ -182,7 +184,7 @@ Project.prototype.cutoffTask = function (rowData, callback) {
 								tx_no: utils.generateUUID(),
 								reward_type: rewardType.id,
 								date_issued: new Date().toLocaleString(),
-								scc: vpcm.cm_scc,
+								scc: vpcm.cm_scc * 0.5,
 								content: '模块(' + vpcm.cm_id + ':' + vpcm.cm_title + ')被项目(' + rowData.projectId + ':' + rowData.projectTitle + ')采用',
 							};
 							data.result.vpcmTxDatas = [];
@@ -194,6 +196,17 @@ Project.prototype.cutoffTask = function (rowData, callback) {
 			}, next);
 		},
 		function (next) {
+			scc.txLog.record(data, next);
+		},
+		function (next) {
+			user.getSccToken(txData.uid, next);
+		},
+		function (scctoken, next) {
+			data.oldSccToken = scctoken;
+			user.incrSccToken(txData.uid, txData.scc, next);
+		},
+		function (scctoken, next) {
+			data.newSccToken = scctoken;
 			scc.txLog.record(data, next);
 		},
 	], function (err) {

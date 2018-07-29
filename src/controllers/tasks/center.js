@@ -62,7 +62,8 @@ CenterController.get = function (req, res, callback) {
 									function (userData, next) {
 										row.username = userData.username;
 										row.userslug = userData.userslug;
-										row.status_text = scc.taskCategoryItem.find('id', row.status).content;
+										row.date_published_text = row.date_published ? row.date_published.toLocaleDateString() : null;
+										row.status_text = scc.taskCategoryItem.getCodeModuleStatusText('client', row.status);
 										row.delivery_deadline_text = row.delivery_deadline ? row.delivery_deadline.toLocaleDateString() : null;
 										row.date_cutoff_text = row.date_cutoff ? row.date_cutoff.toLocaleDateString() : null;
 										row.languages = row.dev_language ? row.dev_language.split(',') : [];
@@ -141,11 +142,11 @@ CenterController.getDetail = function (req, res, callback) {
 					db.getObjectFields('user:' + codeModule.publish_uid, ['username', 'userslug'], next);
 				},
 				function (userData, next) {
-					var taskCategoryItem = scc.taskCategoryItem.find('id', codeModule.status);
 					codeModule.username = userData.username;
 					codeModule.userslug = userData.userslug;
-					codeModule.status_text = taskCategoryItem.content;
+					codeModule.status_text = scc.taskCategoryItem.getCodeModuleStatusText('client', codeModule.status);
 					codeModule.delivery_deadline_text = codeModule.delivery_deadline ? codeModule.delivery_deadline.toLocaleDateString() : null;
+					codeModule.date_published_text = codeModule.date_published ? codeModule.date_published.toLocaleDateString() : null;
 					codeModule.date_cutoff_text = codeModule.date_cutoff ? codeModule.date_cutoff.toLocaleDateString() : null;
 					codeModule.date_upload_text = codeModule.date_upload ? codeModule.date_upload.toLocaleString() : null;
 					codeModule.languages = codeModule.dev_language ? codeModule.dev_language.split(',') : [];

@@ -178,9 +178,10 @@ projectController.getDetail = function (req, res, callback) {
 										db.getObjectFields('user:' + row.cm_accept_uid, ['username', 'userslug'], next);
 									},
 									function (userData, next) {
+										row.project_cm_scc = row.cm_scc * 0.5;
 										row.accept_username = userData.username;
 										row.accept_userslug = userData.userslug;
-										row.status_text = scc.taskCategoryItem.find('id', row.cm_status).content;
+										row.status_text = scc.taskCategoryItem.getCodeModuleStatusText('background', row.cm_status);
 										next();
 									},
 								], next);

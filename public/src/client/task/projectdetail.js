@@ -201,7 +201,7 @@ define('forum/task/projectdetail', ['benchpress', 'autocomplete'], function (Ben
 			function getSccSum() {
 				var sccSum = 0;
 				$('[component="codemodule"] [data-id]').each(function (index, el) {
-					sccSum += parseInt($(el).children('td:eq(2)').text(), 10);
+					sccSum += parseInt($(el).children('td:eq(5)').text(), 10);
 				});
 				$('[component="projectArchitect"] [data-id]').each(function (index, el) {
 					sccSum += parseInt($(el).children('td:eq(4)').text(), 10);

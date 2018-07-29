@@ -25,4 +25,23 @@ TaskCategoryItem.prototype.getCodeModuleStatuses = function (status) {
 	return result;
 };
 
+TaskCategoryItem.prototype.getCodeModuleStatusText = function (scene, status) {
+	var comment = this.find('id', status).comment;
+	if (!comment) {
+		return '';
+	}
+	var statusTexts = comment.split('::');
+	if (statusTexts.length !== 2) {
+		return comment;
+	}
+	switch (scene) {
+	case 'client':
+		return statusTexts[0];
+	case 'background':
+		return statusTexts[1];
+	default:
+		return statusTexts[0];
+	}
+};
+
 module.exports = taskCategoryItem;

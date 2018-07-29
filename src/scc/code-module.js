@@ -4,6 +4,7 @@ var async = require('async');
 var mysql = require('../database/mysql');
 var util = require('util');
 var utils = require('../utils');
+var user = require('../user');
 var scc = require('../scc');
 var Base = require('./base');
 
@@ -30,6 +31,7 @@ CodeModule.prototype.cutoffTask = function (data, callback) {
 		result: {},
 	};
 	var me = this;
+	var txData = {};
 	async.waterfall([
 		function (next) {
 			scc.txLog.begin(logData, next);
@@ -47,7 +49,7 @@ CodeModule.prototype.cutoffTask = function (data, callback) {
 					},
 					function (result, next) {
 						var rewardType = scc.rewardType.get('task', 'code_module');
-						var txData = {
+						txData = {
 							uid: data.accept_uid,
 							transaction_uid: 0,
 							publish_uid: data.publish_uid,
@@ -69,6 +71,17 @@ CodeModule.prototype.cutoffTask = function (data, callback) {
 			}, next);
 		},
 		function (next) {
+			scc.txLog.record(logData, next);
+		},
+		function (next) {
+			user.getSccToken(txData.uid, next);
+		},
+		function (scctoken, next) {
+			logData.oldSccToken = scctoken;
+			user.incrSccToken(txData.uid, txData.scc, next);
+		},
+		function (scctoken, next) {
+			logData.newSccToken = scctoken;
 			scc.txLog.record(logData, next);
 		},
 	], function (err) {
