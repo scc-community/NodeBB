@@ -121,6 +121,7 @@ Project.prototype.cutoffTask = function (rowData, callback) {
 	};
 	var me = this;
 	var txData = {};
+	var projectData = {};
 	async.waterfall([
 		function (next) {
 			scc.txLog.begin(data, next);
@@ -128,7 +129,6 @@ Project.prototype.cutoffTask = function (rowData, callback) {
 		function (next) {
 			mysql.transaction(function (conn, next) {
 				var rewardType = scc.rewardType.get('task', 'project');
-				var projectData;
 				async.waterfall([
 					function (next) {
 						projectData = {
@@ -150,7 +150,7 @@ Project.prototype.cutoffTask = function (rowData, callback) {
 						});
 						data.parameters.projectArchitects = projectArchitects;
 						async.eachSeries(projectArchitects, function (projectArchitect, next) {
-							var txData = {
+							txData = {
 								uid: projectArchitect.architect_uid,
 								transaction_uid: 0,
 								publish_uid: rowData.publishUId,
@@ -196,17 +196,40 @@ Project.prototype.cutoffTask = function (rowData, callback) {
 			}, next);
 		},
 		function (next) {
-			scc.txLog.record(data, next);
+			async.eachSeries(data.result.paTxDatas, function (tx, next) {
+				async.waterfall([
+					function (next) {
+						user.getSccToken(tx.uid, next);
+					},
+					function (scctoken, next) {
+						tx.oldSccToken = scctoken;
+						user.incrSccToken(tx.uid, tx.scc, next);
+					},
+					function (scctoken, next) {
+						tx.newSccToken = scctoken;
+						next();
+					},
+				], next);
+			}, next);
 		},
 		function (next) {
-			user.getSccToken(txData.uid, next);
+			async.eachSeries(data.result.vpcmTxDatas, function (tx, next) {
+				async.waterfall([
+					function (next) {
+						user.getSccToken(tx.uid, next);
+					},
+					function (scctoken, next) {
+						tx.oldSccToken = scctoken;
+						user.incrSccToken(tx.uid, tx.scc, next);
+					},
+					function (scctoken, next) {
+						tx.newSccToken = scctoken;
+						next();
+					},
+				], next);
+			}, next);
 		},
-		function (scctoken, next) {
-			data.oldSccToken = scctoken;
-			user.incrSccToken(txData.uid, txData.scc, next);
-		},
-		function (scctoken, next) {
-			data.newSccToken = scctoken;
+		function (next) {
 			scc.txLog.record(data, next);
 		},
 	], function (err) {
