@@ -18,7 +18,7 @@ var meta = require('./meta');
 var translator = require('./translator');
 var pubsub = require('./pubsub');
 var file = require('./file');
-var languages = require('./languages')
+var languages = require('./languages');
 
 var Emailer = module.exports;
 
