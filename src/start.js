@@ -25,14 +25,16 @@ start.start = function () {
 				async.apply(meta.configs.init),
 				function (next) {
 					if (nconf.get('dep-check') === undefined || nconf.get('dep-check') !== false) {
-						meta.dependencies.check(next);
+						// meta.dependencies.check(next);
+						next();
 					} else {
 						winston.warn('[init] Dependency checking skipped!');
 						setImmediate(next);
 					}
 				},
 				function (next) {
-					require('./upgrade').check(next);
+					// require('./upgrade').check(next);
+					next();
 				},
 			], function (err) {
 				next(err);

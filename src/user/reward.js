@@ -28,7 +28,7 @@ module.exports = function (User) {
 				},
 				function (content, next) {
 					initTxData.content += content;
-					scc.tx.nowRow(initTxData, next);
+					scc.tx.newRow(initTxData, next);
 				},
 				function (row, next) {
 					data.registerReward.createTxData = row._data;
